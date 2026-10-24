@@ -1,8 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: 2026 Jeremy Murphy
-name: Fix Formatting
+name: Run stamp.sh
 
 on:
+  push:
+    branches:
+      - setup
   workflow_dispatch:
 
 jobs:
