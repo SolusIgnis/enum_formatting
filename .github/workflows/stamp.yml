@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 Jeremy Murphy
+name: Fix Formatting
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fix-formatting:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run stamp.sh
+        run: |
+         ./stamp.sh < .stamp_config
