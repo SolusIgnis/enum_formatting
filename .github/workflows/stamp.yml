@@ -17,6 +17,7 @@ jobs:
 
     permissions:
       contents: write
+      workflows: write
 
     if: github.actor != 'github-actions[bot]'
 
