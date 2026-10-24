@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  fix-formatting:
+  stamper:
     runs-on: ubuntu-latest
 
     permissions:
