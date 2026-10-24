@@ -18,6 +18,8 @@ jobs:
     permissions:
       contents: write
 
+    if: github.actor != 'github-actions[bot]'
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,5 +28,10 @@ jobs:
 
       - name: Run stamp.sh
         run: |
+          # Using the official GitHub Actions Bot identity
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          pwd
           echo < .stamp_config
           #./stamp.sh < .stamp_config
