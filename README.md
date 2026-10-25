@@ -6,16 +6,16 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 <!-- markdownlint-disable line-length -->
 [![Library Status](https://raw.githubusercontent.com/bemanproject/beman/refs/heads/main/images/badges/beman_badge-beman_library_under_development.svg)](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#the-beman-library-maturity-model)
-[![Continuous Integration Tests](https://github.com/bemanproject/enum_formatting/actions/workflows/ci_tests.yml/badge.svg)](https://github.com/bemanproject/enum_formatting/actions/workflows/ci_tests.yml)
-[![Lint Check (pre-commit)](https://github.com/bemanproject/enum_formatting/actions/workflows/pre-commit-check.yml/badge.svg)](https://github.com/bemanproject/enum_formatting/actions/workflows/pre-commit-check.yml)
-[![Coverage](https://coveralls.io/repos/github/bemanproject/enum_formatting/badge.svg?branch=main)](https://coveralls.io/github/bemanproject/enum_formatting?branch=main)
+<!-- [![Continuous Integration Tests](https://github.com/bemanproject/enum_formatting/actions/workflows/ci_tests.yml/badge.svg)](https://github.com/bemanproject/enum_formatting/actions/workflows/ci_tests.yml) -->
+<!-- [![Lint Check (pre-commit)](https://github.com/bemanproject/enum_formatting/actions/workflows/pre-commit-check.yml/badge.svg)](https://github.com/bemanproject/enum_formatting/actions/workflows/pre-commit-check.yml) -->
+<!-- [![Coverage](https://coveralls.io/repos/github/bemanproject/enum_formatting/badge.svg?branch=main)](https://coveralls.io/github/bemanproject/enum_formatting?branch=main) -->
 ![Standard Target](https://github.com/bemanproject/beman/blob/main/images/badges/cpp29.svg)
 
 <!-- markdownlint-restore -->
 
 `beman.enum_formatting` is (... TODO: description).
 
-**Implements**: `std::todo` proposed in [TODO (PXXXXR0)](https://wg21.link/PXXXXR0).
+**Implements**: `std::to_string` overloads, `std::formatter` specializations, `std::formattable`, `std::formattable_with_default`, and `std::is_enumerated_value` proposed in [Paper # Unassigned: Initial Draft in Progress (PXXXXR0)](https://wg21.link/PXXXXR0).
 
 **Status**: [Under development and not yet ready for production use.](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#under-development-and-not-yet-ready-for-production-use)
 
@@ -37,7 +37,7 @@ This project requires at least the following to build:
 
 * A C++ compiler that conforms to the C++26 standard or greater
 * CMake 3.30 or later
-* (Test Only) GoogleTest
+* (Test Only) Catch2
 
 You can disable building tests by setting CMake option `BEMAN_ENUM_FORMATTING_BUILD_TESTS` to
 `OFF` when configuring the project.
