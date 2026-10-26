@@ -1,5 +1,4 @@
-# `beman.enum_formatting
-`: Scoped Enumeration Stringification and Annotation-Driven Defaultable Formatting
+# `beman.enum_formatting`: Scoped Enumeration Stringification and Annotation-Driven Defaultable Formatting
 
 <!--
 SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
