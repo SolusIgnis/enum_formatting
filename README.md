@@ -25,6 +25,64 @@ Powered by C++26 static reflection and attribute annotations, `beman.enum_format
 
 ## Usage
 
+### Direct Stringification
+
+Overloads for `to_string` enable direct production of `std::string`s from scoped enumeration values with a fallback for values without a matching enumerator.
+
+```cpp
+enum class color : std::uint8_t {
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    purple,
+};
+
+color my_color  = color::blue;
+auto color_name = to_string(my_color); //color_name == "blue"s
+
+color no_match     = static_cast<color>(42);
+auto unnamed_color = to_string(no_match); //unnamed_color == "color::42"s
+```
+
+### Annotated Declarations
+
+By applying the `[[=beman::enum_formatting::formattable]]` annotation on the declaration, a scoped enumeration can opt into `std::format` participation.
+
+```cpp
+using namespace beman::enum_formatting::annotations;
+
+enum class [[=formattable]] ink_color : std::uint8_t {
+    cyan,
+    magenta,
+    yellow,
+    black,
+};
+```
+
+With the `[[=beman::enum_formatting::formattable_with_default(...)]]` annotation, a default format specifier can be attached to the type.
+
+```cpp
+using namespace beman::enum_formatting::annotations;
+
+enum class [[=formattable_with_default("i,#010b")]] byte_t : std::uint8_t {};
+```
+
+### Simple Formatting Integration
+
+With the above declarations, the full `std::format` ecosystem becomes available.
+
+```cpp 
+std::println("{}", ink_color::cyan); //prints "cyan"
+
+std::println("{}", static_cast<byte_t>(8)); //prints "0b00001000"
+```
+
+However, `std::format("{}", color::green) });` fails to compile because `color` didn't declare itself formattable.
+
+### Format Specifiers
+
 TODO
 
 Full runnable examples can be found in [`examples/`](examples/).
