@@ -1,4 +1,5 @@
-# beman.enum_formatting: Scoped Enumeration Stringification and Annotation-Enabled Defaultable Formatting
+# `beman.enum_formatting
+`: Scoped Enumeration Stringification and Annotation-Driven Defaultable Formatting
 
 <!--
 SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
@@ -13,7 +14,7 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 <!-- markdownlint-restore -->
 
-`beman.enum_formatting` is (... TODO: description).
+Powered by C++26 static reflection and attribute annotations, `beman.enum_formating` provides automatic `to_string` support, seamless `std::format` integration, and type-level default formatting specifications to scoped enumerations.
 
 **Implements**: `std::to_string` overloads, `std::formatter` specializations, `std::formattable`, `std::formattable_with_default`, and `std::is_enumerated_value` proposed in [Paper # Unassigned: Initial Draft in Progress (PXXXXR0)](https://wg21.link/PXXXXR0).
 
@@ -49,21 +50,16 @@ You can disable building examples by setting CMake option `BEMAN_ENUM_FORMATTING
 
 | Compiler   | Version | C++ Standards | Standard Library  |
 |------------|---------|---------------|-------------------|
-| GCC        | 16-13   | C++26-C++17   | libstdc++         |
-| GCC        | 12-11   | C++23-C++17   | libstdc++         |
-| Clang      | 22-19   | C++26-C++17   | libstdc++, libc++ |
-| Clang      | 18      | C++26-C++17   | libc++            |
-| Clang      | 18      | C++23-C++17   | libstdc++         |
-| Clang      | 17      | C++26-C++17   | libc++            |
-| Clang      | 17      | C++20, C++17  | libstdc++         |
-| AppleClang | latest  | C++26-C++17   | libc++            |
-| MSVC       | latest  | C++23         | MSVC STL          |
+| GCC        | 16      | C++26         | libstdc++         |
+| Clang      | TBA     | C++26         | libstdc++, libc++ |
+| AppleClang | TBA     | C++26         | libc++            |
+| MSVC       | TBA     | C++26         | MSVC STL          |
 
 ## Development
 
 See the [Contributing Guidelines](CONTRIBUTING.md).
 
-## Integrate beman.enum_formatting into your project
+## Integrate `beman.enum_formatting` into your project
 
 ### Build
 
@@ -79,7 +75,7 @@ To list available workflow presets, you can invoke:
 cmake --list-presets=workflow
 ```
 
-For details on building beman.enum_formatting without using a CMake preset, refer to the
+For details on building `beman.enum_formatting` without using a CMake preset, refer to the
 [Contributing Guidelines](CONTRIBUTING.md).
 
 ### Installation
@@ -95,7 +91,7 @@ Then, simply run `vcpkg install beman-enum-formatting`.
 
 #### Manual
 
-To install beman.enum_formatting globally after building with the `gcc-release` preset, you can
+To install `beman.enum_formatting` globally after building with the `gcc-release` preset, you can
 run:
 
 ```bash
@@ -127,7 +123,7 @@ This will generate the following directory structure:
 
 ### CMake Configuration
 
-If you installed beman.enum_formatting to a prefix, you can specify that prefix to your CMake
+If you installed `beman.enum_formatting` to a prefix, you can specify that prefix to your CMake
 project using `CMAKE_PREFIX_PATH`; for example, `-DCMAKE_PREFIX_PATH=/opt/beman`.
 
 You need to bring in the `beman.enum_formatting` package to define the `beman::enum_formatting` CMake
@@ -144,7 +140,7 @@ executables that include `beman.enum_formatting` headers.
 target_link_libraries(yourlib PUBLIC beman::enum_formatting)
 ```
 
-### Using beman.enum_formatting
+### Using `beman.enum_formatting`
 
 To use `beman.enum_formatting` in your C++ project,
 include an appropriate `beman.enum_formatting` header from your source code.
