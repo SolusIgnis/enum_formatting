@@ -87,7 +87,7 @@ However, `std::format("{}", color::green)` fails to compile because the `color` 
 
 The `std::formatter` specializations divide the format specification between general specifiers and a representation-specific format specification, separated by a colon (`:`). The general specifiers select string (`s`) vs integer (`i`) vs type (`t`) formatting representation with the first character. For the string and integer representations, an optional second character specifies whether the representation is qualified with the name of the enumeration type (`q`) or unqualified (`u`). These qualification specifiers do not apply to the type representation as they would respectively be redundant (e.g., `ink_color::ink_color`) or self-contradictory. The representation-specific format specification is forwarded to the string or integer formatter as selected previously. (The type representation uses the string formatter.)
 
-```cpp 
+```cpp
 auto unqualified_cyan_name  = std::format("{:su}", ink_color::cyan); //"cyan"
 auto qualified_cyan_name    = std::format("{:sq}", ink_color::cyan); //"ink_color::cyan"
 auto unqualified_cyan_value = std::format("{:iu}", ink_color::cyan); //"0"
