@@ -7,7 +7,7 @@ include(infra/cmake/enable-experimental-import-std.cmake)
 project(
     beman.enum_formatting
     DESCRIPTION
-        "Scoped Enumeration Stringification and Annotation-Enabled Defaultable Formatting"
+        "Scoped Enumeration Stringification and Annotation-Driven Defaultable Formatting"
     LANGUAGES CXX
     VERSION 0.1.0
 )
