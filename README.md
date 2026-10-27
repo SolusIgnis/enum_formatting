@@ -184,7 +184,7 @@ See the [Contributing Guidelines](CONTRIBUTING.md).
 
 ### Build
 
-You can build enum_formatting using a CMake workflow preset:
+You can build `beman.enum_formatting` using a CMake workflow preset:
 
 ```bash
 cmake --workflow --preset gcc-release
@@ -203,10 +203,10 @@ For details on building `beman.enum_formatting` without using a CMake preset, re
 
 #### Vcpkg
 
-The preferred way to install enum_formatting is via vcpkg. To do so, after installing vcpkg
+The preferred way to install `beman.enum_formatting` is via vcpkg. To do so, after installing vcpkg
 itself, you need to add support for the Beman project's [vcpkg
 registry](https://github.com/bemanproject/vcpkg-registry) by configuring a
-`vcpkg-configuration.json` file (which enum_formatting [provides](vcpkg-configuration.json)).
+`vcpkg-configuration.json` file (which `beman.enum_formatting` [provides](vcpkg-configuration.json)).
 
 Then, simply run `vcpkg install beman-enum-formatting`.
 
