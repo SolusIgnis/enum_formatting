@@ -232,7 +232,12 @@ This will generate the following directory structure:
 ├── include
 │   └── beman
 │       └── enum_formatting
+│           ├── unexported
+│           │   └── to_string.hpp
+│           ├── annotations.hpp
 │           ├── enum_formatting.hpp
+│           ├── format.hpp
+│           ├── string.hpp
 │           └── ...
 └── lib
     └── cmake

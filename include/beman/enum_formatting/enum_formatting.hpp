@@ -11,7 +11,11 @@ import beman.enum_formatting;
 
 #else
 
-    #include <beman/enum_formatting/todo.hpp>
+    #include <beman/enum_formatting/annotations.hpp>
+
+    #include <beman/enum_formatting/string.hpp>
+
+    #include <beman/enum_formatting/format.hpp>
 
 #endif // BEMAN_ENUM_FORMATTING_USE_MODULES() &&
        // !defined(BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT)

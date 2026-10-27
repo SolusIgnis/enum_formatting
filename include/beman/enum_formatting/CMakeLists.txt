@@ -9,7 +9,10 @@ if(BEMAN_ENUM_FORMATTING_USE_MODULES)
                 FILES
                     config.hpp
                     enum_formatting.hpp
-                    todo.hpp
+                    annotations.hpp
+                    unexported/to_string.hpp
+                    string.hpp
+                    format.hpp
                     "${PROJECT_BINARY_DIR}/include/beman/enum_formatting/config_generated.hpp"
     )
 else()
@@ -20,7 +23,10 @@ else()
                 FILES
                     config.hpp
                     enum_formatting.hpp
-                    todo.hpp
+                    annotations.hpp
+                    unexported/to_string.hpp
+                    string.hpp
+                    format.hpp
                     "${PROJECT_BINARY_DIR}/include/beman/enum_formatting/config_generated.hpp"
     )
 endif()
