@@ -12,6 +12,7 @@ if(BEMAN_ENUM_FORMATTING_USE_MODULES)
                     annotations.hpp
                     unexported/to_string.hpp
                     string.hpp
+                    utility.hpp
                     format.hpp
                     "${PROJECT_BINARY_DIR}/include/beman/enum_formatting/config_generated.hpp"
     )
@@ -26,6 +27,7 @@ else()
                     annotations.hpp
                     unexported/to_string.hpp
                     string.hpp
+                    utility.hpp
                     format.hpp
                     "${PROJECT_BINARY_DIR}/include/beman/enum_formatting/config_generated.hpp"
     )
