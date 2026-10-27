@@ -5,7 +5,7 @@
 
 namespace beman::enum_formatting::unexported {
 
-    // TODO
+// TODO
 
 } //namespace beman::enum_formatting::unexported
 
