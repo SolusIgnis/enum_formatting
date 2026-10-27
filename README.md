@@ -75,7 +75,7 @@ enum class [[=formattable_with_default("i,#010b")]] byte_t : std::uint8_t {};
 
 With the above declarations, the full `std::format` ecosystem becomes available.
 
-```cpp 
+```cpp
 std::println("{}", ink_color::cyan); //prints "cyan"
 
 std::println("{}", static_cast<byte_t>(8)); //prints "0b00001000"
