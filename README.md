@@ -151,6 +151,19 @@ Multiple representations of the same value can be combined in a single format st
 auto verbose_cyan = std::format("{0:sq} ({0:i:#04x})", ink_color::cyan); //"ink_color::cyan (0x00)"
 ```
 
+### `is_enumerated_value`
+
+The `is_enumerated_value` utility function determines if a value of a scoped enumeration type corresponds to a named enumerator.
+
+```cpp
+auto my_color = static_cast<ink_color>(2);
+if (beman::enum_formatting::is_enumerated_value(my_color)) {
+    std::println("Color: {}", my_color);
+} else {
+    std::println("Unknown Color Value: {:i}", my_color);
+}
+```
+
 ## Dependencies
 
 ### Build Environment
