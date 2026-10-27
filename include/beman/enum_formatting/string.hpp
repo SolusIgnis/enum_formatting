@@ -9,4 +9,4 @@ namespace beman::enum_formatting {
 
 } // namespace beman::enum_formatting
 
-#endif //BEMAN_ENUM_FORMATTING_STRING_HPP
+#endif // BEMAN_ENUM_FORMATTING_STRING_HPP
