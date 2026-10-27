@@ -128,7 +128,7 @@ auto clear_byte_value = std::format("{0:t:>9}::{0:i:#04x}", byte); //"   byte_t:
 
 When the general specifiers section is omitted, the general default representation (string) is selected, and the representation-specific format specification is passed to the string formatter. When the representation-specific format specification is empty, the selected formatter applies its own defaults. When the overall format specification is empty, the specification annotated on the type provides the default. Any nonempty format specification at the call site completely replaces the type-level default.
 
-```cpp 
+```cpp
 auto abbr_cyan1 = std::format("{:.1}",   ink_color::cyan); //"c"
 auto abbr_cyan2 = std::format("{0:.1}",  ink_color::cyan); //"c"
 auto abbr_cyan3 = std::format("{::.1}",  ink_color::cyan); //"c"
