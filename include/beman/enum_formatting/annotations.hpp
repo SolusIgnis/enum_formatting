@@ -7,6 +7,6 @@ namespace beman::enum_formatting::inline annotations {
 
 // TODO
 
-} //namespace beman::enum_formatting::inline annotations
+} // namespace beman::enum_formatting::inline annotations
 
 #endif //BEMAN_ENUM_FORMATTING_ANNOTATIONS_HPP
