@@ -114,7 +114,7 @@ auto default_byte_format    = std::format("{}",    byte); //"0b00101010" (from t
 
 The string format specification applies to the whole qualified name (i.e., the string representation), but the integer format specification only applies to the value in the underlying type (i.e., the integer representation) before the qualification is prepended.
 
-```cpp 
+```cpp
 auto specified_byte_name  = std::format("{:s:>15}", byte); //"     byte_t::42"
 auto specified_byte_value = std::format("{:iq:4}",  byte); //"byte_t::  42"
 auto padded_byte_value    = std::format("{:iq:04}", byte); //"byte_t::0042"
