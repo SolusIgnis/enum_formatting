@@ -5,7 +5,7 @@
 
 namespace beman::enum_formatting::inline annotations {
 
-    // TODO
+// TODO
 
 } //namespace beman::enum_formatting::inline annotations
 
