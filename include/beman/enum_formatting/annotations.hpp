@@ -9,4 +9,4 @@ namespace beman::enum_formatting::inline annotations {
 
 } // namespace beman::enum_formatting::inline annotations
 
-#endif //BEMAN_ENUM_FORMATTING_ANNOTATIONS_HPP
+#endif // BEMAN_ENUM_FORMATTING_ANNOTATIONS_HPP
