@@ -7,6 +7,6 @@ namespace beman::enum_formatting::unexported {
 
 // TODO
 
-} //namespace beman::enum_formatting::unexported
+} // namespace beman::enum_formatting::unexported
 
 #endif //BEMAN_ENUM_FORMATTING_UNEXPORTED_TO_STRING_HPP
