@@ -17,9 +17,11 @@ namespace beman::enum_formatting::inline annotations {
 
         template<std::size_t N>
         consteval formattable_with_default(array_reference_t<const char, N> format_spec) : default_format_specification{std::define_static_string(format_spec)} {}
+
+        consteval formattable_with_default() : formattable_with_default("") {}
     };
 
-    inline constexpr formattable_with_default formattable{""};
+    inline constexpr formattable_with_default formattable{};
 } // namespace beman::enum_formatting::inline annotations
 
 #endif // BEMAN_ENUM_FORMATTING_ANNOTATIONS_HPP
