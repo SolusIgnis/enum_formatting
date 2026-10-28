@@ -14,12 +14,12 @@
 
 template<typename E, typename CharT>
     requires (std::meta::is_scoped_enum_type(^^E))
-        && (!std::meta::annotations_of_with_type(^^E, ^^beman::enum_formatting::formattable_with_default).empty())
+        && (!std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).empty())
 struct std::formatter<E, CharT>
     : private std::formatter<std::basic_string_view<CharT>, CharT>
     , private std::formatter<std::underlying_type_t<E>, CharT> {
 private:
-    static_assert(std::meta::annotations_of_with_type(^^E, ^^beman::enum_formatting::formattable_with_default).size() == 1, "Only one 'formattable' or 'formattable_with_default' annotation can be on a single type.");
+    static_assert(std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).size() == 1, "Only one 'formattable' or 'formattable_with_default' annotation can be on a single type.");
 
     static constexpr char format_terminator = '}';
     static constexpr char format_delimiter = ':';
@@ -47,7 +47,7 @@ public:
         }
 
         if (specifiers.empty() || specifiers.starts_with(format_terminator)) {
-            auto default_specifiers = std::basic_string_view{std::meta::extract<beman::enum_formatting::formattable_with_default>(std::meta::annotations_of_with_type(^^E, ^^beman::enum_formatting::formattable_with_default).front()).default_format_specification};
+            auto default_specifiers = std::basic_string_view{std::meta::extract<::beman::enum_formatting::formattable_with_default>(std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()).default_format_specification};
 
             if (default_specifiers.empty() || default_specifiers.starts_with(format_terminator)) {
                 return ctx.begin();
@@ -98,7 +98,7 @@ public:
             bool qualified_name = (qualified_ == qualification::qualified);       //Only qualify the name when explicitly requested.
             bool qualified_fallback = (qualified_ != qualification::unqualified); //Qualify the fallback by default.
 
-            return std::formatter<std::basic_string_view<CharT>, CharT>::format(enum_formatting::unexported::to_string(value, qualified_name, qualified_fallback), ctx);
+            return std::formatter<std::basic_string_view<CharT>, CharT>::format(::beman::enum_formatting::unexported::to_string(value, qualified_name, qualified_fallback), ctx);
         } else if (representation_ == representation::integer) {
             if (qualified_ == qualification::qualified) {
                 auto out = ctx.out();
