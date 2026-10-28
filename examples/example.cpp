@@ -30,7 +30,7 @@ using cmyk_color = ink_color;
 
 enum class [[=formattable_with_default("i:#010b")]] byte_t : std::uint8_t {};
 
-int main(int argc, const char** argv)
+int main()
 {
     auto byte = static_cast<byte_t>(42);
 
