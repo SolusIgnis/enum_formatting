@@ -6,9 +6,9 @@
 #include <meta>
 #include <print>
 
-using namespace enum_formatting::annotations;
+using namespace beman::enum_formatting::annotations;
 
-using enum_formatting::to_string;
+using beman::enum_formatting::to_string;
 
 enum class color : std::uint8_t {
     red,
