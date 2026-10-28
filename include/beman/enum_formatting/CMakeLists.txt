@@ -32,3 +32,13 @@ else()
                     "${PROJECT_BINARY_DIR}/include/beman/enum_formatting/config_generated.hpp"
     )
 endif()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(
+        beman.enum_formatting
+        PUBLIC
+            -freflection
+    )
+else()
+    message(WARNING "Compiler may need manual arguments to enable reflection support.")
+endif()
