@@ -8,7 +8,7 @@
 #include <meta>
 #include <string>
 
-namespace enum_formatting {
+namespace beman::enum_formatting {
     template<typename E>
         requires (std::meta::is_scoped_enum_type(^^E))
     constexpr std::string to_string(E value)

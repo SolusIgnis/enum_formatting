@@ -5,7 +5,7 @@
 
 #include <meta>
 
-namespace enum_formatting {
+namespace beman::enum_formatting {
     template<typename E>
         requires (std::meta::is_scoped_enum_type(^^E))
     bool is_enumerated_value(E value)
