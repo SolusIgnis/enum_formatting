@@ -16,7 +16,7 @@ namespace beman::enum_formatting::inline annotations {
         const char* default_format_specification;
 
         template<std::size_t N>
-        consteval formattable_with_default(array_reference_t<const char, N> format_spec) : default_format_specification{std::define_static_string(format_spec)} {}
+        consteval explicit formattable_with_default(array_reference_t<const char, N> format_spec) : default_format_specification{std::define_static_string(format_spec)} {}
 
         consteval formattable_with_default() : formattable_with_default("") {}
     };
