@@ -182,6 +182,8 @@ You can disable building examples by setting CMake option `BEMAN_ENUM_FORMATTING
 
 ### Supported Platforms
 
+As of late October 2026, only GCC 16 has reliable support for C++26 reflection. As other toolchains implement the necessary features, support will be added.
+
 | Compiler   | Version | C++ Standards | Standard Library  |
 |------------|---------|---------------|-------------------|
 | GCC        | 16      | C++26         | libstdc++         |
