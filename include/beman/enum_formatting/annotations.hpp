@@ -3,8 +3,10 @@
 #ifndef BEMAN_ENUM_FORMATTING_ANNOTATIONS_HPP
 #define BEMAN_ENUM_FORMATTING_ANNOTATIONS_HPP
 
+#ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
 #include <cstdint>
 #include <meta>
+#endif
 
 namespace beman::enum_formatting::inline annotations {
     struct formattable_with_default {

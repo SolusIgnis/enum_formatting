@@ -3,10 +3,12 @@
 #ifndef BEMAN_ENUM_FORMATTING_STRING_HPP
 #define BEMAN_ENUM_FORMATTING_STRING_HPP
 
+#ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
 #include "unexported/to_string.hpp"
 
 #include <meta>
 #include <string>
+#endif
 
 namespace beman::enum_formatting {
     template<typename E>

@@ -3,7 +3,9 @@
 #ifndef BEMAN_ENUM_FORMATTING_UTILITY_HPP
 #define BEMAN_ENUM_FORMATTING_UTILITY_HPP
 
+#ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
 #include <meta>
+#endif
 
 namespace beman::enum_formatting {
     template<typename E>

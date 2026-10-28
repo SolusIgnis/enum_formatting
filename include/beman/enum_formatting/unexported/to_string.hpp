@@ -3,9 +3,11 @@
 #ifndef BEMAN_ENUM_FORMATTING_UNEXPORTED_TO_STRING_HPP
 #define BEMAN_ENUM_FORMATTING_UNEXPORTED_TO_STRING_HPP
 
+#ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
 #include <meta>
 #include <string>
 #include <utility>
+#endif
 
 namespace beman::enum_formatting::unexported {
     template<typename E>
