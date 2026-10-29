@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/enum_formatting/config.hpp>
+
+#if BEMAN_ENUM_FORMATTING_USE_MODULES()
+import std;
+import beman.enum_formatting;
+#else
 #include <beman/enum_formatting/enum_formatting.hpp>
 
 #include <meta>
 #include <print>
+#endif
 
 using namespace beman::enum_formatting::annotations;
 
