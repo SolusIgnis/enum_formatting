@@ -64,7 +64,7 @@ if(BEMAN_ENUM_FORMATTING_USE_MODULES)
                     "${CMAKE_CURRENT_BINARY_DIR}/include"
     )
     set_target_properties(beman.enum_formatting PROPERTIES CXX_MODULE_STD ON)
-    target_compile_features(beman.enum_formatting PUBLIC cxx_std_23)
+    target_compile_features(beman.enum_formatting PUBLIC cxx_std_26)
 else()
     target_sources(
         beman.enum_formatting
