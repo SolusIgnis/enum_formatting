@@ -167,3 +167,21 @@ TEST_CASE("formattable_with_default and formattable interoperate with [[=...]] a
         CHECK(specification == "i:#04X");
     }
 }
+
+TEST_CASE("canonical annotation object interoperates with [[=...]] annotations and static reflection", "[integration][enum_formatting][annotations][canonical]")
+{
+    using beman::enum_formatting::formattable;
+    using beman::enum_formatting::canonical;
+
+    enum class [[=formattable]] color : std::uint32_t {
+                       red   = 0xFF0000,
+        [[=canonical]] gules = 0xFF0000, 
+                       green = 0x00FF00, 
+        [[=canonical]] vert  = 0x00FF00, 
+                       blue  = 0x0000FF,
+        [[=canonical]] azure = 0x0000FF,
+    };
+    
+    CHECK(std::meta::annotations_of_with_type(^^color::red, ^^canonical).empty());
+    CHECK(std::meta::annotations_of_with_type(^^color::gules, ^^canonical).size() == 1);
+}

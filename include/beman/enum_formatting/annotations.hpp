@@ -38,6 +38,10 @@ namespace beman::enum_formatting::inline annotations {
     };
 
     inline constexpr formattable_with_default formattable{};
+
+    struct canonical_annotation {};
+
+    inline constexpr canonical_annotation cannonical{};
 } // namespace beman::enum_formatting::inline annotations
 
 #endif // BEMAN_ENUM_FORMATTING_ANNOTATIONS_HPP
