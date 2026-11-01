@@ -4,7 +4,7 @@
 #define BEMAN_ENUM_FORMATTING_UNEXPORTED_TO_STRING_HPP
 
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
-#include <../annotations.hpp>
+#include "../annotations.hpp"
 
 #include <meta>
 #include <string>
