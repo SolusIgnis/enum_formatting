@@ -33,7 +33,7 @@ namespace beman::enum_formatting::unexported {
         requires (std::meta::is_scoped_enum_type(^^E))
     constexpr std::string to_string(E value, [[maybe_unused]] bool use_qualified_name = false, bool use_qualified_fallback = true, bool use_empty_fallback = false)
     {
-        template for (constexpr auto enumerator : std::define_static_array(enumerators_of_by_tier(^^E))) {
+        template for (constexpr auto enumerator : std::define_static_array(std::meta::enumerators_of(^^E))) {
             if (value == [:enumerator:]) {
                 if (use_qualified_name) {
                     return std::string{} + std::meta::identifier_of(^^E) + "::" + std::meta::identifier_of(enumerator);
