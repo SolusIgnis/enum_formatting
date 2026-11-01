@@ -41,7 +41,7 @@ namespace beman::enum_formatting::inline annotations {
 
     struct canonical_annotation {};
 
-    inline constexpr canonical_annotation cannonical{};
+    inline constexpr canonical_annotation canonical{};
 } // namespace beman::enum_formatting::inline annotations
 
 #endif // BEMAN_ENUM_FORMATTING_ANNOTATIONS_HPP
