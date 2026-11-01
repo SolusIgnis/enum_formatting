@@ -51,7 +51,7 @@ public:
         }
 
         if (specifiers.empty() || specifiers.starts_with(format_terminator)) {
-            constinit auto default_specifiers = std::basic_string_view{std::meta::extract<::beman::enum_formatting::formattable_with_default>(std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front())};
+            constinit auto default_specifiers = std::string_view{std::meta::extract<::beman::enum_formatting::formattable_with_default>(std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front())};
 
             if (default_specifiers.empty() || default_specifiers.starts_with(format_terminator)) {
                 return ctx.begin();
