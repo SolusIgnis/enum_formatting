@@ -8,6 +8,11 @@ import std;
 import beman.enum_formatting;
 #else
 #include <beman/enum_formatting/annotations.hpp>
+
+#include <concepts>
+#include <meta>
+#include <string_view>
+#include <type_traits>
 #endif
 
 TEST_CASE("formattable_with_default construction", "[unit][enum_formatting][annotations][formattable_with_default]")
