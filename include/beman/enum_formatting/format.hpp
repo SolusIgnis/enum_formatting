@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
+///@todo Handle UTF8 support.
+
 #ifndef BEMAN_ENUM_FORMATTING_FORMAT_HPP
 #define BEMAN_ENUM_FORMATTING_FORMAT_HPP
 
@@ -49,7 +51,7 @@ public:
         }
 
         if (specifiers.empty() || specifiers.starts_with(format_terminator)) {
-            auto default_specifiers = std::basic_string_view{std::meta::extract<::beman::enum_formatting::formattable_with_default>(std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()).default_format_specification};
+            constinit auto default_specifiers = std::basic_string_view{std::meta::extract<::beman::enum_formatting::formattable_with_default>(std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front())};
 
             if (default_specifiers.empty() || default_specifiers.starts_with(format_terminator)) {
                 return ctx.begin();
