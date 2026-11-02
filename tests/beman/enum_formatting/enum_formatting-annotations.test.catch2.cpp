@@ -146,7 +146,7 @@ TEST_CASE("formattable_with_default and formattable interoperate with [[=...]] a
     enum class [[=formattable_with_default("i:#04X")]] q_word : std::uint64_t {};
 
     auto get_formattable_annotation = [](std::meta::info reflection) consteval {
-        return std::meta::extract<formattable_with_default>(std::meta::annotations_of_with_type(reflection, ^^formattable_with_default).front());
+        return std::meta::extract<formattable_with_default>(std::meta::annotations_of_with_type(reflection, ^^::beman::enum_formatting::formattable_with_default).front());
     };
 
     SECTION("formattable annotation is extractable")
@@ -174,14 +174,14 @@ TEST_CASE("canonical annotation object interoperates with [[=...]] annotations a
     using beman::enum_formatting::canonical;
 
     enum class [[=formattable]] color : std::uint32_t {
-                       red   = 0xFF0000,
-        [[=canonical]] gules = 0xFF0000, 
-                       green = 0x00FF00, 
-        [[=canonical]] vert  = 0x00FF00, 
-                       blue  = 0x0000FF,
-        [[=canonical]] azure = 0x0000FF,
+        red                  = 0xFF0000,
+        gules [[=canonical]] = 0xFF0000, 
+        green                = 0x00FF00, 
+        vert  [[=canonical]] = 0x00FF00, 
+        blue                 = 0x0000FF,
+        azure [[=canonical]] = 0x0000FF,
     };
     
-    CHECK(std::meta::annotations_of_with_type(^^color::red, ^^canonical).empty());
-    CHECK(std::meta::annotations_of_with_type(^^color::gules, ^^canonical).size() == 1);
+    CHECK(std::meta::annotations_of_with_type(^^color::red, ^^::beman::enum_formatting::canonical_annotation).empty());
+    CHECK(std::meta::annotations_of_with_type(^^color::gules, ^^::beman::enum_formatting::canonical_annotation).size() == 1);
 }
