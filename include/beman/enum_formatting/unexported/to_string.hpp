@@ -15,21 +15,7 @@
 namespace beman::enum_formatting::unexported {
     consteval auto enumerators_of_by_tier(std::meta::info reflected_enumeration)
     {
-        if constexpr (__cpp_lib_constexpr_algorithms >= 202306L) {
-            auto enumerators = std::meta::enumerators_of(reflected_enumeration);
-
-            std::ranges::stable_partition(
-                enumerators,
-                [](std::meta::info enumerator) {
-                    return !std::meta::annotations_of_with_type(
-                        enumerator,
-                        ^^::beman::enum_formatting::annotations::canonical_annotation
-                    ).empty();
-                }
-            );
-
-            return enumerators;
-        } else {
+        ///@todo Replace this with a std::ranges::stable_partition call when that actually works with libstdc++.
             auto enumerators = std::meta::enumerators_of(reflected_enumeration);
             decltype(enumerators) partitioned_enumerators;
             for(const auto enumerator : enumerators) {
