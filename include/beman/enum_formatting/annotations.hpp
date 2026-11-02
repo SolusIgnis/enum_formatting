@@ -26,7 +26,7 @@ namespace beman::enum_formatting::inline annotations {
 
         consteval formattable_with_default() : formattable_with_default("") {}
 
-        constexpr explicit(false) operator std::string_view() { return please_use_other_door; }
+        constexpr explicit(false) operator std::string_view() const { return please_use_other_door; }
         
         friend constexpr bool operator==(
             const formattable_with_default& lhs,
