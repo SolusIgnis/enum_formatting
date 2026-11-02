@@ -6,6 +6,7 @@
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
 #include "../annotations.hpp"
 
+#include <algorithm>
 #include <meta>
 #include <string>
 #include <utility>
@@ -14,19 +15,37 @@
 namespace beman::enum_formatting::unexported {
     consteval auto enumerators_of_by_tier(std::meta::info reflected_enumeration)
     {
-        auto enumerators = std::meta::enumerators_of(reflected_enumeration);
-        decltype(enumerators) partitioned_enumerators;
-        for(const auto enumerator : enumerators) {
-            if (!std::meta::annotations_of_with_type(enumerator, ^^::beman::enum_formatting::canonical).empty()) {
-                partitioned_enumerators.push_back(enumerator);
+        if constexpr (__cpp_lib_constexpr_algorithms >= 202306L) {
+            auto enumerators = std::meta::enumerators_of(reflected_enumeration);
+
+            std::ranges::stable_partition(
+                enumerators,
+                [](std::meta::info enumerator) {
+                    return !std::meta::annotations_of_with_type(
+                        enumerator,
+                        ^^::beman::enum_formatting::annotations::canonical
+                    ).empty();
+                }
+            );
+
+            return enumerators;
+        } else {
+            throw "no constexpr std::ranges::stable_partition";
+
+            auto enumerators = std::meta::enumerators_of(reflected_enumeration);
+            decltype(enumerators) partitioned_enumerators;
+            for(const auto enumerator : enumerators) {
+                if (!std::meta::annotations_of_with_type(enumerator, ^^::beman::enum_formatting::canonical).empty()) {
+                    partitioned_enumerators.push_back(enumerator);
+                }
             }
-        }
-        for(const auto enumerator : enumerators) {
-            if (std::meta::annotations_of_with_type(enumerator, ^^::beman::enum_formatting::canonical).empty()) {
-                partitioned_enumerators.push_back(enumerator);
+            for(const auto enumerator : enumerators) {
+                if (std::meta::annotations_of_with_type(enumerator, ^^::beman::enum_formatting::canonical).empty()) {
+                    partitioned_enumerators.push_back(enumerator);
+                }
             }
+            return partitioned_enumerators;
         }
-        return partitioned_enumerators;
     }
 
     template<typename E>
