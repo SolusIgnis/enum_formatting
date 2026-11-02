@@ -30,8 +30,6 @@ namespace beman::enum_formatting::unexported {
 
             return enumerators;
         } else {
-            throw std::meta::exception("no constexpr std::ranges::stable_partition");
-
             auto enumerators = std::meta::enumerators_of(reflected_enumeration);
             decltype(enumerators) partitioned_enumerators;
             for(const auto enumerator : enumerators) {
@@ -40,7 +38,7 @@ namespace beman::enum_formatting::unexported {
                 }
             }
             for(const auto enumerator : enumerators) {
-                if (std::meta::annotations_of_with_type(enumerator, ^^::beman::enum_formatting::canonical).empty()) {
+                if (std::meta::annotations_of_with_type(enumerator, ^^::beman::enum_formatting::canonical_annotation).empty()) {
                     partitioned_enumerators.push_back(enumerator);
                 }
             }
