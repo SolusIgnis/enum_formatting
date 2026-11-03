@@ -9,6 +9,7 @@ import beman.enum_formatting;
 #else
 #include <beman/enum_formatting/annotations.hpp>
 
+#include <cstdint>
 #include <concepts>
 #include <meta>
 #include <string_view>
