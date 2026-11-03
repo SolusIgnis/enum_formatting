@@ -45,9 +45,11 @@ int main()
     std::print("\t{}", to_string(rgb_color::red));
     std::print(", {}", to_string(rgb_color::blue));
     std::print(", {}", to_string(rgb_color::yellow));
-    std::print(", {}", to_string(rgb_color::violet)); //"purple" because it is declared the canonical enumerator for this value
+    std::print(", {}", to_string(rgb_color::violet)); //"purple" because it is annotated as the canonical enumerator for this value
     std::println();
-    std::print("\t{}", to_string(static_cast<color>(42)));
+    std::print("\t{}", to_string(static_cast<rgb_color>(255))); //255 = 0x0000FF => "blue"
+    std::print(", {}", to_string(static_cast<rgb_color>(0x800080))); //"purple" again
+    std::print("\t{}", to_string(static_cast<rgb_color>(42)));
     std::println();
     std::print("\t{}", to_string(static_cast<cmyk_color>(42)));
     std::print(", {}", to_string(static_cast<ink_color>(45)));
