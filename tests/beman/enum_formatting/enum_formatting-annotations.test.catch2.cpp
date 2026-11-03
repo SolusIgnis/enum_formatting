@@ -15,7 +15,8 @@ import beman.enum_formatting;
 #include <type_traits>
 #endif
 
-TEST_CASE("formattable_with_default construction", "[unit][enum_formatting][annotations][formattable_with_default]")
+TEST_CASE("formattable_with_default construction",
+          "[unit][enum_formatting][annotations][formattable_with_default]")
 {
     using beman::enum_formatting::formattable_with_default;
 
@@ -59,7 +60,8 @@ TEST_CASE("formattable_with_default construction", "[unit][enum_formatting][anno
     }
 }
 
-TEST_CASE("formattable_with_default std::string_view implicit conversion yields format specification", "[unit][enum_formatting][annotations][formattable_with_default]") {
+TEST_CASE("formattable_with_default std::string_view implicit conversion yields format specification",
+          "[unit][enum_formatting][annotations][formattable_with_default]") {
     using beman::enum_formatting::formattable_with_default;
 
     constexpr char expected[] = "#010b";
@@ -70,7 +72,8 @@ TEST_CASE("formattable_with_default std::string_view implicit conversion yields 
     CHECK(specification == std::string_view{expected});
 }
 
-TEST_CASE("formattable_with_default format specification has static storage duration", "[unit][enum_formatting][annotations][formattable_with_default]") {
+TEST_CASE("formattable_with_default format specification has static storage duration",
+          "[unit][enum_formatting][annotations][formattable_with_default]") {
     using beman::enum_formatting::formattable_with_default;
 
     auto make_format_specification = [] consteval {
@@ -84,7 +87,8 @@ TEST_CASE("formattable_with_default format specification has static storage dura
     CHECK(specification == "#010b");
 }
 
-TEST_CASE("formattable annotation object is formattable_with_default(\"\")", "[unit][enum_formatting][annotations][formattable]") {
+TEST_CASE("formattable annotation object is formattable_with_default(\"\")",
+          "[unit][enum_formatting][annotations][formattable]") {
     using beman::enum_formatting::formattable_with_default;
     using beman::enum_formatting::formattable;
 
@@ -95,7 +99,8 @@ TEST_CASE("formattable annotation object is formattable_with_default(\"\")", "[u
     CHECK(std::string_view{formattable}.empty());
 }
 
-TEST_CASE("formattable_with_default compares equality by format specification equivalence", "[unit][enum_formatting][annotations][formattable_with_default][formattable]")
+TEST_CASE("formattable_with_default compares equality by format specification equivalence",
+          "[unit][enum_formatting][annotations][formattable_with_default][formattable]")
 {
     using beman::enum_formatting::formattable_with_default;
     using beman::enum_formatting::formattable;
@@ -133,7 +138,8 @@ TEST_CASE("formattable_with_default compares equality by format specification eq
     }
 }
 
-TEST_CASE("formattable_with_default and formattable interoperate with [[=...]] annotations and static reflection", "[integration][enum_formatting][annotations][formattable_with_default][formattable]")
+TEST_CASE("formattable_with_default and formattable interoperate with [[=...]] annotations and static reflection",
+          "[integration][enum_formatting][annotations][formattable_with_default][formattable]")
 {
     using beman::enum_formatting::formattable_with_default;
     using beman::enum_formatting::formattable;
@@ -168,7 +174,8 @@ TEST_CASE("formattable_with_default and formattable interoperate with [[=...]] a
     }
 }
 
-TEST_CASE("canonical annotation object interoperates with [[=...]] annotations and static reflection", "[integration][enum_formatting][annotations][canonical]")
+TEST_CASE("canonical annotation object interoperates with [[=...]] annotations and static reflection",
+          "[integration][enum_formatting][annotations][canonical]")
 {
     using beman::enum_formatting::formattable;
     using beman::enum_formatting::canonical;
