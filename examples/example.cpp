@@ -16,13 +16,14 @@ using namespace beman::enum_formatting::annotations;
 
 using beman::enum_formatting::to_string;
 
-enum class color : std::uint8_t {
-    red,
-    orange,
-    yellow,
-    green,
-    blue,
-    purple,
+enum class rgb_color : std::uint32_t {
+    red                   = 0xFF0000,
+    orange                = 0xFFA500,
+    yellow                = 0xFFFF00,
+    green                 = 0x00FF00,
+    blue                  = 0x0000FF,
+    violet                = 0x800080,
+    purple [[=canonical]] = 0x800080,
 };
 
 enum class [[=formattable]] ink_color : std::uint8_t {
@@ -41,9 +42,10 @@ int main()
     auto byte = static_cast<byte_t>(42);
 
     std::println("to_string for enumerators and unnamed values of enumerations");
-    std::print("\t{}", to_string(color::red));
-    std::print(", {}", to_string(color::blue));
-    std::print(", {}", to_string(color::yellow));
+    std::print("\t{}", to_string(rgb_color::red));
+    std::print(", {}", to_string(rgb_color::blue));
+    std::print(", {}", to_string(rgb_color::yellow));
+    std::print(", {}", to_string(rgb_color::violet)); //"purple" because it is declared the canonical enumerator for this value
     std::println();
     std::print("\t{}", to_string(static_cast<color>(42)));
     std::println();
