@@ -91,23 +91,23 @@ TEST_CASE("to_string falls back to integers qualified with the enumeration name 
 {
     using beman::enum_formatting::to_string;
 
-    enum class color : std::uint32_t {
+    enum class rgb_color : std::uint32_t {
         red   = 0xFF0000,
         green = 0x00FF00,
         blue  = 0x0000FF,
     };
 
-    auto my_red    = static_cast<color>(16711680); //0xFF0000
-    auto my_white  = static_cast<color>(0);        //0x000000
-    auto my_blue   = static_cast<color>(255);      //0x0000FF
-    auto my_orange = static_cast<color>(16753920); //0xFFA500
-    auto my_black  = static_cast<color>(16777215); //0xFFFFFF
+    auto my_red    = static_cast<rgb_color>(16711680); //0xFF0000
+    auto my_white  = static_cast<rgb_color>(0);        //0x000000
+    auto my_blue   = static_cast<rgb_color>(255);      //0x0000FF
+    auto my_orange = static_cast<rgb_color>(16753920); //0xFFA500
+    auto my_black  = static_cast<rgb_color>(16777215); //0xFFFFFF
 
     CHECK(to_string(my_red)    == "red");
-    CHECK(to_string(my_white)  == "color::0");
+    CHECK(to_string(my_white)  == "rgb_color::0");
     CHECK(to_string(my_blue)   == "blue");
-    CHECK(to_string(my_orange) == "color::16753920");
-    CHECK(to_string(my_black)  == "color::16777215");
+    CHECK(to_string(my_orange) == "rgb_color::16753920");
+    CHECK(to_string(my_black)  == "rgb_color::16777215");
 
     enum class direction : std::int8_t {
         left    = -1,
@@ -115,5 +115,5 @@ TEST_CASE("to_string falls back to integers qualified with the enumeration name 
         right   =  1,
     };
 
-    CHECK(to_string(static_cast<direction>(-42)) == "direction::-42")
+    CHECK(to_string(static_cast<direction>(-42)) == "direction::-42");
 }
