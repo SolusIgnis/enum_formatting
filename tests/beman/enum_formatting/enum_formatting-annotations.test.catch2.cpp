@@ -82,7 +82,6 @@ TEST_CASE("formattable_with_default format specification has static storage dura
         return formattable_with_default{specification_array};
     };
     constexpr std::string_view specification = make_format_specification();
-   
     STATIC_CHECK(specification == "#010b"); //STATIC_CHECK employs constant evaluation to fail the check if this access is Undefined Behavior.
     CHECK(specification == "#010b");
 }
