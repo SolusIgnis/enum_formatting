@@ -22,9 +22,9 @@ TEST_CASE("std::formatter is available only for annotated scoped enumerations",
     enum unscoped {};
     enum class [[=beman::enum_formatting::formattable]] annotated {};
 
-    CHECK(std::formattable<annotated>);
-    CHECK_FALSE(std::formattable<unannotated>);
-    CHECK_FALSE(std::formattable<unscoped>);
+    CHECK(std::formattable<annotated, char>);
+    CHECK_FALSE(std::formattable<unannotated, char>);
+    CHECK_FALSE(std::formattable<unscoped, char>);
 }
 
 TEST_CASE("formatter parses valid specifications",
