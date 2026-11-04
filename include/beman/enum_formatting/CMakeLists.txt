@@ -40,5 +40,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         target_compile_options(beman.enum_formatting INTERFACE -freflection)
     endif()
 else()
-    message(WARNING "Compiler may need manual arguments to enable reflection support.")
+    message(
+        WARNING
+        "Compiler may need manual arguments to enable reflection support."
+    )
 endif()
