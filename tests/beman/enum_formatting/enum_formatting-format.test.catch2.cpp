@@ -98,7 +98,7 @@ TEST_CASE("formatter rejects invalid representation combinations",
 TEST_CASE("std::format formats annotated scoped enumerations",
           "[integration][enum_formatting][std::formatter]")
 {
-    enum class [[=beman::enum_formatting::formattable]] byte : std::uint8_t {
+    enum class [[=beman::enum_formatting::formattable]] arbitrary_color : std::uint8_t {
         red   = 42,
         green = 128,
         blue  = 255,
@@ -106,38 +106,38 @@ TEST_CASE("std::format formats annotated scoped enumerations",
 
     SECTION("default string representation")
     {
-        CHECK(std::format("{}", byte::red) == "red");
-        CHECK(std::format("{:}", byte::green) == "green");
+        CHECK(std::format("{}", arbitrary_color::red) == "red");
+        CHECK(std::format("{:}", arbitrary_color::green) == "green");
 
-        CHECK(std::format("{}", static_cast<byte>(7)) == "byte::7");
+        CHECK(std::format("{}", static_cast<arbitrary_color>(7)) == "arbitrary_color::7");
     }
 
     SECTION("representation selection")
     {
-        CHECK(std::format("{:s}", byte::red) == "red");
-        CHECK(std::format("{:i}", byte::red) == "42");
-        CHECK(std::format("{:t}", byte::red) == "byte");
+        CHECK(std::format("{:s}", arbitrary_color::red) == "red");
+        CHECK(std::format("{:i}", arbitrary_color::red) == "42");
+        CHECK(std::format("{:t}", arbitrary_color::red) == "byte");
     }
 
     SECTION("qualification")
     {
-        CHECK(std::format("{:sq}", byte::red) == "byte::red");
-        CHECK(std::format("{:su}", byte::red) == "red");
+        CHECK(std::format("{:sq}", arbitrary_color::red) == "arbitrary_color::red");
+        CHECK(std::format("{:su}", arbitrary_color::red) == "red");
 
-        CHECK(std::format("{:iq}", byte::red) == "byte::42");
-        CHECK(std::format("{:iu}", byte::red) == "42");
+        CHECK(std::format("{:iq}", arbitrary_color::red) == "arbitrary_color::42");
+        CHECK(std::format("{:iu}", arbitrary_color::red) == "42");
     }
 
     SECTION("qualification of unnamed values")
     {
-        auto value = static_cast<byte>(7);
+        auto value = static_cast<arbitrary_color>(7);
 
-        CHECK(std::format("{:s}", value) == "byte::7");
-        CHECK(std::format("{:sq}", value) == "byte::7");
+        CHECK(std::format("{:s}", value) == "arbitrary_color::7");
+        CHECK(std::format("{:sq}", value) == "arbitrary_color::7");
         CHECK(std::format("{:su}", value) == "7");
 
         CHECK(std::format("{:i}", value) == "7");
-        CHECK(std::format("{:iq}", value) == "byte::7");
+        CHECK(std::format("{:iq}", value) == "arbitrary_color::7");
         CHECK(std::format("{:iu}", value) == "7");
     }
 }
@@ -145,25 +145,25 @@ TEST_CASE("std::format formats annotated scoped enumerations",
 TEST_CASE("std::formatter forwards representation-specific format specifications",
           "[integration][enum_formatting][std::formatter]")
 {
-    enum class [[=beman::enum_formatting::formattable]] byte : std::uint8_t {
-        red = 42,
+    enum class [[=beman::enum_formatting::formattable]] test_enumeration : std::uint8_t {
+        enumerator = 42,
     };
 
     SECTION("string representation")
     {
-        CHECK(std::format("{:s:>10}", byte::red) == std::format("{:>10}", "red"));
-        CHECK(std::format("{:s:.2}", byte::red) == std::format("{:.2}", "red"));
+        CHECK(std::format("{:s:>10}", test_enumeration::enumerator) == std::format("{:>10}", "enumerator"));
+        CHECK(std::format("{:s:.2}", test_enumeration::enumerator) == std::format("{:.2}", "enumerator"));
     }
 
     SECTION("integer representation")
     {
-        CHECK(std::format("{:i:04}", byte::red) == std::format("{:04}", std::to_underlying(byte::red)));
-        CHECK(std::format("{:i:#04x}", byte::red) == std::format("{:#04x}", std::to_underlying(byte::red)));
+        CHECK(std::format("{:i:04}", test_enumeration::enumerator) == std::format("{:04}", std::to_underlying(test_enumeration::enumerator)));
+        CHECK(std::format("{:i:#04x}", test_enumeration::enumerator) == std::format("{:#04x}", std::to_underlying(test_enumeration::enumerator)));
     }
 
     SECTION("type representation")
     {
-        CHECK(std::format("{:t:>10}", byte::red) == std::format("{:>10}", "byte"));
+        CHECK(std::format("{:t:>10}", test_enumeration::enumerator) == std::format("{:>10}", "test_enumeration"));
     }
 }
 
@@ -171,20 +171,20 @@ TEST_CASE("std::formatter uses annotation-provided default specifications",
           "[integration][enum_formatting][std::formatter]")
 {
     enum class [[=beman::enum_formatting::formattable_with_default("i:#04X")]]
-    byte : std::uint8_t {
-        red = 42,
+    test_enumeration : std::uint8_t {
+        enumerator = 7,
     };
 
     SECTION("annotation default is used when no specification is provided")
     {
-        CHECK(std::format("{}", byte::red) == "0X2A");
-        CHECK(std::format("{:}", byte::red) == "0X2A");
+        CHECK(std::format("{}", test_enumeration::enumerator) == std::format("{:#04X}", std::to_underlying(test_enumeration::enumerator)));
+        CHECK(std::format("{:}", test_enumeration::enumerator) == std::format("{:#04X}", std::to_underlying(test_enumeration::enumerator)));
     }
 
     SECTION("explicit specification overrides annotation default")
     {
-        CHECK(std::format("{:s}", byte::red) == "red");
-        CHECK(std::format("{:i:04}", byte::red) == "0042");
+        CHECK(std::format("{:s}", test_enumeration::enumerator) == std::format("{}", "enumerator");
+        CHECK(std::format("{:i:04}", test_enumeration::enumerator) == std::format("{:04}", std::to_underlying(test_enumeration::enumerator)));
     }
 }
 
