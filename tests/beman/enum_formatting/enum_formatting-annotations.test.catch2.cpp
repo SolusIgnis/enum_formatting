@@ -179,9 +179,9 @@ TEST_CASE("canonical annotation object interoperates with [[=...]] annotations a
 
     enum class [[=formattable]] color : std::uint32_t {
         red                  = 0xFF0000,
-        gules [[=canonical]] = 0xFF0000, 
-        green                = 0x00FF00, 
-        vert  [[=canonical]] = 0x00FF00, 
+        gules [[=canonical]] = 0xFF0000,
+        green                = 0x00FF00,
+        vert  [[=canonical]] = 0x00FF00,
         blue                 = 0x0000FF,
         azure [[=canonical]] = 0x0000FF,
     };
