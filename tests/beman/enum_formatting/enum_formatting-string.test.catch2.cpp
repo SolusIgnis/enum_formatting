@@ -77,7 +77,6 @@ TEST_CASE("to_string enumerator name selection",
         CHECK(to_string(color::azul) == "azure");
         CHECK(to_string(static_cast<color>(0x0000FF)) == "azure");
     }
-    
     SECTION("to_string selects the first declared enumerator alias when none is canonical")
     {
         CHECK(to_string(color::green) == "green");
