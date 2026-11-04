@@ -35,11 +35,7 @@ endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     if(BEMAN_ENUM_FORMATTING_USE_MODULES)
-        target_compile_options(
-            beman.enum_formatting
-            PUBLIC
-                -freflection
-        )
+        target_compile_options(beman.enum_formatting PUBLIC -freflection)
     else()
         target_compile_options(
             beman.enum_formatting
