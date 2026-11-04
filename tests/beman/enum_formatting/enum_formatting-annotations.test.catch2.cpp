@@ -116,7 +116,6 @@ TEST_CASE("formattable_with_default compares equality by format specification eq
         constexpr auto stringy_format_c = formattable_with_default{">20"};
         constexpr auto default_format_a = formattable_with_default{""};
         constexpr auto default_format_b = formattable_with_default{":"};
-        
         CHECK(stringy_format_a == stringy_format_b);
         CHECK(stringy_format_a != stringy_format_c);
         CHECK(stringy_format_b != stringy_format_c);
