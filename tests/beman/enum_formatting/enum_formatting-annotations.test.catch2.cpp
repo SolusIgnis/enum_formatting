@@ -145,7 +145,6 @@ TEST_CASE("formattable_with_default and formattable interoperate with [[=...]] a
         black,
         white,
     };
-    
     enum class [[=formattable_with_default("i:#04X")]] q_word : std::uint64_t {};
 
     auto get_formattable_annotation = [](std::meta::info reflection) consteval {
