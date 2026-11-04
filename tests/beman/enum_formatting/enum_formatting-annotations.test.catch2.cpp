@@ -127,7 +127,6 @@ TEST_CASE("formattable_with_default compares equality by format specification eq
         CHECK_FALSE(stringy_format_b == stringy_format_c);
         CHECK_FALSE(default_format_a == default_format_b);
     }
-    
     SECTION("formattable is equivalent to an empty format specification")
     {
         CHECK(formattable == formattable);
