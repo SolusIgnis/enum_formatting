@@ -1,5 +1,7 @@
 ---
 Language:        Cpp
+DisableFormat: true
+# Disabled formatting until I can figure out which version we're using and adapt my configuration to it.
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
 AlignArrayOfStructures: None
