@@ -56,7 +56,6 @@ TEST_CASE("formatter parses valid specifications",
             CHECK(formatter.parse(context) == context.end());
         }
     }
-    
     SECTION("replacement field format string")
     {
         std::format_parse_context ctx{"i:#04x}) {:t}"};
