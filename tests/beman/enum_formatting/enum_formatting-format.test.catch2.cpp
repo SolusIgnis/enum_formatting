@@ -81,7 +81,6 @@ TEST_CASE("formatter rejects invalid representation combinations",
         formatter.parse(ctx); }),
         std::format_error
     );
-    
     CHECK_THROWS_AS(std::invoke([&]{
         auto ctx = std::format_parse_context{"ix:#04x"};
         formatter.parse(ctx); }),
