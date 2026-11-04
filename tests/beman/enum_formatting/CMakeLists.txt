@@ -41,7 +41,6 @@ target_link_libraries(
     PRIVATE beman::enum_formatting Catch2::Catch2WithMain
 )
 
-
 if(BEMAN_EXEMPLAR_USE_MODULES)
     set_target_properties(
         beman.enum_formatting.tests.annotations
