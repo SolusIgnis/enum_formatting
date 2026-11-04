@@ -71,31 +71,31 @@ TEST_CASE("formatter rejects invalid representation combinations",
 
     std::formatter<byte> formatter;
 
-    CHECK_THROWS_AS(std::invoke([]{
+    CHECK_THROWS_AS(std::invoke([&]{
         auto ctx = std::format_parse_context{"x:>10"};
         formatter.parse(ctx); }),
         std::format_error
     );
 
-    CHECK_THROWS_AS(std::invoke([]{
+    CHECK_THROWS_AS(std::invoke([&]{
         auto ctx = std::format_parse_context{"sx:>10"};
         formatter.parse(ctx); }),
         std::format_error
     );
     
-    CHECK_THROWS_AS(std::invoke([]{
+    CHECK_THROWS_AS(std::invoke([&]{
         auto ctx = std::format_parse_context{"ix:#04x"};
         formatter.parse(ctx); }),
         std::format_error
     );
 
-    CHECK_THROWS_AS(std::invoke([]{
+    CHECK_THROWS_AS(std::invoke([&]{
         auto ctx = std::format_parse_context{"tq"};
         formatter.parse(ctx); }),
         std::format_error
     );
     
-    CHECK_THROWS_AS(std::invoke([]{
+    CHECK_THROWS_AS(std::invoke([&]{
         auto ctx = std::format_parse_context{"tu"};
         formatter.parse(ctx); }),
         std::format_error
