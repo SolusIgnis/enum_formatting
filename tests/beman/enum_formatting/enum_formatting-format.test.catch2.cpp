@@ -183,7 +183,7 @@ TEST_CASE("std::formatter uses annotation-provided default specifications",
 
     SECTION("explicit specification overrides annotation default")
     {
-        CHECK(std::format("{:s}", test_enumeration::enumerator) == std::format("{}", "enumerator");
+        CHECK(std::format("{:s}", test_enumeration::enumerator) == std::format("{}", "enumerator"));
         CHECK(std::format("{:i:04}", test_enumeration::enumerator) == std::format("{:04}", std::to_underlying(test_enumeration::enumerator)));
     }
 }
