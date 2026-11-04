@@ -12,8 +12,8 @@ import beman.enum_formatting;
 #else
 
     #include <beman/enum_formatting/annotations.hpp>
-
     #include <beman/enum_formatting/string.hpp>
+    #include <beman/enum_formatting/utility.hpp>
 
     #include <beman/enum_formatting/format.hpp>
 

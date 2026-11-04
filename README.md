@@ -1,4 +1,4 @@
-# `beman.enum_formatting`: Scoped Enumeration Stringification and Annotation-Driven Defaultable Formatting
+# beman.enum_formatting: Scoped Enumeration Stringification and Annotation-Driven Defaultable Formatting
 
 <!--
 SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
@@ -29,23 +29,26 @@ Full runnable examples can be found in [`examples/`](examples/).
 
 ### Direct Stringification
 
-Overloads for `to_string` enable direct production of `std::string`s from scoped enumeration values with a fallback for values without a matching enumerator.
+Overloads for `to_string` enable direct production of `std::string`s from scoped enumeration values with a fallback for values without a matching enumerator. The `[[=beman::enum_formatting::canonical]]` annotation allows a canonical alias designation when enumerators share a value.
 
 ```cpp
-enum class color : std::uint8_t {
-    red,
-    orange,
-    yellow,
-    green,
-    blue,
-    purple,
+using namespace beman::enum_formatting::annotations;
+
+enum class rgb_color : std::uint32_t {
+    red                   = 0xFF0000,
+    orange                = 0xFFA500,
+    yellow                = 0xFFFF00,
+    green                 = 0x00FF00,
+    blue                  = 0x0000FF,
+    violet                = 0x800080,
+    purple [[=canonical]] = 0x800080,
 };
 
-color my_color  = color::blue;
-auto color_name = to_string(my_color); //color_name == "blue"s
+auto my_color   = rgb_color::violet;
+auto color_name = to_string(my_color); //color_name == "purple"s
 
-color no_match     = static_cast<color>(42);
-auto unnamed_color = to_string(no_match); //unnamed_color == "color::42"s
+auto no_match      = static_cast<rgb_color>(42);
+auto unnamed_color = to_string(no_match); //unnamed_color == "rgb_color::42"s
 ```
 
 ### Annotated Declarations
@@ -181,6 +184,8 @@ You can disable building examples by setting CMake option `BEMAN_ENUM_FORMATTING
 `OFF` when configuring the project.
 
 ### Supported Platforms
+
+As of November 2026, only GCC 16 has reliable support for C++26 reflection. As other toolchains release with the necessary features implemented, support will be added.
 
 | Compiler   | Version | C++ Standards | Standard Library  |
 |------------|---------|---------------|-------------------|
