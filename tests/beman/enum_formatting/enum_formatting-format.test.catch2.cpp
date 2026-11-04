@@ -123,7 +123,7 @@ TEST_CASE("std::format formats annotated scoped enumerations",
     {
         CHECK(std::format("{:s}", arbitrary_color::red) == "red");
         CHECK(std::format("{:i}", arbitrary_color::red) == "42");
-        CHECK(std::format("{:t}", arbitrary_color::red) == "byte");
+        CHECK(std::format("{:t}", arbitrary_color::red) == "arbitrary_color");
     }
 
     SECTION("qualification")
