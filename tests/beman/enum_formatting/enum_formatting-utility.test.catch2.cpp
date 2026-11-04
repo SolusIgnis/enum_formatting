@@ -34,7 +34,6 @@ TEST_CASE("is_enumerated_value validates if a value corresponds to a named enume
         auto my_blue   = static_cast<color>(0x0000FF);
         auto my_orange = static_cast<color>(0xFFA500);
         auto my_black  = static_cast<color>(0xFFFFFF);
-    
         CHECK(is_enumerated_value(color::green));
         CHECK(is_enumerated_value(color::vert));
         CHECK(is_enumerated_value(my_red1));
