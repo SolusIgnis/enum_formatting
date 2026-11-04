@@ -49,6 +49,7 @@ int main()
     std::println();
     std::print("\t{}", to_string(static_cast<rgb_color>(255))); //255 = 0x0000FF => "blue"
     std::print(", {}", to_string(static_cast<rgb_color>(0x800080))); //"purple" again
+    std::println();
     std::print("\t{}", to_string(static_cast<rgb_color>(42)));
     std::println();
     std::print("\t{}", to_string(static_cast<cmyk_color>(42)));
