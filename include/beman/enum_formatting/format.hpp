@@ -87,7 +87,11 @@ public:
         ctx.advance_to(specifiers.begin());
 
         if (representation_ == representation::string) {
-            return std::formatter<std::basic_string_view<CharT>, CharT>::parse(ctx);
+            if constexpr (!std::meta::is_enumerable_type(^^E)) {
+                throw std::format_error("String representation is not available for unenumerable types.");
+            } else {
+                return std::formatter<std::basic_string_view<CharT>, CharT>::parse(ctx);
+            }
         } else if (representation_ == representation::integer) {
             return std::formatter<std::underlying_type_t<E>, CharT>::parse(ctx);
         } else if (representation_ == representation::type) {
