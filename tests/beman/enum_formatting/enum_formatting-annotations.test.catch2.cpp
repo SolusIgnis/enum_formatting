@@ -185,7 +185,6 @@ TEST_CASE("canonical annotation object interoperates with [[=...]] annotations a
         blue                 = 0x0000FF,
         azure [[=canonical]] = 0x0000FF,
     };
-    
     STATIC_CHECK(std::meta::annotations_of_with_type(^^color::red, ^^::beman::enum_formatting::canonical_annotation).empty());
     STATIC_CHECK(std::meta::annotations_of_with_type(^^color::gules, ^^::beman::enum_formatting::canonical_annotation).size() == 1);
 }
