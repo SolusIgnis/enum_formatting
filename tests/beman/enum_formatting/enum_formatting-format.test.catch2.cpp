@@ -15,12 +15,14 @@ import beman.enum_formatting;
 #include <string>
 #endif
 
+using namespace beman::enum_formatting::annotations;
+
 TEST_CASE("std::formatter is available only for annotated scoped enumerations",
           "[unit][enum_formatting][std::formatter]")
 {
     enum class unannotated {};
     enum unscoped {};
-    enum class [[=beman::enum_formatting::formattable]] annotated {};
+    enum class [[=formattable]] annotated {};
 
     CHECK(std::formattable<annotated, char>);
     CHECK_FALSE(std::formattable<unannotated, char>);
@@ -30,7 +32,7 @@ TEST_CASE("std::formatter is available only for annotated scoped enumerations",
 TEST_CASE("formatter parses valid specifications",
           "[unit][enum_formatting][formatter][parse]")
 {
-    enum class [[=beman::enum_formatting::formattable]] byte : std::uint8_t {};
+    enum class [[=formattable]] byte : std::uint8_t {};
 
     std::formatter<byte> formatter;
 
@@ -65,7 +67,7 @@ TEST_CASE("formatter parses valid specifications",
 TEST_CASE("formatter rejects invalid representation combinations",
           "[unit][enum_formatting][formatter][parse]")
 {
-    enum class [[=beman::enum_formatting::formattable]] byte {};
+    enum class [[=formattable]] byte {};
 
     std::formatter<byte> formatter;
 
@@ -103,7 +105,7 @@ TEST_CASE("formatter rejects invalid representation combinations",
 TEST_CASE("std::format formats annotated scoped enumerations",
           "[integration][enum_formatting][std::formatter]")
 {
-    enum class [[=beman::enum_formatting::formattable]] arbitrary_color : std::uint8_t {
+    enum class [[=formattable]] arbitrary_color : std::uint8_t {
         red   = 42,
         green = 128,
         blue  = 255,
@@ -150,7 +152,7 @@ TEST_CASE("std::format formats annotated scoped enumerations",
 TEST_CASE("std::formatter forwards representation-specific format specifications",
           "[integration][enum_formatting][std::formatter]")
 {
-    enum class [[=beman::enum_formatting::formattable]] test_enumeration : std::uint8_t {
+    enum class [[=formattable]] test_enumeration : std::uint8_t {
         enumerator = 42,
     };
 
@@ -175,8 +177,7 @@ TEST_CASE("std::formatter forwards representation-specific format specifications
 TEST_CASE("std::formatter uses annotation-provided default specifications",
           "[integration][enum_formatting][std::formatter]")
 {
-    enum class [[=beman::enum_formatting::formattable_with_default("i:#04X")]]
-    test_enumeration : std::uint8_t {
+    enum class [[=formattable_with_default("i:#04X")]] test_enumeration : std::uint8_t {
         test = 7,
     };
 
@@ -196,14 +197,14 @@ TEST_CASE("std::formatter uses annotation-provided default specifications",
 TEST_CASE("std::formatter uses canonical enumerator names",
           "[integration][enum_formatting][std::formatter]")
 {
-    enum class [[=beman::enum_formatting::formattable]] color : std::uint32_t {
+    enum class [[=formattable]] color : std::uint32_t {
         red                  = 0xFF0000,
         green                = 0x00FF00,
         blue                 = 0x0000FF,
-        gules [[=beman::enum_formatting::canonical]] = 0xFF0000,
+        gules [[=canonical]] = 0xFF0000,
         vert                 = 0x00FF00,
-        azure [[=beman::enum_formatting::canonical]] = 0x0000FF,
-        azul  [[=beman::enum_formatting::canonical]] = 0x0000FF,
+        azure [[=canonical]] = 0x0000FF,
+        azul  [[=canonical]] = 0x0000FF,
     };
 
     SECTION("canonical names are preferred")
