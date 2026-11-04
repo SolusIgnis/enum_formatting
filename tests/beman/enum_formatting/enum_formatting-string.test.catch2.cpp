@@ -71,7 +71,6 @@ TEST_CASE("to_string enumerator name selection",
         CHECK(to_string(color::red) == "gules");
         CHECK(to_string(color::gules) == "gules");
         CHECK(to_string(static_cast<color>(0xFF0000)) == "gules");
-        
         CHECK(to_string(color::blue) == "azure");
         CHECK(to_string(color::azure) == "azure");
         CHECK(to_string(color::azul) == "azure");
