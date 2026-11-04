@@ -7,6 +7,7 @@
 
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
 #include "annotations.hpp"
+#include "detail_unexported/concepts.hpp"
 #include "detail_unexported/to_string.hpp"
 
 #include <meta>
@@ -16,9 +17,8 @@
 #include <format>
 #endif
 
-template<typename E, typename CharT>
-    requires (std::meta::is_scoped_enum_type(^^E))
-        && (!std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).empty())
+template<::beman::enum_formatting::unexported::scoped_enum E, typename CharT>
+    requires ::beman::enum_formatting::unexported::annotated_with<E, ::beman::enum_formatting::formattable_with_default>
 struct std::formatter<E, CharT>
     : private std::formatter<std::basic_string_view<CharT>, CharT>
     , private std::formatter<std::underlying_type_t<E>, CharT> {

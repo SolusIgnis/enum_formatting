@@ -4,15 +4,14 @@
 #define BEMAN_ENUM_FORMATTING_STRING_HPP
 
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
+#include "detail_unexported/concepts.hpp"
 #include "detail_unexported/to_string.hpp"
 
-#include <meta>
 #include <string>
 #endif
 
 namespace beman::enum_formatting {
-    template<typename E>
-        requires (std::meta::is_scoped_enum_type(^^E))
+    template<unexported::enumerable_scoped_enum E>
     constexpr std::string to_string(E value)
     {
         return unexported::to_string(value);

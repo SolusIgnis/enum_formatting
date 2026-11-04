@@ -4,6 +4,7 @@
 #define BEMAN_ENUM_FORMATTING_UNEXPORTED_TO_STRING_HPP
 
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
+#include "concepts.hpp"
 #include "../annotations.hpp"
 
 #include <algorithm>
@@ -31,8 +32,7 @@ namespace beman::enum_formatting::unexported {
         return partitioned_enumerators;
     }
 
-    template<typename E>
-        requires (std::meta::is_scoped_enum_type(^^E))
+    template<enumerable_scoped_enum E>
     constexpr std::string to_string(E value, [[maybe_unused]] bool use_qualified_name = false, bool use_qualified_fallback = true, bool use_empty_fallback = false)
     {
         template for (constexpr auto enumerator : std::define_static_array(enumerators_of_by_tier(^^E))) {
