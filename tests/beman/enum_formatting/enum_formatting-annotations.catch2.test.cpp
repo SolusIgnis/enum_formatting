@@ -145,7 +145,6 @@ TEST_CASE("formattable_with_default and formattable interoperate with [[=...]] a
         black,
         white,
     };
-    
     enum class [[=formattable_with_default("i:#04X")]] q_word : std::uint64_t {};
 
     auto get_formattable_annotation = [](std::meta::info reflection) consteval {
@@ -185,7 +184,6 @@ TEST_CASE("canonical annotation object interoperates with [[=...]] annotations a
         blue                 = 0x0000FF,
         azure [[=canonical]] = 0x0000FF,
     };
-    
     STATIC_CHECK(std::meta::annotations_of_with_type(^^color::red, ^^::beman::enum_formatting::canonical_annotation).empty());
     STATIC_CHECK(std::meta::annotations_of_with_type(^^color::gules, ^^::beman::enum_formatting::canonical_annotation).size() == 1);
 }
