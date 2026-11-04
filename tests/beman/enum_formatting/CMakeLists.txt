@@ -7,10 +7,22 @@ add_executable(beman.enum_formatting.tests.format)
 add_executable(beman.enum_formatting.tests.string)
 add_executable(beman.enum_formatting.tests.utility)
 
-target_sources(beman.enum_formatting.tests.annotations PRIVATE enum_formatting-annotations.test.catch2.cpp)
-target_sources(beman.enum_formatting.tests.format PRIVATE enum_formatting-format.test.catch2.cpp) 
-target_sources(beman.enum_formatting.tests.string PRIVATE enum_formatting-string.test.catch2.cpp)
-target_sources(beman.enum_formatting.tests.utility PRIVATE enum_formatting-utility.test.catch2.cpp)
+target_sources(
+    beman.enum_formatting.tests.annotations
+    PRIVATE enum_formatting-annotations.test.catch2.cpp
+)
+target_sources(
+    beman.enum_formatting.tests.format
+    PRIVATE enum_formatting-format.test.catch2.cpp
+)
+target_sources(
+    beman.enum_formatting.tests.string
+    PRIVATE enum_formatting-string.test.catch2.cpp
+)
+target_sources(
+    beman.enum_formatting.tests.utility
+    PRIVATE enum_formatting-utility.test.catch2.cpp
+)
 
 target_link_libraries(
     beman.enum_formatting.tests.annotations
