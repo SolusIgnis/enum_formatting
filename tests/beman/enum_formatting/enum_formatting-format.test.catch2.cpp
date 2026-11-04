@@ -69,28 +69,33 @@ TEST_CASE("formatter rejects invalid representation combinations",
 
     std::formatter<byte> formatter;
 
-    CHECK_THROWS_AS(
-        formatter.parse(std::format_parse_context{"x:>10"}),
+    CHECK_THROWS_AS(std::invoke([]{
+        auto ctx = std::format_parse_context{"x:>10"};
+        formatter.parse(ctx); }),
         std::format_error
     );
 
-    CHECK_THROWS_AS(
-        formatter.parse(std::format_parse_context{"sx:>10"}),
+    CHECK_THROWS_AS(std::invoke([]{
+        auto ctx = std::format_parse_context{"sx:>10"};
+        formatter.parse(ctx); }),
         std::format_error
     );
     
-    CHECK_THROWS_AS(
-        formatter.parse(std::format_parse_context{"ix:#04x"}),
+    CHECK_THROWS_AS(std::invoke([]{
+        auto ctx = std::format_parse_context{"ix:#04x"};
+        formatter.parse(ctx); }),
         std::format_error
     );
 
-    CHECK_THROWS_AS(
-        formatter.parse(std::format_parse_context{"tq"}),
+    CHECK_THROWS_AS(std::invoke([]{
+        auto ctx = std::format_parse_context{"tq"};
+        formatter.parse(ctx); }),
         std::format_error
     );
     
-    CHECK_THROWS_AS(
-        formatter.parse(std::format_parse_context{"tu"}),
+    CHECK_THROWS_AS(std::invoke([]{
+        auto ctx = std::format_parse_context{"tu"};
+        formatter.parse(ctx); }),
         std::format_error
     );
 }
@@ -172,19 +177,19 @@ TEST_CASE("std::formatter uses annotation-provided default specifications",
 {
     enum class [[=beman::enum_formatting::formattable_with_default("i:#04X")]]
     test_enumeration : std::uint8_t {
-        enumerator = 7,
+        test = 7,
     };
 
     SECTION("annotation default is used when no specification is provided")
     {
-        CHECK(std::format("{}", test_enumeration::enumerator) == std::format("{:#04X}", std::to_underlying(test_enumeration::enumerator)));
-        CHECK(std::format("{:}", test_enumeration::enumerator) == std::format("{:#04X}", std::to_underlying(test_enumeration::enumerator)));
+        CHECK(std::format("{}", test_enumeration::test) == std::format("{:#04X}", std::to_underlying(test_enumeration::test)));
+        CHECK(std::format("{:}", test_enumeration::test) == std::format("{:#04X}", std::to_underlying(test_enumeration::test)));
     }
 
     SECTION("explicit specification overrides annotation default")
     {
-        CHECK(std::format("{:s}", test_enumeration::enumerator) == std::format("{}", "enumerator"));
-        CHECK(std::format("{:i:04}", test_enumeration::enumerator) == std::format("{:04}", std::to_underlying(test_enumeration::enumerator)));
+        CHECK(std::format("{:s}", test_enumeration::test) == std::format("{}", "test"));
+        CHECK(std::format("{:i:04}", test_enumeration::test) == std::format("{:04}", std::to_underlying(test_enumeration::test)));
     }
 }
 
