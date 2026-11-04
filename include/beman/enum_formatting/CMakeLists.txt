@@ -10,7 +10,7 @@ if(BEMAN_ENUM_FORMATTING_USE_MODULES)
                     config.hpp
                     enum_formatting.hpp
                     annotations.hpp
-                    unexported/to_string.hpp
+                    detail_unexported/to_string.hpp
                     string.hpp
                     utility.hpp
                     format.hpp
@@ -25,7 +25,7 @@ else()
                     config.hpp
                     enum_formatting.hpp
                     annotations.hpp
-                    unexported/to_string.hpp
+                    detail_unexported/to_string.hpp
                     string.hpp
                     utility.hpp
                     format.hpp

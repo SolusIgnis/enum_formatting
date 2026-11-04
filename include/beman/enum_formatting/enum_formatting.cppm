@@ -19,7 +19,7 @@ export {
 #include <beman/enum_formatting/annotations.hpp>
 }
 
-#include <beman/enum_formatting/unexported/to_string.hpp>
+#include <beman/enum_formatting/detail_unexported/to_string.hpp>
 
 export {
 #include <beman/enum_formatting/string.hpp>
