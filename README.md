@@ -15,7 +15,7 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 Powered by C++26 static reflection and attribute annotations, `beman.enum_formatting` provides automatic `to_string` support, seamless `std::format` integration, and type-level default formatting specifications to scoped enumerations.
 
-**Implements**: `std::to_string` overloads, `std::formatter` specializations, `std::formattable`, `std::formattable_with_default`, `std::canonical`, and `std::is_enumerated_value` proposed in [Paper # Unassigned: Initial Draft in Progress (PXXXXR0)](https://wg21.link/PXXXXR0).
+**Implements**: `std::to_string` overloads, `std::formatter` specializations, `std::formattable`, `std::formattable_with_default`, `std::canonical`, and `std::is_enumerated_value` proposed in [Paper # Unassigned: Initial Draft in Progress (DXXXXR0)](https://wg21.link/DXXXXR0).
 
 **Status**: [Under development and not yet ready for production use.](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#under-development-and-not-yet-ready-for-production-use)
 
