@@ -3,6 +3,9 @@
 name: Sync mpark/wg21 Submodule
 
 on:
+  push:
+    - "feature/paper_generation"
+    
   workflow_dispatch:
 
 env:
