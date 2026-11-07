@@ -28,7 +28,7 @@ env:
 jobs:
   render:
     if: >-
-      github.event_name == 'workflow_dispatch' ||
+      github.event_name != 'pull_request ||
       github.event.pull_request.merged == true
 
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
         run: |
           declare -A papers=()
 
-          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+          if [[ "$GITHUB_EVENT_NAME" != "pull_request" ]]; then
             echo "Rendering all papers."
 
             while IFS= read -r file; do
