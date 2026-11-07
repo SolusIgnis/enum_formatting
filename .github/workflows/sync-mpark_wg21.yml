@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  update-wg21:
+  sync-submodule:
     runs-on: ubuntu-latest
 
     steps:
