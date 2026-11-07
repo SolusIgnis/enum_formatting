@@ -57,7 +57,7 @@ jobs:
         run: |
           declare -A papers=()
 
-          if [[ "$GITHUB_EVENT_NAME" != "pull_request" ]]; then
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
             echo "Rendering all papers."
 
             while IFS= read -r file; do
@@ -70,22 +70,24 @@ jobs:
                 -type f -name '*.md'
             )
           else
-            echo "Finding papers changed by merged PR."
-
-            base="${{ github.event.pull_request.base.sha }}"
-            merge="${{ github.event.pull_request.merge_commit_sha }}"
+            echo "Finding papers changed by push."
 
             while IFS= read -r file; do
               if [[ "$file" =~ ^papers/([^/]+)/([^/]+)\.md$ ]]; then
                 [[ "${BASH_REMATCH[1]}" == "${BASH_REMATCH[2]}" ]] || continue
+                [[ -f "$file" ]] || continue
                 papers["${BASH_REMATCH[1]}"]=1
               fi
-            done < <(git diff --name-only "$base" "$merge")
+            done < <(
+              git diff --name-only \
+                "${{ github.event.before }}" \
+                "${{ github.event.after }}"
+            )
           fi
 
           if (( ${#papers[@]} == 0 )); then
             echo "No matching papers found."
-            exit 1
+            exit 0
           fi
 
           for paper in "${!papers[@]}"; do
