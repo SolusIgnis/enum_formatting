@@ -1,0 +1,116 @@
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+name: Render WG21 Papers
+
+on:
+  workflow_dispatch:
+  
+  push:
+    branches:
+      - feature/paper_generation
+
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+permissions:
+  contents: write
+
+concurrency:
+  group: render-papers
+  cancel-in-progress: false
+
+env:
+  WG21_PATH: papers/.wg21
+
+jobs:
+  render:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.pull_request.merged == true
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git curl make python3 python3-venv \
+            texlive-xetex
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Render Papers
+        shell: bash
+        run: |
+          declare -A papers=()
+
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            echo "Rendering all papers."
+
+            while IFS= read -r file; do
+              if [[ "$file" =~ ^papers/([PD][0-9]{4}R[0-9])/([PD][0-9]{4}R[0-9])\.md$ ]]; then
+                [[ "${BASH_REMATCH[1]}" == "${BASH_REMATCH[2]}" ]] || continue
+                papers["${BASH_REMATCH[1]}"]=1
+              fi
+            done < <(
+              find papers -mindepth 2 -maxdepth 2 \
+                -type f -name '*.md'
+            )
+          else
+            echo "Finding papers changed by merged PR."
+
+            base="${{ github.event.pull_request.base.sha }}"
+            merge="${{ github.event.pull_request.merge_commit_sha }}"
+
+            while IFS= read -r file; do
+              if [[ "$file" =~ ^papers/([^/]+)/([^/]+)\.md$ ]]; then
+                [[ "${BASH_REMATCH[1]}" == "${BASH_REMATCH[2]}" ]] || continue
+                papers["${BASH_REMATCH[1]}"]=1
+              fi
+            done < <(git diff --name-only "$base" "$merge")
+          fi
+
+          if (( ${#papers[@]} == 0 )); then
+            echo "No matching papers found."
+            exit 1
+          fi
+
+          for paper in "${!papers[@]}"; do
+            paper_dir="papers/$paper"
+
+            echo "::group::Rendering $paper"
+
+            make -C "$paper_dir" \
+              -f "../Makefile" \
+              "$paper.html"
+
+            make -C "$paper_dir" \
+              -f "../Makefile" \
+              "$paper.pdf"
+
+            git add \
+              "$paper_dir/$paper.html" \
+              "$paper_dir/$paper.pdf"
+
+            echo "::endgroup::"
+          done
+
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: render WG21 paper HTML and PDF outputs"
+            git push
+          else
+            echo "Generated outputs are already up to date. No changes to commit."
+          fi
