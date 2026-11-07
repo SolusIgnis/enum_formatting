@@ -6,7 +6,7 @@ date: today
 audience: Library Evolution Working Group (LEWG)
 author:
   - name: Jeremy Murphy
-    email: <jeremy.r.murphy at protonmail dot com>
+    email: jeremy.r.murphy at protonmail dot com
 toc: true
 toc-depth: 3
 ---
@@ -30,7 +30,8 @@ Explain why this proposal exists, what real-world use cases it addresses, and th
 ### Before (Current C++)
 
 ```cpp
-// Motivating example showing current verbose, error-prone, or inefficient code
+// Motivating example showing current verbose,
+// error-prone, or inefficient code
 #include <iostream>
 
 void legacy_way() {

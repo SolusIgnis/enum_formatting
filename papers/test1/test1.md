@@ -6,7 +6,7 @@ date: today
 audience: Library Evolution Working Group (LEWG)
 author:
   - name: Jeremy Murphy
-    email: <jeremy.r.murphy at protonmail dot com>
+    email: jeremy.r.murphy at protonmail dot com
 toc: true
 toc-depth: 3
 ---
@@ -19,7 +19,7 @@ Introduce the problem domain and the proposed facility.
 
 Explain the relationship between this proposal and existing C++ formatting facilities.
 
-# Revision History
+# Revision History {.collapsed}
 
 ## R0
 - Initial revision.
