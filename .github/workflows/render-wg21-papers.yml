@@ -61,7 +61,7 @@ jobs:
             echo "Rendering all papers."
 
             while IFS= read -r file; do
-              if [[ "$file" =~ ^papers/([PD][0-9]{4}R[0-9])/([PD][0-9]{4}R[0-9])\.md$ ]]; then
+              if [[ "$file" =~ ^papers/([^/]+)/([^/]+)\.md$ ]]; then
                 [[ "${BASH_REMATCH[1]}" == "${BASH_REMATCH[2]}" ]] || continue
                 papers["${BASH_REMATCH[1]}"]=1
               fi
