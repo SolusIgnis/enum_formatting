@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="mpark/wg21" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="dcterms.date" content="2026-11-07" />
+  <meta name="dcterms.date" content="2026-11-08" />
   <title>Scoped Enumeration Stringification and Annotation-Driven
 Defaultable Formatting with C++26 Static Reflection</title>
   <style>
@@ -1566,7 +1566,7 @@ and
   </tr>
   <tr>
     <td>Date:</td>
-    <td>2026-11-07</td>
+    <td>2026-11-08</td>
   </tr>
   <tr>
     <td style="vertical-align:top">Project:</td>
@@ -1671,12 +1671,30 @@ addresses, and the limitations of current C++.</p>
 <p>Explain the technical design choices, trade-offs, ABI implications,
 and feature interactions.</p>
 <h2 data-number="4.1" id="alternatives-considered"><span class="header-section-number">4.1</span> Alternatives Considered<a href="#alternatives-considered" class="self-link"></a></h2>
-<ul>
-<li><strong>Option A:</strong> Description of an alternative approach
-and reasons for rejection.</li>
-<li><strong>Option B:</strong> Another candidate syntax or API and its
-drawbacks.</li>
-</ul>
+<div class="table-wrapper">
+<table class="cmptable">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><div style="text-align:center">
+<strong>Option A</strong>
+</div></th>
+<th><div style="text-align:center">
+<strong>Option B</strong>
+</div></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">//chose this one</span></span></code></pre></div></td>
+<td><div class="sourceCode" id="cb6"><pre class="sourceCode cpp not_proposed"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">//didn&#39;t do this</span></span></code></pre></div></td>
+</tr>
+</tbody>
+</table>
+</div>
 <h1 data-number="5" id="proposed-wording"><span class="header-section-number">5</span> Proposed Wording<a href="#proposed-wording" class="self-link"></a></h1>
 <p>Draft edits relative to the C++ Working Draft. Use markup tags like
 <code class="sourceCode cpp"><span class="op">&lt;</span>ins<span class="op">&gt;</span>added text<span class="op">&lt;/</span>ins<span class="op">&gt;</span></code>
