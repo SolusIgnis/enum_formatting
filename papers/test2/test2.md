@@ -68,8 +68,17 @@ Explain the technical design choices, trade-offs, ABI implications, and feature 
 
 ## Alternatives Considered
 
-* **Option A:** Description of an alternative approach and reasons for rejection.
-* **Option B:** Another candidate syntax or API and its drawbacks.
+::: cmptable
+### Option A
+```cpp
+//chose this one
+```
+
+### Option B
+```cpp {.not_proposed}
+//didn't do this
+```
+:::
 
 # Proposed Wording
 
