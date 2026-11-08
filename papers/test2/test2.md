@@ -82,11 +82,11 @@ Explain the technical design choices, trade-offs, ABI implications, and feature 
 
 # Proposed Wording
 
-Draft edits relative to the C++ Working Draft. Use markup tags like `<ins>added text</ins>` and `<del>removed text</del>`.
+Draft edits relative to the C++ Working Draft. Use markup tags like `[added text]{.add}`, `[removed text]{.rm}`, and `[removed text](added text){.sub}`.
 
 > Modify Section [general.description] as follows:
 >
-> The behavior of the function shall be modified to <ins>support the new functionality</ins> <del>throw an exception</del>.
+> The behavior of the function shall be modified to [support the new functionality]{.add} [throw an exception]{.rm}.
 
 # Implementation Experience
 

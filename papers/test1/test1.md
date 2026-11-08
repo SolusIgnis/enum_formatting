@@ -6,7 +6,7 @@ date: today
 audience: Library Evolution Working Group (LEWG)
 author:
   - name: Jeremy Murphy
-    email: jeremy.r.murphy at protonmail dot com
+    email: jeremy dot r dot murphy at protonmail dot com
 toc: true
 toc-depth: 3
 ---
@@ -42,6 +42,42 @@ Provide motivating examples demonstrating the need for the proposed functionalit
 // Example usage goes here.
 ```
 
+::: cmptable
+### Before (Current C++)
+
+```cpp
+// Motivating example showing current verbose,
+// error-prone, or inefficient code
+#include <iostream>
+
+void legacy_way() {
+    // Current approach
+}
+```
+
+### After (With Proposal)
+
+```cpp
+// Clean code using your proposed feature
+void proposed_way() {
+    // Proposed syntax or library feature
+}
+```
+---
+
+```cpp
+void legacy_way() {
+    // Current approach
+}
+```
+
+```cpp
+void proposed_way() {
+    // Proposed syntax or library feature
+}
+```
+:::
+
 # Impact on the Standard
 
 Describe the impact on the C++ standard, including:
@@ -61,6 +97,18 @@ Explain the overall design and its guiding principles.
 ## Alternatives Considered
 
 Describe alternative approaches and the rationale for accepting or rejecting them.
+
+::: cmptable
+### Option A
+```cpp
+//chose this one
+```
+
+### Option B
+```cpp {.not_proposed}
+//didn't do this
+```
+:::
 
 ## Naming and Interface Design
 
@@ -130,6 +178,12 @@ Specify the proposed feature-test macro and its value.
 # Proposed Wording
 
 This section contains the proposed changes to the C++ working draft.
+
+Use markup tags like `[added text]{.add}`, `[removed text]{.rm}`, and `[removed text](added text){.sub}`.
+
+> Modify Section [general.description] as follows:
+>
+> The behavior of the function shall be modified to [support the new functionality]{.add} [throw an exception]{.rm}.
 
 ## Header Changes
 
