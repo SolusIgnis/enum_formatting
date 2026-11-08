@@ -14,7 +14,7 @@ namespace beman::enum_formatting::unexported {
     template<typename T>
     concept enumerable_scoped_enum = scoped_enum<T> && std::meta::is_enumerable_type(^^T);
     
-    template<typename T, Annotation>
+    template<typename T, typename Annotation>
     concept annotated_with = (!std::meta::annotations_of_with_type(^^T, ^^Annotation).empty());
 } // namespace beman::enum_formatting::unexported
 
