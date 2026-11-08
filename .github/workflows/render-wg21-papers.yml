@@ -4,7 +4,6 @@ name: Render WG21 Papers
 
 on:
   workflow_dispatch:
-  
   push:
     paths:
       - 'papers/*/*.md'
