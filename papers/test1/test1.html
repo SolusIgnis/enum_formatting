@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="mpark/wg21" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="dcterms.date" content="2026-11-07" />
+  <meta name="dcterms.date" content="2026-11-08" />
   <title>Scoped Enumeration Stringification and Annotation-Driven
 Defaultable Formatting with C++26 Static Reflection</title>
   <style>
@@ -1566,7 +1566,7 @@ and
   </tr>
   <tr>
     <td>Date:</td>
-    <td>2026-11-07</td>
+    <td>2026-11-08</td>
   </tr>
   <tr>
     <td style="vertical-align:top">Project:</td>
@@ -1581,7 +1581,7 @@ and
   <tr>
     <td style="vertical-align:top">Reply-to:</td>
     <td>
-      Jeremy Murphy<br><jeremy.r.murphy at protonmail dot com><br>
+      Jeremy Murphy<br><jeremy dot r dot murphy at protonmail dot com><br>
     </td>
   </tr>
 </table>
@@ -1678,6 +1678,47 @@ its scope.</p>
 <p>Provide motivating examples demonstrating the need for the proposed
 functionality.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Example usage goes here.</span></span></code></pre></div>
+<div class="table-wrapper">
+<table class="cmptable">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><div style="text-align:center">
+<strong>Before (Current C++)</strong>
+</div></th>
+<th><div style="text-align:center">
+<strong>After (With Proposal)</strong>
+</div></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Motivating example showing current verbose,</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">// error-prone, or inefficient code</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> legacy_way<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Current approach</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
+<td><div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Clean code using your proposed feature</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> proposed_way<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Proposed syntax or library feature</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
+</tr>
+<tr>
+<td><div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> legacy_way<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Current approach</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
+<td><div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> proposed_way<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Proposed syntax or library feature</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
+</tr>
+</tbody>
+</table>
+</div>
 <h1 data-number="4" id="impact-on-the-standard"><span class="header-section-number">4</span> Impact on the Standard<a href="#impact-on-the-standard" class="self-link"></a></h1>
 <p>Describe the impact on the C++ standard, including:</p>
 <ul>
@@ -1693,6 +1734,30 @@ functionality.</p>
 <h2 data-number="5.2" id="alternatives-considered"><span class="header-section-number">5.2</span> Alternatives Considered<a href="#alternatives-considered" class="self-link"></a></h2>
 <p>Describe alternative approaches and the rationale for accepting or
 rejecting them.</p>
+<div class="table-wrapper">
+<table class="cmptable">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><div style="text-align:center">
+<strong>Option A</strong>
+</div></th>
+<th><div style="text-align:center">
+<strong>Option B</strong>
+</div></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">//chose this one</span></span></code></pre></div></td>
+<td><div class="sourceCode" id="cb7"><pre class="sourceCode cpp not_proposed"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">//didn&#39;t do this</span></span></code></pre></div></td>
+</tr>
+</tbody>
+</table>
+</div>
 <h2 data-number="5.3" id="naming-and-interface-design"><span class="header-section-number">5.3</span> Naming and Interface Design<a href="#naming-and-interface-design" class="self-link"></a></h2>
 <p>Explain the public interface and naming decisions.</p>
 <h2 data-number="5.4" id="constraints-and-limitations"><span class="header-section-number">5.4</span> Constraints and Limitations<a href="#constraints-and-limitations" class="self-link"></a></h2>
@@ -1738,6 +1803,15 @@ experience, and testing.</p>
 <h1 data-number="9" id="proposed-wording"><span class="header-section-number">9</span> Proposed Wording<a href="#proposed-wording" class="self-link"></a></h1>
 <p>This section contains the proposed changes to the C++ working
 draft.</p>
+<p>Use markup tags like
+<code class="sourceCode cpp"><span class="op">[</span>added text<span class="op">]{.</span>add<span class="op">}</span></code>,
+<code class="sourceCode cpp"><span class="op">[</span>removed text<span class="op">]{.</span>rm<span class="op">}</span></code>,
+and
+<code class="sourceCode cpp"><span class="op">[</span>removed text<span class="op">](</span>added text<span class="op">){.</span>sub<span class="op">}</span></code>.</p>
+<blockquote>
+<p>Modify Section [general.description] as follows:</p>
+<p>The behavior of the function shall be modified to <span class="add"><ins>support the new functionality</ins></span> <span class="rm"><del>throw an exception</del></span>.</p>
+</blockquote>
 <h2 data-number="9.1" id="header-changes"><span class="header-section-number">9.1</span> Header Changes<a href="#header-changes" class="self-link"></a></h2>
 <p>[Insert proposed wording.]</p>
 <h2 data-number="9.2" id="library-specification-changes"><span class="header-section-number">9.2</span> Library Specification Changes<a href="#library-specification-changes" class="self-link"></a></h2>

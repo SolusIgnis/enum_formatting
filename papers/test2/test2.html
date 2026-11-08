@@ -1697,13 +1697,13 @@ and feature interactions.</p>
 </div>
 <h1 data-number="5" id="proposed-wording"><span class="header-section-number">5</span> Proposed Wording<a href="#proposed-wording" class="self-link"></a></h1>
 <p>Draft edits relative to the C++ Working Draft. Use markup tags like
-<code class="sourceCode cpp"><span class="op">&lt;</span>ins<span class="op">&gt;</span>added text<span class="op">&lt;/</span>ins<span class="op">&gt;</span></code>
+<code class="sourceCode cpp"><span class="op">[</span>added text<span class="op">]{.</span>add<span class="op">}</span></code>,
+<code class="sourceCode cpp"><span class="op">[</span>removed text<span class="op">]{.</span>rm<span class="op">}</span></code>,
 and
-<code class="sourceCode cpp"><span class="op">&lt;</span>del<span class="op">&gt;</span>removed text<span class="op">&lt;/</span>del<span class="op">&gt;</span></code>.</p>
+<code class="sourceCode cpp"><span class="op">[</span>removed text<span class="op">](</span>added text<span class="op">){.</span>sub<span class="op">}</span></code>.</p>
 <blockquote>
 <p>Modify Section [general.description] as follows:</p>
-<p>The behavior of the function shall be modified to <ins>support the
-new functionality</ins> <del>throw an exception</del>.</p>
+<p>The behavior of the function shall be modified to <span class="add"><ins>support the new functionality</ins></span> <span class="rm"><del>throw an exception</del></span>.</p>
 </blockquote>
 <h1 data-number="6" id="implementation-experience"><span class="header-section-number">6</span> Implementation Experience<a href="#implementation-experience" class="self-link"></a></h1>
 <p>Note whether a prototype exists, compiler branches where it has been
