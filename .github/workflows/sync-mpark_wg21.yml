@@ -1,0 +1,52 @@
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+name: Sync mpark/wg21 Submodule
+
+on:
+  workflow_dispatch:
+
+env:
+  WG21_PATH: papers/.wg21
+
+permissions:
+  contents: write
+
+jobs:
+  sync-submodule:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Configure Git Identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Check and Update or Add WG21 Submodule
+        run: |
+          if [ -f ".gitmodules" ] && git config -f .gitmodules --get-regexp '^submodule\..*\.path$' |
+             grep -qFx "$WG21_PATH"; then
+            echo "Submodule already exists at $WG21_PATH. Updating to latest upstream..."
+            git submodule update --remote --merge "$WG21_PATH"
+          else
+            echo "Submodule not found. Adding mpark/wg21 to $WG21_PATH..."
+            git submodule add \
+              https://github.com/mpark/wg21.git \
+              "$WG21_PATH"
+          fi
+
+      - name: Commit and Push Changes
+        run: |
+          git add .gitmodules "$WG21_PATH"
+
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: sync mpark/wg21 submodule in $WG21_PATH"
+            git push
+          else
+            echo "Submodule is already up to date. No changes to commit."
+          fi
