@@ -25,7 +25,7 @@ jobs:
       - name: Run Pre-Commit Hooks
         uses: pre-commit/action@v3.0.1
         with:
-          extra_args: trailing-whitespace end-of-file-fixer clang-format --all-files
+          extra_args: --config .pre-commit-formatting-config.yaml --all-files
         continue-on-error: true
 
       - name: Commit and Push Corrections
