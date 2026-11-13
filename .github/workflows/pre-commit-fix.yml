@@ -3,7 +3,7 @@ name: Pre-Commit Corrections
 on:
   workflow_dispatch:
   push:
-    branches: 
+    branches:
       - "release/**"
       - "feature/**"
 
