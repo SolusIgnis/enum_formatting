@@ -35,8 +35,7 @@ enum class[[= formattable]] ink_color : std::uint8_t {
 
 using cmyk_color = ink_color;
 
-enum class[[= formattable_with_default("i:#010b")]] byte_t : std::uint8_t {
-};
+enum class[[= formattable_with_default("i:#010b")]] byte_t : std::uint8_t {};
 
 int main()
 {

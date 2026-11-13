@@ -162,8 +162,7 @@ TEST_CASE(
         black,
         white,
     };
-    enum class[[= formattable_with_default("i:#04X")]] q_word : std::uint64_t {
-    };
+    enum class[[= formattable_with_default("i:#04X")]] q_word : std::uint64_t {};
 
     auto get_formattable_annotation = [](std::meta::info reflection) consteval {
         return std::meta::extract<formattable_with_default>(

@@ -19,13 +19,10 @@ using namespace beman::enum_formatting::annotations;
 
 TEST_CASE("std::formatter is available only for annotated scoped enumerations", "[unit][enum_formatting][std::formatter]")
 {
-    enum class unannotated {
-    };
+    enum class unannotated {};
 
-    enum unscoped {
-    };
-    enum class[[= formattable]] annotated {
-    };
+    enum unscoped {};
+    enum class[[= formattable]] annotated {};
 
     CHECK(std::formattable<annotated, char>);
     CHECK_FALSE(std::formattable<unannotated, char>);
@@ -34,8 +31,7 @@ TEST_CASE("std::formatter is available only for annotated scoped enumerations", 
 
 TEST_CASE("formatter parses valid specifications", "[unit][enum_formatting][formatter][parse]")
 {
-    enum class[[= formattable]] byte : std::uint8_t {
-    };
+    enum class[[= formattable]] byte : std::uint8_t {};
 
     std::formatter<byte> formatter;
 
@@ -68,8 +64,7 @@ TEST_CASE("formatter parses valid specifications", "[unit][enum_formatting][form
 
 TEST_CASE("formatter rejects invalid representation combinations", "[unit][enum_formatting][formatter][parse]")
 {
-    enum class[[= formattable]] byte {
-    };
+    enum class[[= formattable]] byte {};
 
     std::formatter<byte> formatter;
 

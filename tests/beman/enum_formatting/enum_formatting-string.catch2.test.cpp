@@ -19,11 +19,9 @@ concept has_to_string = requires(T value) { beman::enum_formatting::to_string(va
 
 TEST_CASE("to_string is only available for scoped enumerations", "[unit][enum_formatting][to_string]")
 {
-    enum class scoped_enumeration {
-    };
+    enum class scoped_enumeration {};
 
-    enum unscoped_enumeration {
-    };
+    enum unscoped_enumeration {};
 
     CHECK(has_to_string<scoped_enumeration>);
     CHECK_FALSE(has_to_string<unscoped_enumeration>);
