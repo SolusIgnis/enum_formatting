@@ -1,0 +1,36 @@
+name: Pre-Commit Corrections
+
+on:
+  workflow_dispatch:
+  push:
+    branches: 
+      - "release/**"
+      - "feature/**"
+
+jobs:
+  pre-commit-fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: setup-python@v5 # Or actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run Pre-Commit Hooks
+        id: pre-commit
+        uses: pre-commit/action@v3.0.1
+        continue-on-error: true
+
+      - name: Commit and Push Corrections
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: auto-apply pre-commit corrections"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
+          branch: ${{ github.ref_name }}
