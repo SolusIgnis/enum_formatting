@@ -23,8 +23,9 @@ jobs:
           python-version: '3.x'
 
       - name: Run Pre-Commit Hooks
-        id: pre-commit
         uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: trailing-whitespace end-of-file-fixer clang-format --all-files
         continue-on-error: true
 
       - name: Commit and Push Corrections
