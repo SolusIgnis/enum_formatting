@@ -12,9 +12,7 @@ import beman.enum_formatting;
 #else
 
 namespace beman::enum_formatting {
-
-// TODO
-
+    // TODO
 } // namespace beman::enum_formatting
 
 #endif // BEMAN_ENUM_FORMATTING_USE_MODULES() &&

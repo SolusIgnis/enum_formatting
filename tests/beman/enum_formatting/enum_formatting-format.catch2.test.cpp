@@ -7,32 +7,35 @@
 import std;
 import beman.enum_formatting;
 #else
-#include <beman/enum_formatting/format.hpp>
+    #include <beman/enum_formatting/format.hpp>
 
-#include <cstdint>
-#include <format>
-#include <meta>
-#include <string>
+    #include <cstdint>
+    #include <format>
+    #include <meta>
+    #include <string>
 #endif
 
 using namespace beman::enum_formatting::annotations;
 
-TEST_CASE("std::formatter is available only for annotated scoped enumerations",
-          "[unit][enum_formatting][std::formatter]")
+TEST_CASE("std::formatter is available only for annotated scoped enumerations", "[unit][enum_formatting][std::formatter]")
 {
-    enum class unannotated {};
-    enum unscoped {};
-    enum class [[=formattable]] annotated {};
+    enum class unannotated {
+    };
+
+    enum unscoped {
+    };
+    enum class[[= formattable]] annotated {
+    };
 
     CHECK(std::formattable<annotated, char>);
     CHECK_FALSE(std::formattable<unannotated, char>);
     CHECK_FALSE(std::formattable<unscoped, char>);
 }
 
-TEST_CASE("formatter parses valid specifications",
-          "[unit][enum_formatting][formatter][parse]")
+TEST_CASE("formatter parses valid specifications", "[unit][enum_formatting][formatter][parse]")
 {
-    enum class [[=formattable]] byte : std::uint8_t {};
+    enum class[[= formattable]] byte : std::uint8_t {
+    };
 
     std::formatter<byte> formatter;
 
@@ -63,48 +66,57 @@ TEST_CASE("formatter parses valid specifications",
     }
 }
 
-TEST_CASE("formatter rejects invalid representation combinations",
-          "[unit][enum_formatting][formatter][parse]")
+TEST_CASE("formatter rejects invalid representation combinations", "[unit][enum_formatting][formatter][parse]")
 {
-    enum class [[=formattable]] byte {};
+    enum class[[= formattable]] byte {
+    };
 
     std::formatter<byte> formatter;
 
-    CHECK_THROWS_AS(std::invoke([&]{
-        auto ctx = std::format_parse_context{"x:>10"};
-        formatter.parse(ctx); }),
+    CHECK_THROWS_AS(
+        std::invoke([&] {
+            auto ctx = std::format_parse_context{"x:>10"};
+            formatter.parse(ctx);
+        }),
         std::format_error
     );
 
-    CHECK_THROWS_AS(std::invoke([&]{
-        auto ctx = std::format_parse_context{"sx:>10"};
-        formatter.parse(ctx); }),
+    CHECK_THROWS_AS(
+        std::invoke([&] {
+            auto ctx = std::format_parse_context{"sx:>10"};
+            formatter.parse(ctx);
+        }),
         std::format_error
     );
 
-    CHECK_THROWS_AS(std::invoke([&]{
-        auto ctx = std::format_parse_context{"ix:#04x"};
-        formatter.parse(ctx); }),
+    CHECK_THROWS_AS(
+        std::invoke([&] {
+            auto ctx = std::format_parse_context{"ix:#04x"};
+            formatter.parse(ctx);
+        }),
         std::format_error
     );
 
-    CHECK_THROWS_AS(std::invoke([&]{
-        auto ctx = std::format_parse_context{"tq"};
-        formatter.parse(ctx); }),
+    CHECK_THROWS_AS(
+        std::invoke([&] {
+            auto ctx = std::format_parse_context{"tq"};
+            formatter.parse(ctx);
+        }),
         std::format_error
     );
 
-    CHECK_THROWS_AS(std::invoke([&]{
-        auto ctx = std::format_parse_context{"tu"};
-        formatter.parse(ctx); }),
+    CHECK_THROWS_AS(
+        std::invoke([&] {
+            auto ctx = std::format_parse_context{"tu"};
+            formatter.parse(ctx);
+        }),
         std::format_error
     );
 }
 
-TEST_CASE("std::format formats annotated scoped enumerations",
-          "[integration][enum_formatting][std::formatter]")
+TEST_CASE("std::format formats annotated scoped enumerations", "[integration][enum_formatting][std::formatter]")
 {
-    enum class [[=formattable]] arbitrary_color : std::uint8_t {
+    enum class[[= formattable]] arbitrary_color : std::uint8_t {
         red   = 42,
         green = 128,
         blue  = 255,
@@ -148,10 +160,12 @@ TEST_CASE("std::format formats annotated scoped enumerations",
     }
 }
 
-TEST_CASE("std::formatter forwards representation-specific format specifications",
-          "[integration][enum_formatting][std::formatter]")
+TEST_CASE(
+    "std::formatter forwards representation-specific format specifications",
+    "[integration][enum_formatting][std::formatter]"
+)
 {
-    enum class [[=formattable]] test_enumeration : std::uint8_t {
+    enum class[[= formattable]] test_enumeration : std::uint8_t {
         enumerator = 42,
     };
 
@@ -163,8 +177,14 @@ TEST_CASE("std::formatter forwards representation-specific format specifications
 
     SECTION("integer representation")
     {
-        CHECK(std::format("{:i:04}", test_enumeration::enumerator) == std::format("{:04}", std::to_underlying(test_enumeration::enumerator)));
-        CHECK(std::format("{:i:#04x}", test_enumeration::enumerator) == std::format("{:#04x}", std::to_underlying(test_enumeration::enumerator)));
+        CHECK(
+            std::format("{:i:04}", test_enumeration::enumerator)
+            == std::format("{:04}", std::to_underlying(test_enumeration::enumerator))
+        );
+        CHECK(
+            std::format("{:i:#04x}", test_enumeration::enumerator)
+            == std::format("{:#04x}", std::to_underlying(test_enumeration::enumerator))
+        );
     }
 
     SECTION("type representation")
@@ -173,10 +193,9 @@ TEST_CASE("std::formatter forwards representation-specific format specifications
     }
 }
 
-TEST_CASE("std::formatter uses annotation-provided default specifications",
-          "[integration][enum_formatting][std::formatter]")
+TEST_CASE("std::formatter uses annotation-provided default specifications", "[integration][enum_formatting][std::formatter]")
 {
-    enum class [[=formattable_with_default("i:#04X")]] test_enumeration : std::uint8_t {
+    enum class[[= formattable_with_default("i:#04X")]] test_enumeration : std::uint8_t {
         test = 7,
     };
 
@@ -189,21 +208,22 @@ TEST_CASE("std::formatter uses annotation-provided default specifications",
     SECTION("explicit specification overrides annotation default")
     {
         CHECK(std::format("{:s}", test_enumeration::test) == std::format("{}", "test"));
-        CHECK(std::format("{:i:04}", test_enumeration::test) == std::format("{:04}", std::to_underlying(test_enumeration::test)));
+        CHECK(
+            std::format("{:i:04}", test_enumeration::test) == std::format("{:04}", std::to_underlying(test_enumeration::test))
+        );
     }
 }
 
-TEST_CASE("std::formatter uses canonical enumerator names",
-          "[integration][enum_formatting][std::formatter]")
+TEST_CASE("std::formatter uses canonical enumerator names", "[integration][enum_formatting][std::formatter]")
 {
-    enum class [[=formattable]] color : std::uint32_t {
+    enum class[[= formattable]] color : std::uint32_t {
         red                  = 0xFF0000,
         green                = 0x00FF00,
         blue                 = 0x0000FF,
-        gules [[=canonical]] = 0xFF0000,
+        gules[[= canonical]] = 0xFF0000,
         vert                 = 0x00FF00,
-        azure [[=canonical]] = 0x0000FF,
-        azul  [[=canonical]] = 0x0000FF,
+        azure[[= canonical]] = 0x0000FF,
+        azul[[= canonical]]  = 0x0000FF,
     };
 
     SECTION("canonical names are preferred")

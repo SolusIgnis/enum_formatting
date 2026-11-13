@@ -6,27 +6,29 @@
 #define BEMAN_ENUM_FORMATTING_FORMAT_HPP
 
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
-#include "annotations.hpp"
-#include "detail_unexported/concepts.hpp"
-#include "detail_unexported/to_string.hpp"
+    #include "annotations.hpp"
+    #include "detail_unexported/concepts.hpp"
+    #include "detail_unexported/to_string.hpp"
 
-#include <meta>
-#include <string_view>
-#include <utility>
+    #include <meta>
+    #include <string_view>
+    #include <utility>
 
-#include <format>
+    #include <format>
 #endif
 
 template<::beman::enum_formatting::unexported::scoped_enum E, typename CharT>
     requires ::beman::enum_formatting::unexported::annotated_with<E, ::beman::enum_formatting::formattable_with_default>
-struct std::formatter<E, CharT>
-    : private std::formatter<std::basic_string_view<CharT>, CharT>
-    , private std::formatter<std::underlying_type_t<E>, CharT> {
+struct std::formatter<E, CharT> : private std::formatter<std::basic_string_view<CharT>, CharT>,
+                                  private std::formatter<std::underlying_type_t<E>, CharT> {
 private:
-    static_assert(std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).size() == 1, "Only one 'formattable' or 'formattable_with_default' annotation can be on a single type.");
+    static_assert(
+        std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).size() == 1,
+        "Only one 'formattable' or 'formattable_with_default' annotation can be on a single type."
+    );
 
     static constexpr char format_terminator = '}';
-    static constexpr char format_delimiter = ':';
+    static constexpr char format_delimiter  = ':';
 
     enum class representation : std::uint8_t {
         string,
@@ -51,7 +53,11 @@ public:
         }
 
         if (specifiers.empty() || specifiers.starts_with(format_terminator)) {
-            constexpr auto default_specifiers = std::string_view{std::meta::extract<::beman::enum_formatting::formattable_with_default>(std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front())};
+            constexpr auto default_specifiers = std::string_view{
+                std::meta::extract<::beman::enum_formatting::formattable_with_default>(
+                    std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
+                )
+            };
 
             if (default_specifiers.empty() || default_specifiers.starts_with(format_terminator)) {
                 return ctx.begin();
@@ -75,7 +81,9 @@ public:
                 }
             } else {
                 if (specifiers.contains(format_delimiter)) {
-                    throw std::format_error("Invalid representation selector: expected 's' for enumerator name string, 'i' for underlying integral type, or 't' for enumeration type name.");
+                    throw std::format_error(
+                        "Invalid representation selector: expected 's' for enumerator name string, 'i' for underlying integral type, or 't' for enumeration type name."
+                    );
                 }
             }
         }
@@ -101,16 +109,19 @@ public:
         }
     }
 
-    constexpr auto format(E value, auto& ctx) const {
+    constexpr auto format(E value, auto& ctx) const
+    {
         if (representation_ == representation::string) {
-            bool qualified_name = (qualified_ == qualification::qualified);       //Only qualify the name when explicitly requested.
+            bool qualified_name = (qualified_ == qualification::qualified); //Only qualify the name when explicitly requested.
             bool qualified_fallback = (qualified_ != qualification::unqualified); //Qualify the fallback by default.
 
-            return std::formatter<std::basic_string_view<CharT>, CharT>::format(::beman::enum_formatting::unexported::to_string(value, qualified_name, qualified_fallback), ctx);
+            return std::formatter<std::basic_string_view<CharT>, CharT>::format(
+                ::beman::enum_formatting::unexported::to_string(value, qualified_name, qualified_fallback), ctx
+            );
         } else if (representation_ == representation::integer) {
             if (qualified_ == qualification::qualified) {
                 auto out = ctx.out();
-                out = std::format_to(out, "{}::", std::meta::identifier_of(^^E));
+                out      = std::format_to(out, "{}::", std::meta::identifier_of(^^E));
                 ctx.advance_to(out);
             }
 

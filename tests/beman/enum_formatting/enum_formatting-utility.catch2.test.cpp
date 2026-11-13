@@ -7,14 +7,16 @@
 import std;
 import beman.enum_formatting;
 #else
-#include <beman/enum_formatting/utility.hpp>
+    #include <beman/enum_formatting/utility.hpp>
 
-#include <cstdint>
-#include <meta>
+    #include <cstdint>
+    #include <meta>
 #endif
 
-TEST_CASE("is_enumerated_value validates if a value corresponds to a named enumerator",
-          "[unit][enum_formatting][is_enumerated_value]")
+TEST_CASE(
+    "is_enumerated_value validates if a value corresponds to a named enumerator",
+    "[unit][enum_formatting][is_enumerated_value]"
+)
 {
     using beman::enum_formatting::is_enumerated_value;
 

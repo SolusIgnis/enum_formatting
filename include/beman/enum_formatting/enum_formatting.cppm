@@ -8,11 +8,11 @@ import std;
 #pragma clang diagnostic ignored "-Winclude-angled-in-module-purview"
 
 //NOTE: These includes are in dependency order.
-//      They cannot safely include their own dependencies
-//      while building the module because doing so would
-//      export the dependency header transitively. Thus,
-//      they include dependencies only when we have not
-//      defined BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT.
+// They cannot safely include their own dependencies
+// while building the module because doing so would
+// export the dependency header transitively. Thus,
+// they include dependencies only when we have not
+// defined BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT.
 
 export {
 #include <beman/enum_formatting/utility.hpp>

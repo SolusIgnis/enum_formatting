@@ -7,17 +7,16 @@
 import std;
 import beman.enum_formatting;
 #else
-#include <beman/enum_formatting/annotations.hpp>
+    #include <beman/enum_formatting/annotations.hpp>
 
-#include <cstdint>
-#include <concepts>
-#include <meta>
-#include <string_view>
-#include <type_traits>
+    #include <cstdint>
+    #include <concepts>
+    #include <meta>
+    #include <string_view>
+    #include <type_traits>
 #endif
 
-TEST_CASE("formattable_with_default construction",
-          "[unit][enum_formatting][annotations][formattable_with_default]")
+TEST_CASE("formattable_with_default construction", "[unit][enum_formatting][annotations][formattable_with_default]")
 {
     using beman::enum_formatting::formattable_with_default;
 
@@ -26,7 +25,12 @@ TEST_CASE("formattable_with_default construction",
         CHECK(std::constructible_from<formattable_with_default, decltype("")>);
         CHECK(std::constructible_from<formattable_with_default, decltype("s:>20.40")>);
         CHECK(std::constructible_from<formattable_with_default, decltype("i:08b")>);
-        CHECK(std::constructible_from<formattable_with_default, decltype("The quick brown fox jumps over the lazy dog. ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789")>);
+        CHECK(
+            std::constructible_from<
+                formattable_with_default,
+                decltype("The quick brown fox jumps over the lazy dog. ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789")
+            >
+        );
         CHECK_FALSE(std::constructible_from<formattable_with_default, const char*>);
         CHECK_FALSE(std::constructible_from<formattable_with_default, char*>);
     }
@@ -54,15 +58,19 @@ TEST_CASE("formattable_with_default construction",
 
     SECTION("construction with an implausibly long string")
     {
-        constexpr char expected[] = "The quick brown fox jumps over the lazy dog. ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789";
+        constexpr char expected[] =
+            "The quick brown fox jumps over the lazy dog. ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789";
         constexpr formattable_with_default annotation{expected};
 
         CHECK(std::string_view{annotation.please_use_other_door} == std::string_view{expected});
     }
 }
 
-TEST_CASE("formattable_with_default std::string_view implicit conversion yields format specification",
-          "[unit][enum_formatting][annotations][formattable_with_default]") {
+TEST_CASE(
+    "formattable_with_default std::string_view implicit conversion yields format specification",
+    "[unit][enum_formatting][annotations][formattable_with_default]"
+)
+{
     using beman::enum_formatting::formattable_with_default;
 
     constexpr char expected[] = "#010b";
@@ -73,8 +81,11 @@ TEST_CASE("formattable_with_default std::string_view implicit conversion yields 
     CHECK(specification == std::string_view{expected});
 }
 
-TEST_CASE("formattable_with_default format specification has static storage duration",
-          "[unit][enum_formatting][annotations][formattable_with_default]") {
+TEST_CASE(
+    "formattable_with_default format specification has static storage duration",
+    "[unit][enum_formatting][annotations][formattable_with_default]"
+)
+{
     using beman::enum_formatting::formattable_with_default;
 
     auto make_format_specification = [] consteval {
@@ -82,24 +93,28 @@ TEST_CASE("formattable_with_default format specification has static storage dura
         return formattable_with_default{specification_array};
     };
     constexpr std::string_view specification = make_format_specification();
-    STATIC_CHECK(specification == "#010b"); //STATIC_CHECK employs constant evaluation to fail the check if this access is Undefined Behavior.
+    STATIC_CHECK(
+        specification == "#010b"
+    ); //STATIC_CHECK employs constant evaluation to fail the check if this access is Undefined Behavior.
     CHECK(specification == "#010b");
 }
 
-TEST_CASE("formattable annotation object is formattable_with_default(\"\")",
-          "[unit][enum_formatting][annotations][formattable]") {
+TEST_CASE(
+    "formattable annotation object is formattable_with_default(\"\")",
+    "[unit][enum_formatting][annotations][formattable]"
+)
+{
     using beman::enum_formatting::formattable_with_default;
     using beman::enum_formatting::formattable;
 
-    CHECK(std::same_as<
-        std::remove_cv_t<decltype(formattable)>,
-        formattable_with_default
-    >);
+    CHECK(std::same_as<std::remove_cv_t<decltype(formattable)>, formattable_with_default>);
     CHECK(std::string_view{formattable}.empty());
 }
 
-TEST_CASE("formattable_with_default compares equality by format specification equivalence",
-          "[unit][enum_formatting][annotations][formattable_with_default][formattable]")
+TEST_CASE(
+    "formattable_with_default compares equality by format specification equivalence",
+    "[unit][enum_formatting][annotations][formattable_with_default][formattable]"
+)
 {
     using beman::enum_formatting::formattable_with_default;
     using beman::enum_formatting::formattable;
@@ -135,20 +150,25 @@ TEST_CASE("formattable_with_default compares equality by format specification eq
     }
 }
 
-TEST_CASE("formattable_with_default and formattable interoperate with [[=...]] annotations and static reflection",
-          "[integration][enum_formatting][annotations][formattable_with_default][formattable]")
+TEST_CASE(
+    "formattable_with_default and formattable interoperate with [[=...]] annotations and static reflection",
+    "[integration][enum_formatting][annotations][formattable_with_default][formattable]"
+)
 {
     using beman::enum_formatting::formattable_with_default;
     using beman::enum_formatting::formattable;
 
-    enum class [[=formattable]] monochrome_color : std::uint8_t {
+    enum class[[= formattable]] monochrome_color : std::uint8_t {
         black,
         white,
     };
-    enum class [[=formattable_with_default("i:#04X")]] q_word : std::uint64_t {};
+    enum class[[= formattable_with_default("i:#04X")]] q_word : std::uint64_t {
+    };
 
     auto get_formattable_annotation = [](std::meta::info reflection) consteval {
-        return std::meta::extract<formattable_with_default>(std::meta::annotations_of_with_type(reflection, ^^::beman::enum_formatting::formattable_with_default).front());
+        return std::meta::extract<formattable_with_default>(
+            std::meta::annotations_of_with_type(reflection, ^^::beman::enum_formatting::formattable_with_default).front()
+        );
     };
 
     SECTION("formattable annotation is extractable")
@@ -170,20 +190,24 @@ TEST_CASE("formattable_with_default and formattable interoperate with [[=...]] a
     }
 }
 
-TEST_CASE("canonical annotation object interoperates with [[=...]] annotations and static reflection",
-          "[integration][enum_formatting][annotations][canonical]")
+TEST_CASE(
+    "canonical annotation object interoperates with [[=...]] annotations and static reflection",
+    "[integration][enum_formatting][annotations][canonical]"
+)
 {
     using beman::enum_formatting::formattable;
     using beman::enum_formatting::canonical;
 
-    enum class [[=formattable]] color : std::uint32_t {
+    enum class[[= formattable]] color : std::uint32_t {
         red                  = 0xFF0000,
-        gules [[=canonical]] = 0xFF0000,
+        gules[[= canonical]] = 0xFF0000,
         green                = 0x00FF00,
-        vert  [[=canonical]] = 0x00FF00,
+        vert[[= canonical]]  = 0x00FF00,
         blue                 = 0x0000FF,
-        azure [[=canonical]] = 0x0000FF,
+        azure[[= canonical]] = 0x0000FF,
     };
     STATIC_CHECK(std::meta::annotations_of_with_type(^^color::red, ^^::beman::enum_formatting::canonical_annotation).empty());
-    STATIC_CHECK(std::meta::annotations_of_with_type(^^color::gules, ^^::beman::enum_formatting::canonical_annotation).size() == 1);
+    STATIC_CHECK(
+        std::meta::annotations_of_with_type(^^color::gules, ^^::beman::enum_formatting::canonical_annotation).size() == 1
+    );
 }

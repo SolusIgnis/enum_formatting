@@ -4,7 +4,7 @@
 #define BEMAN_ENUM_FORMATTING_UNEXPORTED_CONCEPTS_HPP
 
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
-#include <meta>
+    #include <meta>
 #endif
 
 namespace beman::enum_formatting::unexported {
@@ -13,7 +13,7 @@ namespace beman::enum_formatting::unexported {
 
     template<typename T>
     concept enumerable_scoped_enum = scoped_enum<T> && std::meta::is_enumerable_type(^^T);
-    
+
     template<typename T, typename Annotation>
     concept annotated_with = (!std::meta::annotations_of_with_type(^^T, ^^Annotation).empty());
 } // namespace beman::enum_formatting::unexported

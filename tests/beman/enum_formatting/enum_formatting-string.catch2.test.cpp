@@ -7,30 +7,29 @@
 import std;
 import beman.enum_formatting;
 #else
-#include <beman/enum_formatting/string.hpp>
+    #include <beman/enum_formatting/string.hpp>
 
-#include <cstdint>
-#include <meta>
-#include <string>
+    #include <cstdint>
+    #include <meta>
+    #include <string>
 #endif
 
 template<typename T>
-concept has_to_string = requires(T value) {
-    beman::enum_formatting::to_string(value);
-};
+concept has_to_string = requires(T value) { beman::enum_formatting::to_string(value); };
 
-TEST_CASE("to_string is only available for scoped enumerations",
-          "[unit][enum_formatting][to_string]")
+TEST_CASE("to_string is only available for scoped enumerations", "[unit][enum_formatting][to_string]")
 {
-    enum class scoped_enumeration {};
-    enum unscoped_enumeration {};
+    enum class scoped_enumeration {
+    };
+
+    enum unscoped_enumeration {
+    };
 
     CHECK(has_to_string<scoped_enumeration>);
     CHECK_FALSE(has_to_string<unscoped_enumeration>);
 }
 
-TEST_CASE("to_string returns the name of a named enumerator",
-          "[unit][enum_formatting][to_string]")
+TEST_CASE("to_string returns the name of a named enumerator", "[unit][enum_formatting][to_string]")
 {
     using beman::enum_formatting::to_string;
 
@@ -49,21 +48,19 @@ TEST_CASE("to_string returns the name of a named enumerator",
     CHECK(to_string(color::blue) == "blue");
 }
 
-TEST_CASE("to_string enumerator name selection",
-          "[unit][enum_formatting][to_string]")
+TEST_CASE("to_string enumerator name selection", "[unit][enum_formatting][to_string]")
 {
     using beman::enum_formatting::canonical;
     using beman::enum_formatting::to_string;
 
-    enum class color : std::uint32_t
-    {
+    enum class color : std::uint32_t {
         red                  = 0xFF0000,
         green                = 0x00FF00,
         blue                 = 0x0000FF,
-        gules [[=canonical]] = 0xFF0000,
+        gules[[= canonical]] = 0xFF0000,
         vert                 = 0x00FF00,
-        azure [[=canonical]] = 0x0000FF,
-        azul  [[=canonical]] = 0x0000FF,
+        azure[[= canonical]] = 0x0000FF,
+        azul[[= canonical]]  = 0x0000FF,
     };
 
     SECTION("to_string selects the first canonical enumerator alias when designated")
@@ -84,8 +81,10 @@ TEST_CASE("to_string enumerator name selection",
     }
 }
 
-TEST_CASE("to_string falls back to integers qualified with the enumeration name for unenumerated values",
-          "[unit][enum_formatting][to_string]")
+TEST_CASE(
+    "to_string falls back to integers qualified with the enumeration name for unenumerated values",
+    "[unit][enum_formatting][to_string]"
+)
 {
     using beman::enum_formatting::to_string;
 
@@ -101,16 +100,16 @@ TEST_CASE("to_string falls back to integers qualified with the enumeration name 
     auto my_orange = static_cast<rgb_color>(16753920); //0xFFA500
     auto my_black  = static_cast<rgb_color>(16777215); //0xFFFFFF
 
-    CHECK(to_string(my_red)    == "red");
-    CHECK(to_string(my_white)  == "rgb_color::0");
-    CHECK(to_string(my_blue)   == "blue");
+    CHECK(to_string(my_red) == "red");
+    CHECK(to_string(my_white) == "rgb_color::0");
+    CHECK(to_string(my_blue) == "blue");
     CHECK(to_string(my_orange) == "rgb_color::16753920");
-    CHECK(to_string(my_black)  == "rgb_color::16777215");
+    CHECK(to_string(my_black) == "rgb_color::16777215");
 
     enum class direction : std::int8_t {
         left    = -1,
-        forward =  0,
-        right   =  1,
+        forward = 0,
+        right   = 1,
     };
 
     CHECK(to_string(static_cast<direction>(-42)) == "direction::-42");

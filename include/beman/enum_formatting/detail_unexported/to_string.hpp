@@ -4,13 +4,13 @@
 #define BEMAN_ENUM_FORMATTING_UNEXPORTED_TO_STRING_HPP
 
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
-#include "concepts.hpp"
-#include "../annotations.hpp"
+    #include "concepts.hpp"
+    #include "../annotations.hpp"
 
-#include <algorithm>
-#include <meta>
-#include <string>
-#include <utility>
+    #include <algorithm>
+    #include <meta>
+    #include <string>
+    #include <utility>
 #endif
 
 namespace beman::enum_formatting::unexported {
@@ -33,9 +33,15 @@ namespace beman::enum_formatting::unexported {
     }
 
     template<enumerable_scoped_enum E>
-    constexpr std::string to_string(E value, [[maybe_unused]] bool use_qualified_name = false, bool use_qualified_fallback = true, bool use_empty_fallback = false)
+    constexpr std::string to_string(
+        E value,
+        [[maybe_unused]] bool use_qualified_name = false,
+        bool use_qualified_fallback              = true,
+        bool use_empty_fallback                  = false
+    )
     {
-        template for (constexpr auto enumerator : std::define_static_array(enumerators_of_by_tier(^^E))) {
+        template for (constexpr auto enumerator : std::define_static_array(enumerators_of_by_tier(^^E)))
+        {
             if (value == [:enumerator:]) {
                 if (use_qualified_name) {
                     return std::string{} + std::meta::identifier_of(^^E) + "::" + std::meta::identifier_of(enumerator);

@@ -4,10 +4,10 @@
 #define BEMAN_ENUM_FORMATTING_STRING_HPP
 
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
-#include "detail_unexported/concepts.hpp"
-#include "detail_unexported/to_string.hpp"
+    #include "detail_unexported/concepts.hpp"
+    #include "detail_unexported/to_string.hpp"
 
-#include <string>
+    #include <string>
 #endif
 
 namespace beman::enum_formatting {
