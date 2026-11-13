@@ -104,7 +104,7 @@ BreakBeforeCloseBracketSwitch:     true
 AllowShortCaseLabelsOnASingleLine:          false
 AllowShortBlocksOnASingleLine:              Empty
 AllowShortCompoundRequirementOnASingleLine: true
-AllowShortEnumsOnASingleLine:               false
+AllowShortEnumsOnASingleLine:               true
 AllowShortFunctionsOnASingleLine:           Inline
 AllowShortIfStatementsOnASingleLine:        Never
 AllowShortLambdasOnASingleLine:             All
@@ -281,18 +281,3 @@ NumericLiteralCase:
   HexDigit:       Upper
   Prefix:         Lower
   Suffix:         Upper
-
----
-# -------------------------------------------------------------------
-# ClangFormatVersion: 24
-#
-# Since clang-format isn't multi-version capable, the following
-# configuration options need to be uncommented and integrated into
-# the initial part of the document once clang-format version 24 is
-# readily available.
-# -------------------------------------------------------------------
-
-# -------------------------------------------------------------------
-# Spacing
-# -------------------------------------------------------------------
-#SpacesInBlockComments: Leave
