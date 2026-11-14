@@ -68,9 +68,9 @@ private:
 public:
     constexpr auto parse(auto& ctx) -> decltype(ctx.begin())
     {
-        using ::beman::enum_formatting::unexported::format_specification;
+        using format_specification = ::beman::enum_formatting::unexported::format_specification<CharT>;
 
-        const auto specification = format_specification<CharT>{
+        const auto specification = format_specification{
             std::basic_string_view<CharT>{ctx.begin(), ctx.end()}
         };
 
