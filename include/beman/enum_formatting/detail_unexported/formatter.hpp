@@ -64,9 +64,9 @@ namespace beman::enum_formatting::unexported {
 
         std::basic_string_view<CharT> specifiers_;
 
-        parser_state state_{parser_state::initialized};
-        representation representation_{representation::unspecified};
-        qualificationauto qualification_{qualification::unspecified};
+        parser_state state_            = parser_state::initialized;
+        representation representation_ = representation::unspecified;
+        qualification qualification_   = qualification::unspecified;
 
     public:
         constexpr explicit format_specification(std::basic_string_view<CharT> specifiers) : specifiers_{specifiers}
