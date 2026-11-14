@@ -14,27 +14,6 @@
 #endif
 
 namespace beman::enum_formatting::unexported {
-    class enum_formatter_base {
-    protected:
-        enum class specifier_consumption_t : std::uint8_t {
-            retain,
-            consume,
-        };
-
-        enum class parser_state : std::uint8_t {
-            initialized,
-            leading_delimiter,
-            valid_representation,
-            invalid_representation,
-            valid_qualification,
-            invalid_qualification,
-            unexpected_specifier,
-            ready_to_forward,
-            empty,
-            done,
-        } state_ = parser_state::initialized;
-    };
-
     template<typename CharT>
     class format_specification {
     private:
