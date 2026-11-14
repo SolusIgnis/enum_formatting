@@ -16,17 +16,17 @@ namespace beman::enum_formatting::unexported {
         };
 
         enum class parser_state : std::uint8_t {
-            init,
-            init_delimiter,
-            has_representation,
+            initialized,
+            leading_delimiter,
+            valid_representation,
             invalid_representation,
-            has_qualification,
+            valid_qualification,
             invalid_qualification,
-            extra_specifiers,
-            has_delimiter,
+            unexpected_specifier,
+            ready_to_forward,
             empty,
             done,
-        } state_ = parser_state::init;
+        } state_ = parser_state::initialized;
     };
 } // namespace beman::enum_formatting::unexported
 

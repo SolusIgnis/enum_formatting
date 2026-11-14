@@ -85,7 +85,7 @@ public:
             if (default_specifiers.empty() || default_specifiers.starts_with(format_terminator)) {
                 return ctx.begin();
             }
-            state_                = parser_state::init;
+            state_                = parser_state::initialized;
             auto default_spec_ctx = std::basic_format_parse_context{default_specifiers};
             (void)parse(default_spec_ctx);
             return ctx.begin();
@@ -136,17 +136,18 @@ private:
 
         using enum parser_state;
         using enum specifier_consumption_t;
+
         switch (state_) {
             case invalid_qualification:
                 [[fallthrough]];
-            case extra_specifiers:
+            case unexpected_specifier:
                 [[fallthrough]];
             case empty:
                 [[fallthrough]];
             case done:
                 return retain;
-            case has_delimiter:
-                return (old_state == invalid_representation || old_state == init_delimiter) ? retain : consume;
+            case ready_to_forward:
+                return (old_state == invalid_representation || old_state == leading_delimiter) ? retain : consume;
             default:
                 return consume;
         }
@@ -156,22 +157,22 @@ private:
     {
         using enum parser_state;
         switch (state_) {
-            case init:
-                return handle_state_init(specifiers);
-            case init_delimiter:
-                return handle_state_init_delimiter(specifiers);
-            case has_representation:
-                return handle_state_has_representation(specifiers);
+            case initialized:
+                return handle_state_initialized(specifiers);
+            case leading_delimiter:
+                return handle_state_leading_delimiter(specifiers);
+            case valid_representation:
+                return handle_state_valid_representation(specifiers);
             case invalid_representation:
                 return handle_state_invalid_representation(specifiers);
-            case has_qualification:
-                return handle_state_has_qualification(specifiers);
+            case valid_qualification:
+                return handle_state_valid_qualification(specifiers);
             case invalid_qualification:
                 return handle_state_invalid_qualification(specifiers);
-            case extra_specifiers:
-                return handle_state_extra_specifiers(specifiers);
-            case has_delimiter:
-                return handle_state_has_delimiter(specifiers);
+            case unexpected_specifier:
+                return handle_state_unexpected_specifier(specifiers);
+            case ready_to_forward:
+                return handle_state_ready_to_forward(specifiers);
             case empty:
                 return handle_state_empty(specifiers);
             default:
@@ -179,49 +180,49 @@ private:
         }
     }
 
-    constexpr parser_state handle_state_init(auto specifiers)
+    constexpr parser_state handle_state_initialized(auto specifiers)
     {
         if (specifiers.starts_with(format_terminator)) {
             return parser_state::empty;
         } else if (specifiers.starts_with(format_delimiter)) {
-            return parser_state::init_delimiter;
+            return parser_state::leading_delimiter;
         } else if (process_representation_specifier(specifiers)) {
-            return parser_state::has_representation;
+            return parser_state::valid_representation;
         } else {
             return parser_state::invalid_representation;
         }
     }
 
-    constexpr parser_state handle_state_init_delimiter(auto specifiers)
+    constexpr parser_state handle_state_leading_delimiter(auto specifiers)
     {
         if (specifiers.starts_with(format_terminator)) {
             return parser_state::empty;
         } else {
-            return parser_state::has_delimiter;
+            return parser_state::ready_to_forward;
         }
     }
 
-    constexpr parser_state handle_state_has_representation(auto specifiers)
+    constexpr parser_state handle_state_valid_representation(auto specifiers)
     {
         if (specifiers.starts_with(format_terminator)) {
             return parser_state::done;
         } else if (specifiers.starts_with(format_delimiter)) {
-            return parser_state::has_delimiter;
+            return parser_state::ready_to_forward;
         } else if (process_qualification_specifier(specifiers)) {
-            return parser_state::has_qualification;
+            return parser_state::valid_qualification;
         } else {
             return parser_state::invalid_qualification;
         }
     }
 
-    constexpr parser_state handle_state_has_qualification(auto specifiers)
+    constexpr parser_state handle_state_valid_qualification(auto specifiers)
     {
         if (specifiers.starts_with(format_terminator)) {
             return parser_state::done;
         } else if (specifiers.starts_with(format_delimiter)) {
-            return parser_state::has_delimiter;
+            return parser_state::ready_to_forward;
         } else {
-            return parser_state::extra_specifiers;
+            return parser_state::unexpected_specifier;
         }
     }
 
@@ -232,7 +233,7 @@ private:
                 "Invalid representation specifier: expected 's' for enumerator name string, 'i' for underlying integral type, or 't' for enumeration type name."
             );
         } else {
-            return parser_state::has_delimiter;
+            return parser_state::ready_to_forward;
         }
     }
 
@@ -241,12 +242,12 @@ private:
         throw std::format_error("Invalid qualification specifier: expected 'q' for qualified or 'u' for unqualified.");
     }
 
-    constexpr parser_state handle_state_extra_specifiers(auto specifiers)
+    constexpr parser_state handle_state_unexpected_specifier(auto specifiers)
     {
         throw std::format_error("Expected ':' delimiter or closing '}' after qualification specifier ('q' or 'u').");
     }
 
-    constexpr parser_state handle_state_has_delimiter(auto specifiers) { return parser_state::done; }
+    constexpr parser_state handle_state_ready_to_forward(auto specifiers) { return parser_state::done; }
 
     constexpr parser_state handle_state_empty(auto specifiers) { return parser_state::done; }
 
