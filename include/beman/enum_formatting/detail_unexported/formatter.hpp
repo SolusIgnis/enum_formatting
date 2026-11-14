@@ -34,7 +34,7 @@ namespace beman::enum_formatting::unexported {
             done,
         };
     };
-    
+
     template<typename CharT>
     class format_specification : private format_specification_base {
     public:
