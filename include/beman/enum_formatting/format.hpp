@@ -21,7 +21,7 @@
 #endif
 
 template<::beman::enum_formatting::unexported::scoped_enum E, typename CharT>
-    requires ::beman::enum_formatting::unexported::annotated_with<E, enum_formatting::formattable_with_default>
+    requires ::beman::enum_formatting::unexported::annotated_with<E, ::beman::enum_formatting::formattable_with_default>
 struct std::formatter<E, CharT> : private ::beman::enum_formatting::unexported::enum_formatter_base,
                                   private std::formatter<std::basic_string_view<CharT>, CharT>,
                                   private std::formatter<std::underlying_type_t<E>, CharT> {
@@ -83,9 +83,8 @@ public:
         ctx.advance_to(specifiers.begin());
 
         if (state_ == parser_state::empty) {
-            using ::beman::enum_formatting::formattable_with_default;
-            auto default_specifiers = std::basic_string_view{std::meta::extract<formattable_with_default>(
-                std::meta::annotations_of_with_type(^^E, ^^formattable_with_default).front()
+            auto default_specifiers = std::basic_string_view{std::meta::extract<::beman::enum_formatting::formattable_with_default>(
+                std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
             )};
             if (default_specifiers.empty() || default_specifiers.starts_with(format_terminator)) {
                 return ctx.begin();
@@ -118,7 +117,7 @@ public:
             bool qualified_fallback = qualification_ != qualification::unqualified; //Qualify the fallback by default.
 
             return std::formatter<std::basic_string_view<CharT>, CharT>::format(
-                enum_formatting::unexported::to_string(value, qualified_name, qualified_fallback), ctx
+                ::beman::enum_formatting::unexported::to_string(value, qualified_name, qualified_fallback), ctx
             );
         } else if (representation_ == representation::integer) {
             if (qualification_ == qualification::qualified) {
