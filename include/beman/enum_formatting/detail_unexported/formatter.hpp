@@ -14,9 +14,8 @@
 #endif
 
 namespace beman::enum_formatting::unexported {
-    template<typename CharT>
-    class format_specification {
-    private:
+    class format_specification_base {
+    protected:
         enum class consumption_signal : std::uint8_t {
             retain,
             consume,
@@ -34,7 +33,10 @@ namespace beman::enum_formatting::unexported {
             empty,
             done,
         };
-
+    };
+    
+    template<typename CharT>
+    class format_specification : private format_specification_base {
     public:
         enum class representation : std::uint8_t {
             unspecified,
@@ -62,9 +64,9 @@ namespace beman::enum_formatting::unexported {
 
         std::basic_string_view<CharT> specifiers_;
 
-        auto state_          = parser_state::initialized;
-        auto representation_ = representation::unspecified;
-        auto qualification_  = qualification::unspecified;
+        parser_state state_{parser_state::initialized};
+        representation representation_{representation::unspecified};
+        qualificationauto qualification_{qualification::unspecified};
 
     public:
         constexpr explicit format_specification(std::basic_string_view<CharT> specifiers) : specifiers_{specifiers}
