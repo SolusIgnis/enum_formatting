@@ -215,9 +215,15 @@ namespace beman::enum_formatting::unexported {
             throw std::format_error("Expected ':' delimiter or closing '}' after qualification specifier ('q' or 'u').");
         }
 
-        constexpr parser_state handle_state_ready_to_forward([[maybe_unused]] std::basic_string_view<CharT> specifiers) { return parser_state::done; }
+        constexpr parser_state handle_state_ready_to_forward([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        {
+            return parser_state::done;
+        }
 
-        constexpr parser_state handle_state_empty([[maybe_unused]] std::basic_string_view<CharT> specifiers) { return parser_state::done; }
+        constexpr parser_state handle_state_empty([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        {
+            return parser_state::done;
+        }
 
         constexpr bool process_representation_specifier([[maybe_unused]] std::basic_string_view<CharT> specifiers)
         {
