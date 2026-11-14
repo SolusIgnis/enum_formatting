@@ -4,7 +4,7 @@
 #define BEMAN_ENUM_FORMATTING_UNEXPORTED_FORMATTER_HPP
 
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
-//No header dependencies, but structure retained for maintainability.
+#include <cstdint>
 #endif
 
 namespace beman::enum_formatting::unexported {
