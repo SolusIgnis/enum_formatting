@@ -67,12 +67,6 @@ public:
     constexpr auto parse(auto& ctx) -> decltype(ctx.begin())
     {
         auto specifiers = std::basic_string_view{ctx.begin(), ctx.end()};
-#ifdef NEED_PRE_TRIM
-        if (specifiers.starts_with(format_delimiter)) {
-            specifiers.remove_prefix(1);
-            ctx.advance_to(specifiers.begin());
-        }
-#endif
 
         while (!specifiers.empty() && state_ != parser_state::done && state_ != parser_state::empty) {
             if (transition_state(process_next_specifier(specifiers)) == specifier_consumption_t::consume) {
