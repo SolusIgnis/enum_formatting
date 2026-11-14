@@ -4,7 +4,7 @@
 #define BEMAN_ENUM_FORMATTING_UNEXPORTED_FORMATTER_HPP
 
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
-#include <cstdint>
+    #include <cstdint>
 #endif
 
 namespace beman::enum_formatting::unexported {
