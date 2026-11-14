@@ -22,14 +22,17 @@
 
 template<::beman::enum_formatting::unexported::scoped_enum E, typename CharT>
     requires ::beman::enum_formatting::unexported::annotated_with<E, enum_formatting::formattable_with_default>
-struct std::formatter<E, CharT>
-    : private ::beman::enum_formatting::unexported::enum_formatter_base
-    , private std::formatter<std::basic_string_view<CharT>, CharT>
-    , private std::formatter<std::underlying_type_t<E>, CharT> {
+struct std::formatter<E, CharT> : private ::beman::enum_formatting::unexported::enum_formatter_base,
+                                  private std::formatter<std::basic_string_view<CharT>, CharT>,
+                                  private std::formatter<std::underlying_type_t<E>, CharT> {
 private:
-    consteval {
+    consteval
+    {
         using namespace std::literals;
-        const auto annotation_count = [](std::meta::info enumeration) consteval { return std::meta::annotations_of_with_type(enumeration, ^^::beman::enum_formatting::formattable_with_default).size(); };
+        const auto annotation_count = [](std::meta::info enumeration) consteval {
+            return std::meta::annotations_of_with_type(enumeration, ^^::beman::enum_formatting::formattable_with_default)
+                .size();
+        };
 
         const auto count_to_string = [](auto count) consteval {
             std::array<char, std::numeric_limits<decltype(count)>::digits10 + 2> buffer{};
@@ -38,7 +41,11 @@ private:
             return std::string{buffer.data(), ptr};
         };
 
-        static_assert(annotation_count(^^E) == 1, "Only one 'formattable' or 'formattable_with_default' annotation may appertain to a single scoped enumeration type. '"s + std::meta::identifier_of(^^E) + "' has "sv + count_to_string(annotation_count(^^E)) + "."sv);
+        static_assert(
+            annotation_count(^^E) == 1,
+            "Only one 'formattable' or 'formattable_with_default' annotation may appertain to a single scoped enumeration type. '"s
+                + std::meta::identifier_of(^^E) + "' has "sv + count_to_string(annotation_count(^^E)) + "."sv
+        );
     }
 
     enum class representation : std::uint8_t {
@@ -53,7 +60,7 @@ private:
         unqualified,
     } qualification_ = qualification::use_default;
 
-    static constexpr CharT format_terminator ='}';
+    static constexpr CharT format_terminator = '}';
     static constexpr CharT format_delimiter  = ':';
 
 public:
@@ -77,11 +84,13 @@ public:
 
         if (state_ == parser_state::empty) {
             using ::beman::enum_formatting::formattable_with_default;
-            auto default_specifiers = std::basic_string_view{std::meta::extract<formattable_with_default>(std::meta::annotations_of_with_type(^^E, ^^formattable_with_default).front())};
+            auto default_specifiers = std::basic_string_view{std::meta::extract<formattable_with_default>(
+                std::meta::annotations_of_with_type(^^E, ^^formattable_with_default).front()
+            )};
             if (default_specifiers.empty() || default_specifiers.starts_with(format_terminator)) {
                 return ctx.begin();
             }
-            state_ = parser_state::init;
+            state_                = parser_state::init;
             auto default_spec_ctx = std::basic_format_parse_context{default_specifiers};
             (void)parse(default_spec_ctx);
             return ctx.begin();
@@ -102,16 +111,19 @@ public:
         }
     }
 
-    constexpr auto format(E value, auto& ctx) const {
+    constexpr auto format(E value, auto& ctx) const
+    {
         if (representation_ == representation::string) {
-            bool qualified_name = qualification_ == qualification::qualified;       //Only qualify the name when explicitly requested.
+            bool qualified_name = qualification_ == qualification::qualified; //Only qualify the name when explicitly requested.
             bool qualified_fallback = qualification_ != qualification::unqualified; //Qualify the fallback by default.
 
-            return std::formatter<std::basic_string_view<CharT>, CharT>::format(enum_formatting::unexported::to_string(value, qualified_name, qualified_fallback), ctx);
+            return std::formatter<std::basic_string_view<CharT>, CharT>::format(
+                enum_formatting::unexported::to_string(value, qualified_name, qualified_fallback), ctx
+            );
         } else if (representation_ == representation::integer) {
             if (qualification_ == qualification::qualified) {
                 auto out = ctx.out();
-                out = std::format_to(out, "{}::", std::meta::identifier_of(^^E));
+                out      = std::format_to(out, "{}::", std::meta::identifier_of(^^E));
                 ctx.advance_to(out);
             }
             return std::formatter<std::underlying_type_t<E>, CharT>::format(std::to_underlying(value), ctx);
@@ -123,38 +135,57 @@ public:
     }
 
 private:
-    constexpr specifier_consumption_t transition_state(parser_state next_state) {
+    constexpr specifier_consumption_t transition_state(parser_state next_state)
+    {
         const auto old_state = std::exchange(state_, next_state);
 
         using enum parser_state;
         using enum specifier_consumption_t;
-        switch(state_) {
-            case invalid_qualification:  [[fallthrough]];
-            case extra_specifiers:       [[fallthrough]];
-            case empty:                  [[fallthrough]];
-            case done:                   return retain;
-            case has_delimiter:          return (old_state == invalid_representation || old_state == init_delimiter)?retain:consume;
-            default:                     return consume;
+        switch (state_) {
+            case invalid_qualification:
+                [[fallthrough]];
+            case extra_specifiers:
+                [[fallthrough]];
+            case empty:
+                [[fallthrough]];
+            case done:
+                return retain;
+            case has_delimiter:
+                return (old_state == invalid_representation || old_state == init_delimiter) ? retain : consume;
+            default:
+                return consume;
         }
     }
 
-    constexpr parser_state process_next_specifier(auto specifiers) {
+    constexpr parser_state process_next_specifier(auto specifiers)
+    {
         using enum parser_state;
         switch (state_) {
-            case init:                   return handle_state_init(specifiers);
-            case init_delimiter:         return handle_state_init_delimiter(specifiers);
-            case has_representation:     return handle_state_has_representation(specifiers);
-            case invalid_representation: return handle_state_invalid_representation(specifiers);
-            case has_qualification:      return handle_state_has_qualification(specifiers);
-            case invalid_qualification:  return handle_state_invalid_qualification(specifiers);
-            case extra_specifiers:       return handle_state_extra_specifiers(specifiers);
-            case has_delimiter:          return handle_state_has_delimiter(specifiers);
-            case empty:                  return handle_state_empty(specifiers);
-            default:                     return done;
+            case init:
+                return handle_state_init(specifiers);
+            case init_delimiter:
+                return handle_state_init_delimiter(specifiers);
+            case has_representation:
+                return handle_state_has_representation(specifiers);
+            case invalid_representation:
+                return handle_state_invalid_representation(specifiers);
+            case has_qualification:
+                return handle_state_has_qualification(specifiers);
+            case invalid_qualification:
+                return handle_state_invalid_qualification(specifiers);
+            case extra_specifiers:
+                return handle_state_extra_specifiers(specifiers);
+            case has_delimiter:
+                return handle_state_has_delimiter(specifiers);
+            case empty:
+                return handle_state_empty(specifiers);
+            default:
+                return done;
         }
     }
 
-    constexpr parser_state handle_state_init(auto specifiers) {
+    constexpr parser_state handle_state_init(auto specifiers)
+    {
         if (specifiers.starts_with(format_terminator)) {
             return parser_state::empty;
         } else if (specifiers.starts_with(format_delimiter)) {
@@ -166,7 +197,8 @@ private:
         }
     }
 
-    constexpr parser_state handle_state_init_delimiter(auto specifiers) {
+    constexpr parser_state handle_state_init_delimiter(auto specifiers)
+    {
         if (specifiers.starts_with(format_terminator)) {
             return parser_state::empty;
         } else {
@@ -174,7 +206,8 @@ private:
         }
     }
 
-    constexpr parser_state handle_state_has_representation(auto specifiers) {
+    constexpr parser_state handle_state_has_representation(auto specifiers)
+    {
         if (specifiers.starts_with(format_terminator)) {
             return parser_state::done;
         } else if (specifiers.starts_with(format_delimiter)) {
@@ -186,7 +219,8 @@ private:
         }
     }
 
-    constexpr parser_state handle_state_has_qualification(auto specifiers) {
+    constexpr parser_state handle_state_has_qualification(auto specifiers)
+    {
         if (specifiers.starts_with(format_terminator)) {
             return parser_state::done;
         } else if (specifiers.starts_with(format_delimiter)) {
@@ -196,31 +230,33 @@ private:
         }
     }
 
-    constexpr parser_state handle_state_invalid_representation(auto specifiers) {
+    constexpr parser_state handle_state_invalid_representation(auto specifiers)
+    {
         if (specifiers.substr(0, specifiers.find(format_terminator)).contains(format_delimiter)) {
-            throw std::format_error("Invalid representation specifier: expected 's' for enumerator name string, 'i' for underlying integral type, or 't' for enumeration type name.");
+            throw std::format_error(
+                "Invalid representation specifier: expected 's' for enumerator name string, 'i' for underlying integral type, or 't' for enumeration type name."
+            );
         } else {
             return parser_state::has_delimiter;
         }
     }
 
-    constexpr parser_state handle_state_invalid_qualification(auto specifiers) {
+    constexpr parser_state handle_state_invalid_qualification(auto specifiers)
+    {
         throw std::format_error("Invalid qualification specifier: expected 'q' for qualified or 'u' for unqualified.");
     }
 
-    constexpr parser_state handle_state_extra_specifiers(auto specifiers) {
+    constexpr parser_state handle_state_extra_specifiers(auto specifiers)
+    {
         throw std::format_error("Expected ':' delimiter or closing '}' after qualification specifier ('q' or 'u').");
     }
 
-    constexpr parser_state handle_state_has_delimiter(auto specifiers) {
-        return parser_state::done;
-    }
+    constexpr parser_state handle_state_has_delimiter(auto specifiers) { return parser_state::done; }
 
-    constexpr parser_state handle_state_empty(auto specifiers) {
-        return parser_state::done;
-    }
+    constexpr parser_state handle_state_empty(auto specifiers) { return parser_state::done; }
 
-    constexpr bool process_representation_specifier(auto specifiers) {
+    constexpr bool process_representation_specifier(auto specifiers)
+    {
         if (specifiers.starts_with('s')) {
             representation_ = representation::string;
             return true;
@@ -235,7 +271,8 @@ private:
         }
     }
 
-    constexpr bool process_qualification_specifier(auto specifiers) {
+    constexpr bool process_qualification_specifier(auto specifiers)
+    {
         if (representation_ == representation::type) {
             throw std::format_error("Qualification ('q' or 'u') is invalid for type representation ('t').");
         }
