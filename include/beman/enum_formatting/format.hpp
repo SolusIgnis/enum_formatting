@@ -25,6 +25,9 @@
 
 template<::beman::enum_formatting::unexported::scoped_enum E, typename CharT>
     requires ::beman::enum_formatting::unexported::annotated_with<E, ::beman::enum_formatting::formattable_with_default>
+          && (std::same_as<CharT, char>
+        //|| std::same_as<CharT, char8_t>
+             )
 struct std::formatter<E, CharT> : private std::formatter<std::basic_string_view<CharT>, CharT>,
                                   private std::formatter<std::underlying_type_t<E>, CharT> {
 private:
