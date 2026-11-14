@@ -65,7 +65,9 @@ private:
 public:
     constexpr auto parse(auto& ctx) -> decltype(ctx.begin())
     {
-        const auto specification = ::beman::enum_formatting::unexported::format_specification<CharT>{std::basic_string_view<CharT>{ctx.begin(), ctx.end()}};
+        const auto specification = ::beman::enum_formatting::unexported::format_specification<CharT>{
+            std::basic_string_view<CharT>{ctx.begin(), ctx.end()}
+        };
 
         ctx.advance_to(specification.begin());
 
@@ -82,7 +84,7 @@ public:
             (void)parse(default_spec_ctx);
             return ctx.begin();
         }
-        
+
         switch (specification.get_representation()) {
             case format_specification::representation::unspecified:
                 representation_ = representation::string;
@@ -128,7 +130,8 @@ public:
     constexpr auto format(E value, auto& ctx) const
     {
         if (representation_ == representation::string) {
-            const bool qualified_name = qualification_ == qualification::qualified; //Only qualify the name when explicitly requested.
+            const bool qualified_name     = qualification_
+                                         == qualification::qualified; //Only qualify the name when explicitly requested.
             const bool qualified_fallback = qualification_ != qualification::unqualified; //Qualify the fallback by default.
 
             return std::formatter<std::basic_string_view<CharT>, CharT>::format(
