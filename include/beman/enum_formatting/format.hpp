@@ -52,7 +52,7 @@ private:
                 + std::meta::identifier_of(^^E) + "' has "sv + count_to_string(annotation_count(^^E)) + "."sv
         );
     }
-    
+
     static consteval auto generate_default_specification_context_from_annotation()
     {
         auto default_specifiers = std::basic_string_view<CharT>{
