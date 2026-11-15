@@ -78,15 +78,6 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        template<std::ranges::borrowed_range Range>
-            requires std::ranges::contiguous_range<Range> && std::ranges::sized_range<Range>
-                  && std::same_as<std::remove_cv_t<std::ranges::range_value_t<Range>>, CharT>
-        constexpr explicit format_specification(Range&& range)
-            : format_specification{
-                  std::basic_string_view<CharT>{std::ranges::data(range), std::ranges::size(range)}
-        }
-        {}
-
         constexpr bool is_empty() const noexcept { return state_ == parser_state::empty; }
 
         constexpr auto begin() const noexcept { return specifiers_.begin(); }
