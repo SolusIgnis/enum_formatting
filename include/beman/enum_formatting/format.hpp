@@ -136,8 +136,7 @@ private:
                 std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
             )
         };
-        auto default_spec_ctx = std::basic_format_parse_context{default_specifiers};
-        return default_spec_ctx;
+        return std::basic_format_parse_context<CharT>{default_specifiers};
     }
 
     static consteval auto validate_default_format_specification(const std::basic_format_parse_context<CharT>& ctx)
