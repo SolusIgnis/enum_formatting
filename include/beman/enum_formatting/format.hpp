@@ -82,36 +82,33 @@ public:
     {
         auto default_spec_ctx = generate_default_specification_context_from_annotation();
 
-        const auto specification         = format_specification{ctx};
+        const auto caller_specification  = format_specification{ctx};
         const auto default_specification = format_specification{default_spec_ctx};
 
-        ctx.advance_to(specification.begin());
+        ctx.advance_to(caller_specification.begin());
 
-        if (specification.is_empty()) {
-            if (default_specification.is_empty()) {
-                return ctx.begin();
-            }
+        auto& active_specification = caller_specification.is_empty() ? default_specification : caller_specification;
 
-            (void)parse(default_spec_ctx);
-            return ctx.begin();
-        }
+        apply_representation(active_specification);
+        apply_qualification(active_specification);
 
-        apply_representation(specification);
-        apply_qualification(specification);
+        auto& active_ctx = caller_specification.is_empty() ? default_spec_ctx : ctx;
 
         if (representation_ == representation::string) {
             if constexpr (!std::meta::is_enumerable_type(^^E)) {
                 throw std::format_error("String representation is not available for unenumerable types.");
             } else {
-                return std::formatter<std::basic_string_view<CharT>, CharT>::parse(ctx);
+                active_ctx.advance_to(std::formatter<std::basic_string_view<CharT>, CharT>::parse(active_ctx));
             }
         } else if (representation_ == representation::integer) {
-            return std::formatter<std::underlying_type_t<E>, CharT>::parse(ctx);
+            active_ctx.advance_to(std::formatter<std::underlying_type_t<E>, CharT>::parse(active_ctx));
         } else if (representation_ == representation::type) {
-            return std::formatter<std::basic_string_view<CharT>, CharT>::parse(ctx);
+            active_ctx.advance_to(std::formatter<std::basic_string_view<CharT>, CharT>::parse(active_ctx));
         } else {
             std::unreachable();
         }
+        
+        return ctx.begin();
     }
 
     constexpr auto format(E value, auto& ctx) const
