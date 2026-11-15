@@ -67,15 +67,6 @@ private:
 
     using format_specification = ::beman::enum_formatting::unexported::format_specification<CharT>;
 
-    consteval
-    {
-        try {
-            [[maybe_unused]] auto _ = format_specification{generate_default_specification_context_from_annotation(^^E)};
-        } catch (...) {
-            throw;
-        }
-    }
-
 public:
     constexpr auto parse(std::basic_format_parse_context<CharT>& ctx) -> decltype(ctx.begin())
     {
@@ -178,6 +169,15 @@ private:
             case format_specification::qualification::unqualified:
                 qualification_ = qualification::unqualified;
                 break;
+        }
+    }
+    
+    consteval
+    {
+        try {
+            [[maybe_unused]] auto _ = format_specification{generate_default_specification_context_from_annotation(^^E)};
+        } catch (...) {
+            throw;
         }
     }
 };
