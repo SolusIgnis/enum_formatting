@@ -78,8 +78,8 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr explicit format_specification(const std::basic_format_parse_context<CharT>& ctx)
-            : format_specification(std::basic_string_view<CharT>{ctx.begin(), ctx.end()})
+        constexpr explicit format_specification(const std::basic_format_parse_context<CharT>& context)
+            : format_specification(std::basic_string_view<CharT>{context.begin(), context.end()})
         {}
 
         [[nodiscard]] constexpr bool is_empty() const noexcept { return state_ == parser_state::empty; }

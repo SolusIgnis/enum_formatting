@@ -53,14 +53,32 @@ private:
         );
     }
 
-    static consteval auto generate_default_specification_context_from_annotation()
+    using format_specification = ::beman::enum_formatting::unexported::format_specification<CharT>;
+
+    struct format_defaults_t {
+        std::basic_format_parse_context<CharT> ctx;
+        format_specification spec;
+    };
+
+    static consteval auto get_validated_defaults()
     {
         auto default_specifiers = std::basic_string_view<CharT>{
             std::meta::extract<::beman::enum_formatting::formattable_with_default>(
                 std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
             )
         };
-        return std::basic_format_parse_context<CharT>{default_specifiers};
+        
+        try {
+            return format_defaults_t {
+                       std::basic_format_parse_context<CharT>{default_specifiers},
+                       format_specification{default_specifiers},
+                   };
+        } catch (const std::format_error& error) {
+            throw std::format_error(
+                "Invalid default format specification annotated onto '" + std::string{std::meta::identifier_of(^^E)}
+                + "': " + error.what()
+            );
+        }
     }
 
     enum class representation : std::uint8_t {
@@ -75,25 +93,23 @@ private:
         unqualified,
     } qualification_ = qualification::use_default;
 
-    using format_specification = ::beman::enum_formatting::unexported::format_specification<CharT>;
-
 public:
-    constexpr auto parse(std::basic_format_parse_context<CharT>& ctx) -> decltype(ctx.begin())
+    constexpr auto parse(std::basic_format_parse_context<CharT>& caller_ctx) -> decltype(caller_ctx.begin())
     {
-        auto default_spec_ctx = generate_default_specification_context_from_annotation();
+        auto [default_spec_ctx, default_spec] = get_validated_defaults();
 
-        const auto caller_specification  = format_specification{ctx};
-        const auto default_specification = format_specification{default_spec_ctx};
+        const auto caller_spec  = format_specification{caller_ctx};
+        const auto default_spec = format_specification{default_spec_ctx};
 
-        ctx.advance_to(caller_specification.begin());
-        default_spec_ctx.advance_to(default_specification.begin());
+        caller_ctx.advance_to(caller_spec.begin());
+        default_spec_ctx.advance_to(default_spec.begin());
 
-        auto& active_specification = caller_specification.is_empty() ? default_specification : caller_specification;
+        auto& active_spec = caller_spec.is_empty() ? default_spec : caller_spec;
 
-        apply_representation(active_specification);
-        apply_qualification(active_specification);
+        apply_representation(active_spec);
+        apply_qualification(active_spec);
 
-        auto& active_ctx = caller_specification.is_empty() ? default_spec_ctx : ctx;
+        auto& active_ctx = caller_spec.is_empty() ? default_spec_ctx : caller_ctx;
 
         if (representation_ == representation::string) {
             if constexpr (!std::meta::is_enumerable_type(^^E)) {
@@ -109,7 +125,7 @@ public:
             std::unreachable();
         }
 
-        return ctx.begin();
+        return caller_ctx.begin();
     }
 
     constexpr auto format(E value, auto& ctx) const
@@ -167,18 +183,6 @@ private:
             case format_specification::qualification::unqualified:
                 qualification_ = qualification::unqualified;
                 break;
-        }
-    }
-
-    consteval
-    {
-        try {
-            [[maybe_unused]] auto _ = format_specification{generate_default_specification_context_from_annotation()};
-        } catch (const std::format_error& error) {
-            throw std::format_error(
-                "Invalid default format specification annotated onto '" + std::string{std::meta::identifier_of(^^E)}
-                + "': " + error.what()
-            );
         }
     }
 };
