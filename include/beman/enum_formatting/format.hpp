@@ -65,11 +65,11 @@ private:
         unqualified,
     } qualification_ = qualification::use_default;
 
+    using format_specification = ::beman::enum_formatting::unexported::format_specification<CharT>;
+
 public:
     constexpr auto parse(std::basic_format_parse_context<CharT>& ctx) -> decltype(ctx.begin())
     {
-        using format_specification = ::beman::enum_formatting::unexported::format_specification<CharT>;
-
         const auto specification = format_specification{ctx};
 
         ctx.advance_to(specification.begin());
@@ -88,32 +88,8 @@ public:
             return ctx.begin();
         }
 
-        switch (specification.get_representation()) {
-            case format_specification::representation::unspecified:
-                representation_ = representation::string;
-                break;
-            case format_specification::representation::string:
-                representation_ = representation::string;
-                break;
-            case format_specification::representation::integer:
-                representation_ = representation::integer;
-                break;
-            case format_specification::representation::type:
-                representation_ = representation::type;
-                break;
-        }
-
-        switch (specification.get_qualification()) {
-            case format_specification::qualification::unspecified:
-                qualification_ = qualification::use_default;
-                break;
-            case format_specification::qualification::qualified:
-                qualification_ = qualification::qualified;
-                break;
-            case format_specification::qualification::unqualified:
-                qualification_ = qualification::unqualified;
-                break;
-        }
+        apply_representation(specification);
+        apply_qualification(specification);
 
         if (representation_ == representation::string) {
             if constexpr (!std::meta::is_enumerable_type(^^E)) {
@@ -151,6 +127,39 @@ public:
             return std::formatter<std::basic_string_view<CharT>, CharT>::format(std::meta::identifier_of(^^E), ctx);
         } else {
             std::unreachable();
+        }
+    }
+    
+    constexpr void apply_representation(const format_specification& specification) noexcept
+    {
+        switch (specification.get_representation()) {
+            case format_specification::representation::unspecified:
+                representation_ = representation::string;
+                break;
+            case format_specification::representation::string:
+                representation_ = representation::string;
+                break;
+            case format_specification::representation::integer:
+                representation_ = representation::integer;
+                break;
+            case format_specification::representation::type:
+                representation_ = representation::type;
+                break;
+        }
+    }
+
+    constexpr void apply_qualification(const format_specification& specification) noexcept
+    {
+        switch (specification.get_qualification()) {
+            case format_specification::qualification::unspecified:
+                qualification_ = qualification::use_default;
+                break;
+            case format_specification::qualification::qualified:
+                qualification_ = qualification::qualified;
+                break;
+            case format_specification::qualification::unqualified:
+                qualification_ = qualification::unqualified;
+                break;
         }
     }
 };

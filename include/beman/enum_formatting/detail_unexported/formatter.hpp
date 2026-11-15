@@ -72,7 +72,7 @@ namespace beman::enum_formatting::unexported {
         constexpr explicit format_specification(std::basic_string_view<CharT> specifiers) : specifiers_{specifiers}
         {
             while (!specifiers_.empty() && state_ != parser_state::done && state_ != parser_state::empty) {
-                if (transition_state(process_next_specifier(specifiers_)) == consumption_signal::consume) {
+                if (transition_state(evaluate_specifier(specifiers_)) == consumption_signal::consume) {
                     specifiers_.remove_prefix(1);
                 }
             }
@@ -93,7 +93,7 @@ namespace beman::enum_formatting::unexported {
         constexpr qualification get_qualification() const noexcept { return qualification_; }
 
     private:
-        constexpr consumption_signal transition_state(parser_state next_state)
+        constexpr consumption_signal transition_state(parser_state next_state) noexcept
         {
             const auto old_state = std::exchange(state_, next_state);
 
@@ -116,7 +116,7 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr parser_state process_next_specifier([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        constexpr parser_state evaluate_specifier(std::basic_string_view<CharT> specifiers)
         {
             using enum parser_state;
             switch (state_) {
@@ -143,20 +143,20 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr parser_state handle_state_initialized([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        constexpr parser_state handle_state_initialized(std::basic_string_view<CharT> specifiers) noexcept
         {
             if (specifiers.starts_with(format_terminator)) {
                 return parser_state::empty;
             } else if (specifiers.starts_with(format_delimiter)) {
                 return parser_state::leading_delimiter;
-            } else if (process_representation_specifier(specifiers)) {
+            } else if (match_representation_specifier(specifiers)) {
                 return parser_state::valid_representation;
             } else {
                 return parser_state::invalid_representation;
             }
         }
 
-        constexpr parser_state handle_state_leading_delimiter([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        constexpr parser_state handle_state_leading_delimiter(std::basic_string_view<CharT> specifiers) noexcept
         {
             if (specifiers.starts_with(format_terminator)) {
                 return parser_state::empty;
@@ -165,20 +165,22 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr parser_state handle_state_valid_representation([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        constexpr parser_state handle_state_valid_representation(std::basic_string_view<CharT> specifiers)
         {
             if (specifiers.starts_with(format_terminator)) {
                 return parser_state::done;
             } else if (specifiers.starts_with(format_delimiter)) {
                 return parser_state::ready_to_forward;
-            } else if (process_qualification_specifier(specifiers)) {
+            } else if (representation_ == representation::type) {
+                throw std::format_error("Qualification ('q' or 'u') is invalid for type representation ('t').");
+            } else if (match_qualification_specifier(specifiers)) {
                 return parser_state::valid_qualification;
             } else {
                 return parser_state::invalid_qualification;
             }
         }
 
-        constexpr parser_state handle_state_valid_qualification([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        constexpr parser_state handle_state_valid_qualification(std::basic_string_view<CharT> specifiers) noexcept
         {
             if (specifiers.starts_with(format_terminator)) {
                 return parser_state::done;
@@ -189,7 +191,7 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr parser_state handle_state_invalid_representation([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        constexpr parser_state handle_state_invalid_representation(std::basic_string_view<CharT> specifiers)
         {
             if (specifiers.substr(0, specifiers.find(format_terminator)).contains(format_delimiter)) {
                 throw std::format_error(
@@ -210,17 +212,17 @@ namespace beman::enum_formatting::unexported {
             throw std::format_error("Expected ':' delimiter or closing '}' after qualification specifier ('q' or 'u').");
         }
 
-        constexpr parser_state handle_state_ready_to_forward([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        constexpr parser_state handle_state_ready_to_forward([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
         {
             return parser_state::done;
         }
 
-        constexpr parser_state handle_state_empty([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        constexpr parser_state handle_state_empty([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
         {
             return parser_state::done;
         }
 
-        constexpr bool process_representation_specifier([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        constexpr bool match_representation_specifier(std::basic_string_view<CharT> specifiers) noexcept
         {
             if (specifiers.starts_with(string_specifier)) {
                 representation_ = representation::string;
@@ -236,12 +238,8 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr bool process_qualification_specifier([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        constexpr bool match_qualification_specifier(std::basic_string_view<CharT> specifiers) noexcept
         {
-            if (representation_ == representation::type) {
-                throw std::format_error("Qualification ('q' or 'u') is invalid for type representation ('t').");
-            }
-
             if (specifiers.starts_with(qualified_specifier)) {
                 qualification_ = qualification::qualified;
                 return true;
