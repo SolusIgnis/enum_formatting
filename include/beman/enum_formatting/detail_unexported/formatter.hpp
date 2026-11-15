@@ -78,7 +78,7 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr explicit format_specification(std::basic_format_parse_context<CharT>& ctx)
+        constexpr explicit format_specification(const std::basic_format_parse_context<CharT>& ctx)
             : format_specification(std::basic_string_view<CharT>{ctx.begin(), ctx.end()})
         {}
 
