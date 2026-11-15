@@ -50,7 +50,7 @@ private:
             annotation_count(^^E) == 1,
             "Only one 'formattable' or 'formattable_with_default' annotation may appertain to a single scoped enumeration type. '"s
                 + std::meta::identifier_of(^^E) + "' has "sv + count_to_string(annotation_count(^^E)) + "."sv
-        );
+        ); 
     }
 
     enum class representation : std::uint8_t {
@@ -67,13 +67,21 @@ private:
 
     using format_specification = ::beman::enum_formatting::unexported::format_specification<CharT>;
 
+    consteval {
+        try {
+            [[maybe_unused]] auto _ = format_specification{generate_default_specification_context_from_annotation()};
+        } catch(...) {
+            throw;
+        }
+    }
+
 public:
     constexpr auto parse(std::basic_format_parse_context<CharT>& ctx) -> decltype(ctx.begin())
     {
-        constexpr auto default_spec_ctx = generate_default_specification_context_from_annotation();
+        auto default_spec_ctx = generate_default_specification_context_from_annotation();
 
         const auto specification         = format_specification{ctx};
-        const auto default_specification = validate_default_format_specification(default_spec_ctx);
+        const auto default_specification = format_specification{default_spec_ctx};
 
         ctx.advance_to(specification.begin());
 
@@ -137,11 +145,6 @@ private:
             )
         };
         return std::basic_format_parse_context<CharT>{default_specifiers};
-    }
-
-    static consteval auto validate_default_format_specification(const std::basic_format_parse_context<CharT>& ctx)
-    {
-        return format_specification{ctx};
     }
 
     constexpr void apply_representation(const format_specification& specification) noexcept
