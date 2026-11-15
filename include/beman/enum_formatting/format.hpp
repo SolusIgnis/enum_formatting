@@ -99,7 +99,6 @@ public:
         auto [default_spec_ctx, default_spec] = get_validated_defaults();
 
         const auto caller_spec  = format_specification{caller_ctx};
-        const auto default_spec = format_specification{default_spec_ctx};
 
         caller_ctx.advance_to(caller_spec.begin());
         default_spec_ctx.advance_to(default_spec.begin());
