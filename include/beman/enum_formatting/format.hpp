@@ -50,7 +50,7 @@ private:
             annotation_count(^^E) == 1,
             "Only one 'formattable' or 'formattable_with_default' annotation may appertain to a single scoped enumeration type. '"s
                 + std::meta::identifier_of(^^E) + "' has "sv + count_to_string(annotation_count(^^E)) + "."sv
-        ); 
+        );
     }
 
     enum class representation : std::uint8_t {
@@ -67,10 +67,11 @@ private:
 
     using format_specification = ::beman::enum_formatting::unexported::format_specification<CharT>;
 
-    consteval {
+    consteval
+    {
         try {
             [[maybe_unused]] auto _ = format_specification{generate_default_specification_context_from_annotation()};
-        } catch(...) {
+        } catch (...) {
             throw;
         }
     }
