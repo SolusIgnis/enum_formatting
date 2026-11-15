@@ -67,12 +67,12 @@ private:
                 std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
             )
         };
-        
+
         try {
-            return format_defaults_t {
-                       std::basic_format_parse_context<CharT>{default_specifiers},
-                       format_specification{default_specifiers},
-                   };
+            return format_defaults_t{
+                std::basic_format_parse_context<CharT>{default_specifiers},
+                format_specification{default_specifiers},
+            };
         } catch (const std::format_error& error) {
             throw std::format_error(
                 "Invalid default format specification annotated onto '" + std::string{std::meta::identifier_of(^^E)}
