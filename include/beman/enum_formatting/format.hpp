@@ -81,7 +81,7 @@ public:
             if (default_specification.is_empty()) {
                 return ctx.begin();
             }
-            
+
             (void)parse(default_spec_ctx);
             return ctx.begin();
         }
@@ -132,13 +132,14 @@ private:
     static consteval auto generate_default_specification_context_from_annotation()
     {
         auto default_specifiers = std::basic_string_view<CharT>{
-                std::meta::extract<::beman::enum_formatting::formattable_with_default>(
-                    std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
-                )
-            };
+            std::meta::extract<::beman::enum_formatting::formattable_with_default>(
+                std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
+            )
+        };
         auto default_spec_ctx = std::basic_format_parse_context{default_specifiers};
         return default_spec_ctx;
     }
+
     static consteval auto validate_default_format_specification(std::basic_format_parse_context<CharT> ctx)
     {
         return format_specification{ctx};
