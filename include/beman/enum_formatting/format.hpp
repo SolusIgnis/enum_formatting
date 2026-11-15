@@ -70,7 +70,7 @@ private:
     consteval
     {
         try {
-            [[maybe_unused]] auto _ = format_specification{generate_default_specification_context_from_annotation()};
+            [[maybe_unused]] auto _ = format_specification{generate_default_specification_context_from_annotation(^^E)};
         } catch (...) {
             throw;
         }
@@ -138,11 +138,11 @@ public:
     }
 
 private:
-    static consteval auto generate_default_specification_context_from_annotation()
+    static consteval auto generate_default_specification_context_from_annotation(std::meta::info enumeration)
     {
         auto default_specifiers = std::basic_string_view<CharT>{
             std::meta::extract<::beman::enum_formatting::formattable_with_default>(
-                std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
+                std::meta::annotations_of_with_type(enumeration, ^^::beman::enum_formatting::formattable_with_default).front()
             )
         };
         return std::basic_format_parse_context<CharT>{default_specifiers};
