@@ -86,6 +86,7 @@ public:
         const auto default_specification = format_specification{default_spec_ctx};
 
         ctx.advance_to(caller_specification.begin());
+        default_spec_ctx.advance_to(default_specification.begin());
 
         auto& active_specification = caller_specification.is_empty() ? default_specification : caller_specification;
 
