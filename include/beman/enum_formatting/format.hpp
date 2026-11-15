@@ -73,7 +73,7 @@ public:
         constexpr auto default_spec_ctx = generate_default_specification_context_from_annotation();
 
         const auto specification         = format_specification{ctx};
-        const auto default_specification = format_specification{default_spec_ctx};
+        const auto default_specification = validate_default_format_specification(default_spec_ctx);
 
         ctx.advance_to(specification.begin());
 
