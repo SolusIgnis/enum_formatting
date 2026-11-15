@@ -70,20 +70,18 @@ private:
 public:
     constexpr auto parse(std::basic_format_parse_context<CharT>& ctx) -> decltype(ctx.begin())
     {
-        const auto specification = format_specification{ctx};
+        constexpr auto default_spec_ctx = generate_default_specification_context_from_annotation();
+
+        const auto specification         = format_specification{ctx};
+        const auto default_specification = format_specification{default_spec_ctx};
 
         ctx.advance_to(specification.begin());
 
         if (specification.is_empty()) {
-            auto default_specifiers = std::basic_string_view<CharT>{
-                std::meta::extract<::beman::enum_formatting::formattable_with_default>(
-                    std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
-                )
-            };
-            if (default_specifiers.empty() || default_specifiers.starts_with(static_cast<CharT>('}'))) {
+            if (default_specification.is_empty()) {
                 return ctx.begin();
             }
-            auto default_spec_ctx = std::basic_format_parse_context{default_specifiers};
+            
             (void)parse(default_spec_ctx);
             return ctx.begin();
         }
@@ -128,6 +126,22 @@ public:
         } else {
             std::unreachable();
         }
+    }
+
+private:
+    static consteval auto generate_default_specification_context_from_annotation()
+    {
+        auto default_specifiers = std::basic_string_view<CharT>{
+                std::meta::extract<::beman::enum_formatting::formattable_with_default>(
+                    std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
+                )
+            };
+        auto default_spec_ctx = std::basic_format_parse_context{default_specifiers};
+        return default_spec_ctx;
+    }
+    static consteval auto validate_default_format_specification(std::basic_format_parse_context<CharT> ctx)
+    {
+        return format_specification{ctx};
     }
 
     constexpr void apply_representation(const format_specification& specification) noexcept
