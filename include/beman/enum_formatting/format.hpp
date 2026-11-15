@@ -129,7 +129,7 @@ public:
             std::unreachable();
         }
     }
-    
+
     constexpr void apply_representation(const format_specification& specification) noexcept
     {
         switch (specification.get_representation()) {

@@ -202,22 +202,26 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        [[noreturn]] constexpr parser_state handle_state_invalid_qualification([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        [[noreturn]] constexpr parser_state
+            handle_state_invalid_qualification([[maybe_unused]] std::basic_string_view<CharT> specifiers)
         {
             throw std::format_error("Invalid qualification specifier: expected 'q' for qualified or 'u' for unqualified.");
         }
 
-        [[noreturn]] constexpr parser_state handle_state_unexpected_specifier([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        [[noreturn]] constexpr parser_state
+            handle_state_unexpected_specifier([[maybe_unused]] std::basic_string_view<CharT> specifiers)
         {
             throw std::format_error("Expected ':' delimiter or closing '}' after qualification specifier ('q' or 'u').");
         }
 
-        [[nodiscard]] constexpr parser_state handle_state_ready_to_forward([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
+        [[nodiscard]] constexpr parser_state
+            handle_state_ready_to_forward([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
         {
             return parser_state::done;
         }
 
-        [[nodiscard]] constexpr parser_state handle_state_empty([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
+        [[nodiscard]] constexpr parser_state
+            handle_state_empty([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
         {
             return parser_state::done;
         }
