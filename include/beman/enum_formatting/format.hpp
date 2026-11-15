@@ -107,7 +107,7 @@ public:
         } else {
             std::unreachable();
         }
-        
+
         return ctx.begin();
     }
 
