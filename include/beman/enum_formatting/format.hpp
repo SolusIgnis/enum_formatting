@@ -171,7 +171,7 @@ private:
                 break;
         }
     }
-    
+
     consteval
     {
         try {
