@@ -94,7 +94,7 @@ private:
     } qualification_ = qualification::use_default;
 
 public:
-    constexpr auto parse(std::basic_format_parse_context<CharT>& caller_ctx) -> decltype(caller_ctx.begin())
+    constexpr auto parse(std::basic_format_parse_context<CharT>& caller_ctx)
     {
         auto [default_spec_ctx, default_spec] = get_validated_defaults();
 
