@@ -82,18 +82,18 @@ namespace beman::enum_formatting::unexported {
             : format_specification(std::basic_string_view<CharT>{ctx.begin(), ctx.end()})
         {}
 
-        constexpr bool is_empty() const noexcept { return state_ == parser_state::empty; }
+        [[nodiscard]] constexpr bool is_empty() const noexcept { return state_ == parser_state::empty; }
 
-        constexpr auto begin() const noexcept { return specifiers_.begin(); }
+        [[nodiscard]] constexpr auto begin() const noexcept { return specifiers_.begin(); }
 
-        constexpr auto end() const noexcept { return specifiers_.end(); }
+        [[nodiscard]] constexpr auto end() const noexcept { return specifiers_.end(); }
 
-        constexpr representation get_representation() const noexcept { return representation_; }
+        [[nodiscard]] constexpr representation get_representation() const noexcept { return representation_; }
 
-        constexpr qualification get_qualification() const noexcept { return qualification_; }
+        [[nodiscard]] constexpr qualification get_qualification() const noexcept { return qualification_; }
 
     private:
-        constexpr consumption_signal transition_state(parser_state next_state) noexcept
+        [[nodiscard]] constexpr consumption_signal transition_state(parser_state next_state) noexcept
         {
             const auto old_state = std::exchange(state_, next_state);
 
@@ -116,7 +116,7 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr parser_state evaluate_specifier(std::basic_string_view<CharT> specifiers)
+        [[nodiscard]] constexpr parser_state evaluate_specifier(std::basic_string_view<CharT> specifiers)
         {
             using enum parser_state;
             switch (state_) {
@@ -143,7 +143,7 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr parser_state handle_state_initialized(std::basic_string_view<CharT> specifiers) noexcept
+        [[nodiscard]] constexpr parser_state handle_state_initialized(std::basic_string_view<CharT> specifiers) noexcept
         {
             if (specifiers.starts_with(format_terminator)) {
                 return parser_state::empty;
@@ -156,7 +156,7 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr parser_state handle_state_leading_delimiter(std::basic_string_view<CharT> specifiers) noexcept
+        [[nodiscard]] constexpr parser_state handle_state_leading_delimiter(std::basic_string_view<CharT> specifiers) noexcept
         {
             if (specifiers.starts_with(format_terminator)) {
                 return parser_state::empty;
@@ -165,7 +165,7 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr parser_state handle_state_valid_representation(std::basic_string_view<CharT> specifiers)
+        [[nodiscard]] constexpr parser_state handle_state_valid_representation(std::basic_string_view<CharT> specifiers)
         {
             if (specifiers.starts_with(format_terminator)) {
                 return parser_state::done;
@@ -180,7 +180,7 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr parser_state handle_state_valid_qualification(std::basic_string_view<CharT> specifiers) noexcept
+        [[nodiscard]] constexpr parser_state handle_state_valid_qualification(std::basic_string_view<CharT> specifiers) noexcept
         {
             if (specifiers.starts_with(format_terminator)) {
                 return parser_state::done;
@@ -191,7 +191,7 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr parser_state handle_state_invalid_representation(std::basic_string_view<CharT> specifiers)
+        [[nodiscard]] constexpr parser_state handle_state_invalid_representation(std::basic_string_view<CharT> specifiers)
         {
             if (specifiers.substr(0, specifiers.find(format_terminator)).contains(format_delimiter)) {
                 throw std::format_error(
@@ -202,27 +202,27 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr parser_state handle_state_invalid_qualification([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        [[noreturn]] constexpr parser_state handle_state_invalid_qualification([[maybe_unused]] std::basic_string_view<CharT> specifiers)
         {
             throw std::format_error("Invalid qualification specifier: expected 'q' for qualified or 'u' for unqualified.");
         }
 
-        constexpr parser_state handle_state_unexpected_specifier([[maybe_unused]] std::basic_string_view<CharT> specifiers)
+        [[noreturn]] constexpr parser_state handle_state_unexpected_specifier([[maybe_unused]] std::basic_string_view<CharT> specifiers)
         {
             throw std::format_error("Expected ':' delimiter or closing '}' after qualification specifier ('q' or 'u').");
         }
 
-        constexpr parser_state handle_state_ready_to_forward([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
+        [[nodiscard]] constexpr parser_state handle_state_ready_to_forward([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
         {
             return parser_state::done;
         }
 
-        constexpr parser_state handle_state_empty([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
+        [[nodiscard]] constexpr parser_state handle_state_empty([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
         {
             return parser_state::done;
         }
 
-        constexpr bool match_representation_specifier(std::basic_string_view<CharT> specifiers) noexcept
+        [[nodiscard]] constexpr bool match_representation_specifier(std::basic_string_view<CharT> specifiers) noexcept
         {
             if (specifiers.starts_with(string_specifier)) {
                 representation_ = representation::string;
@@ -238,7 +238,7 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr bool match_qualification_specifier(std::basic_string_view<CharT> specifiers) noexcept
+        [[nodiscard]] constexpr bool match_qualification_specifier(std::basic_string_view<CharT> specifiers) noexcept
         {
             if (specifiers.starts_with(qualified_specifier)) {
                 qualification_ = qualification::qualified;
