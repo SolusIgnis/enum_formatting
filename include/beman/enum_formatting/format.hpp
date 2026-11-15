@@ -140,7 +140,7 @@ private:
         return default_spec_ctx;
     }
 
-    static consteval auto validate_default_format_specification(std::basic_format_parse_context<CharT> ctx)
+    static consteval auto validate_default_format_specification(const std::basic_format_parse_context<CharT>& ctx)
     {
         return format_specification{ctx};
     }
