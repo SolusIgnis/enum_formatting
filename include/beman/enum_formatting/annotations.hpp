@@ -44,8 +44,11 @@ namespace beman::enum_formatting::inline annotations {
         }
     };
 
-    using formattable_with_default   = basic_formattable_with_default<char>;
-    using u8formattable_with_default = basic_formattable_with_default<char8_t>;
+    template<typename FormatSpecifierCharT = char>
+    using formattable_with_default = basic_formattable_with_default<char, FormatSpecifierCharT>;
+
+    template<typename FormatSpecifierCharT = char>
+    using u8formattable_with_default = basic_formattable_with_default<char8_t, FormatSpecifierCharT>;
 
     inline constexpr formattable_with_default formattable{};
     inline constexpr u8formattable_with_default u8formattable{};
