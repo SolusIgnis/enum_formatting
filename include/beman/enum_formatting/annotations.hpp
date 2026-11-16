@@ -27,7 +27,10 @@ namespace beman::enum_formatting::inline annotations {
 
         consteval basic_formattable_with_default() : basic_formattable_with_default("") {}
 
-        constexpr explicit(false) operator std::basic_string_view<FormatSpecifierCharT>() const { return please_use_other_door; }
+        constexpr explicit(false) operator std::basic_string_view<FormatSpecifierCharT>() const
+        {
+            return please_use_other_door;
+        }
 
         friend constexpr bool operator==(const basic_formattable_with_default& lhs, const basic_formattable_with_default& rhs)
         {
@@ -35,7 +38,7 @@ namespace beman::enum_formatting::inline annotations {
         }
     };
 
-    using formattable_with_default = basic_formattable_with_default<char>;
+    using formattable_with_default   = basic_formattable_with_default<char>;
     using u8formattable_with_default = basic_formattable_with_default<char8_t>;
 
     inline constexpr formattable_with_default formattable{};
