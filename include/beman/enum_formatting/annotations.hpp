@@ -16,16 +16,16 @@ namespace beman::enum_formatting::inline annotations {
     private:
         template<typename T, std::size_t N>
         using array_reference_t = T (&)[N];
-        
+
         template<typename T, std::size_t N>
         using c_array_t = T[N];
-        
+
         static constexpr c_array_t<FormatSpecifierCharT, 1> empty_string{};
 
     public:
         const std::add_pointer_t<const FormatSpecifierCharT> please_use_other_door;
         std::size_t do_not_enter;
-        
+
         template<std::size_t N>
         consteval explicit basic_formattable_with_default(array_reference_t<const FormatSpecifierCharT, N> format_spec)
             : please_use_other_door{std::define_static_string(format_spec)}, do_not_enter{N}
