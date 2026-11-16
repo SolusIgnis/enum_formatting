@@ -16,7 +16,7 @@ namespace beman::enum_formatting::unexported {
 
     template<typename T, typename Annotation>
     concept annotated_with = (!std::meta::annotations_of_with_type(^^T, ^^Annotation).empty());
-    
+
     template<typename T>
     concept annotated_as_formattable = annotated_with<T, basic_formattable_with_default<char, char>>
                                     || annotated_with<T, basic_formattable_with_default<char, char8_t>>
