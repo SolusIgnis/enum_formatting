@@ -34,6 +34,7 @@ private:
     consteval
     {
         using namespace std::literals;
+
         const auto annotation_count = [](std::meta::info enumeration) consteval {
             return std::meta::annotations_of_with_type(enumeration, ^^::beman::enum_formatting::formattable_with_default)
                 .size();
@@ -58,25 +59,25 @@ private:
     struct format_defaults_t {
         std::basic_format_parse_context<CharT> ctx;
         format_specification spec;
+        
+        constexpr format_defaults_t(std::basic_string_view<CharT> specifiers) : ctx{specifiers}, spec{specifiers}
+        {
+            ctx.advance_to(spec.begin());
+        }
     };
 
-    static consteval auto get_validated_defaults()
+    static consteval format_defaults_t get_validated_defaults()
     {
-        auto default_specifiers = std::basic_string_view<CharT>{
-            std::meta::extract<::beman::enum_formatting::formattable_with_default>(
-                std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
-            )
-        };
-
         try {
-            return format_defaults_t{
-                std::basic_format_parse_context<CharT>{default_specifiers},
-                format_specification{default_specifiers},
+            return std::basic_string_view<CharT>{
+                std::meta::extract<::beman::enum_formatting::formattable_with_default>(
+                    std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
+                )
             };
         } catch (const std::format_error& error) {
             throw std::format_error(
                 "Invalid default format specification annotated onto '" + std::string{std::meta::identifier_of(^^E)}
-                + "': " + error.what()
+                    + "': " + error.what()
             );
         }
     }
@@ -101,7 +102,6 @@ public:
         const auto caller_spec = format_specification{caller_ctx};
 
         caller_ctx.advance_to(caller_spec.begin());
-        default_spec_ctx.advance_to(default_spec.begin());
 
         auto& active_spec = caller_spec.is_empty() ? default_spec : caller_spec;
 
