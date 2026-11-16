@@ -35,7 +35,7 @@ namespace beman::enum_formatting::inline annotations {
 
         constexpr explicit(false) operator std::basic_string_view<FormatSpecifierCharT>() const
         {
-            return please_use_other_door;
+            return {please_use_other_door, do_not_enter - 1};
         }
 
         friend constexpr bool operator==(const basic_formattable_with_default& lhs, const basic_formattable_with_default& rhs)
