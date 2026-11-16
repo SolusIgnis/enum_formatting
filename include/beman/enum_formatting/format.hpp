@@ -24,7 +24,7 @@
 #endif
 
 template<::beman::enum_formatting::unexported::scoped_enum E, typename CharT>
-    requires ::beman::enum_formatting::unexported::annotated_with<E, ::beman::enum_formatting::formattable_with_default>
+    requires ::beman::enum_formatting::unexported::annotated_as_formattable<E>
           && (std::same_as<CharT, char>
         //|| std::same_as<CharT, char8_t>
              )
@@ -36,7 +36,7 @@ private:
         using namespace std::literals;
 
         const auto annotation_count = [](std::meta::info enumeration) consteval {
-            return std::meta::annotations_of_with_type(enumeration, ^^::beman::enum_formatting::formattable_with_default)
+            return std::meta::annotations_of_with_type(enumeration, ^^::beman::enum_formatting::formattable_with_default<CharT>)
                 .size();
         };
 
@@ -69,8 +69,8 @@ private:
     static consteval format_defaults_t get_validated_defaults()
     {
         try {
-            return std::basic_string_view<CharT>{std::meta::extract<::beman::enum_formatting::formattable_with_default>(
-                std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
+            return std::basic_string_view<CharT>{std::meta::extract<::beman::enum_formatting::formattable_with_default<CharT>>(
+                std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default<CharT>).front()
             )};
         } catch (const std::format_error& error) {
             throw std::format_error(
