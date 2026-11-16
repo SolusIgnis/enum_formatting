@@ -136,8 +136,6 @@ namespace beman::enum_formatting::unexported {
                     return handle_state_unexpected_specifier(specifiers);
                 case ready_to_forward:
                     return handle_state_ready_to_forward(specifiers);
-                case empty:
-                    return handle_state_empty(specifiers);
                 default:
                     std::unreachable();
             }
@@ -216,12 +214,6 @@ namespace beman::enum_formatting::unexported {
 
         [[nodiscard]] constexpr parser_state
             handle_state_ready_to_forward([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
-        {
-            return parser_state::done;
-        }
-
-        [[nodiscard]] constexpr parser_state
-            handle_state_empty([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
         {
             return parser_state::done;
         }
