@@ -59,7 +59,7 @@ private:
     struct format_defaults_t {
         std::basic_format_parse_context<CharT> ctx;
         format_specification spec;
-        
+
         constexpr format_defaults_t(std::basic_string_view<CharT> specifiers) : ctx{specifiers}, spec{specifiers}
         {
             ctx.advance_to(spec.begin());
@@ -69,15 +69,13 @@ private:
     static consteval format_defaults_t get_validated_defaults()
     {
         try {
-            return std::basic_string_view<CharT>{
-                std::meta::extract<::beman::enum_formatting::formattable_with_default>(
-                    std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
-                )
-            };
+            return std::basic_string_view<CharT>{std::meta::extract<::beman::enum_formatting::formattable_with_default>(
+                std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
+            )};
         } catch (const std::format_error& error) {
             throw std::format_error(
                 "Invalid default format specification annotated onto '" + std::string{std::meta::identifier_of(^^E)}
-                    + "': " + error.what()
+                + "': " + error.what()
             );
         }
     }
