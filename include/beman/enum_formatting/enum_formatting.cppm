@@ -18,6 +18,7 @@ export {
 #include <beman/enum_formatting/annotations.hpp>
 }
 
+#include <beman/enum_formatting/detail_unexported/meta.hpp>
 #include <beman/enum_formatting/detail_unexported/concepts.hpp>
 
 export {

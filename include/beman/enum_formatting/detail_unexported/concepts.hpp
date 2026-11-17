@@ -5,6 +5,7 @@
 
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
     #include "../annotations.hpp"
+    #include "meta.hpp"
 
     #include <meta>
 #endif
