@@ -4,8 +4,9 @@
 #define BEMAN_ENUM_FORMATTING_UNEXPORTED_TO_STRING_HPP
 
 #ifndef BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT
-    #include "concepts.hpp"
     #include "../annotations.hpp"
+    #include "concepts.hpp"
+    #include "meta.hpp"
 
     #include <algorithm>
     #include <meta>
@@ -14,24 +15,6 @@
 #endif
 
 namespace beman::enum_formatting::unexported {
-    consteval auto enumerators_of_by_tier(std::meta::info reflected_enumeration)
-    {
-        ///@todo Replace this with a std::ranges::stable_partition call when that actually works with libstdc++.
-        auto enumerators = std::meta::enumerators_of(reflected_enumeration);
-        decltype(enumerators) partitioned_enumerators;
-        for (const auto enumerator : enumerators) {
-            if (!std::meta::annotations_of_with_type(enumerator, ^^::beman::enum_formatting::canonical_annotation).empty()) {
-                partitioned_enumerators.push_back(enumerator);
-            }
-        }
-        for (const auto enumerator : enumerators) {
-            if (std::meta::annotations_of_with_type(enumerator, ^^::beman::enum_formatting::canonical_annotation).empty()) {
-                partitioned_enumerators.push_back(enumerator);
-            }
-        }
-        return partitioned_enumerators;
-    }
-
     std::u8string to_utf8(std::string narrow)
     {
         std::u8string result;

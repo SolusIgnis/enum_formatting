@@ -63,6 +63,24 @@ namespace beman::enum_formatting::unexported {
         return !annotations_of_with_template(candidate, ^^::beman::enum_formatting::annotations::basic_formattable_with_default)
                     .empty();
     }
+
+    consteval auto enumerators_of_by_tier(std::meta::info reflected_enumeration)
+    {
+        ///@todo Replace this with a std::ranges::stable_partition call when that actually works with libstdc++.
+        auto enumerators = std::meta::enumerators_of(reflected_enumeration);
+        decltype(enumerators) partitioned_enumerators;
+        for (const auto enumerator : enumerators) {
+            if (!std::meta::annotations_of_with_type(enumerator, ^^::beman::enum_formatting::canonical_annotation).empty()) {
+                partitioned_enumerators.push_back(enumerator);
+            }
+        }
+        for (const auto enumerator : enumerators) {
+            if (std::meta::annotations_of_with_type(enumerator, ^^::beman::enum_formatting::canonical_annotation).empty()) {
+                partitioned_enumerators.push_back(enumerator);
+            }
+        }
+        return partitioned_enumerators;
+    }
 } // namespace beman::enum_formatting::unexported
 
 #endif // BEMAN_ENUM_FORMATTING_UNEXPORTED_META_HPP
