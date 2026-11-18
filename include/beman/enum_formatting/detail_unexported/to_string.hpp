@@ -31,7 +31,7 @@ namespace beman::enum_formatting::unexported {
         }
         return partitioned_enumerators;
     }
-    
+
     std::u8string to_utf8(std::string narrow)
     {
         std::u8string result;
@@ -53,11 +53,13 @@ namespace beman::enum_formatting::unexported {
         bool use_empty_fallback                  = false
     )
     {
-        template for (constexpr auto enumerator : std::define_static_array(enumerators_of_by_tier(^^E))) {
+        template for (constexpr auto enumerator : std::define_static_array(enumerators_of_by_tier(^^E)))
+        {
             if (value == [:enumerator:]) {
                 if (use_qualified_name) {
                     if constexpr (std::same_as<CharT, char8_t>) {
-                        return std::u8string{} + std::meta::u8identifier_of(^^E) + u8"::" + std::meta::u8identifier_of(enumerator);
+                        return std::u8string{} + std::meta::u8identifier_of(^^E) + u8"::"
+                             + std::meta::u8identifier_of(enumerator);
                     } else {
                         return std::string{} + std::meta::identifier_of(^^E) + "::" + std::meta::identifier_of(enumerator);
                     }
@@ -75,7 +77,8 @@ namespace beman::enum_formatting::unexported {
             return {};
         } else if (use_qualified_fallback) {
             if constexpr (std::same_as<CharT, char8_t>) {
-                return std::u8string{} + std::meta::u8identifier_of(^^E) + u8"::" + to_utf8(std::to_string(std::to_underlying(value)));
+                return std::u8string{} + std::meta::u8identifier_of(^^E) + u8"::"
+                     + to_utf8(std::to_string(std::to_underlying(value)));
             } else {
                 return std::string{} + std::meta::identifier_of(^^E) + "::" + std::to_string(std::to_underlying(value));
             }

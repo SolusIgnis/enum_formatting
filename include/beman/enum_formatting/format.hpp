@@ -52,7 +52,8 @@ private:
         return !narrow_format_annotations_of(enumeration).empty();
     }
 
-    static consteval auto narrow_annotation_count(std::meta::info enumeration) {
+    static consteval auto narrow_annotation_count(std::meta::info enumeration)
+    {
         return narrow_format_annotations_of(enumeration).size();
     }
 
@@ -100,10 +101,7 @@ private:
         );
 
 #ifndef BEMAN_ENUM_FORMATTING_FEATURE_SUPPORT_UTF8
-        static_assert(
-            !has_utf8_format_annotations(^^E),
-            "std::format does not currently support formatting utf8 strings."
-        );
+        static_assert(!has_utf8_format_annotations(^^E), "std::format does not currently support formatting utf8 strings.");
 #endif
     }
 
@@ -123,12 +121,19 @@ private:
     {
         try {
             if constexpr (has_narrow_format_annotations(^^E)) {
-                return {std::meta::extract<enum_formatting::formattable_with_default<CharT>>(narrow_format_annotations_of(^^E).front())};
+                return {std::meta::extract<enum_formatting::formattable_with_default<CharT>>(
+                    narrow_format_annotations_of(^^E).front()
+                )};
             } else {
-                return {std::meta::extract<enum_formatting::u8formattable_with_default<CharT>>(utf8_format_annotations_of(^^E).front())};
+                return {std::meta::extract<enum_formatting::u8formattable_with_default<CharT>>(
+                    utf8_format_annotations_of(^^E).front()
+                )};
             }
         } catch (const std::format_error& error) {
-            throw std::format_error("Invalid default format specification annotated onto '" + std::string{std::meta::identifier_of(^^E)} + "': " + error.what());
+            throw std::format_error(
+                "Invalid default format specification annotated onto '" + std::string{std::meta::identifier_of(^^E)}
+                + "': " + error.what()
+            );
         }
     }
 
@@ -181,13 +186,17 @@ public:
     constexpr auto format(E value, auto& ctx) const
     {
         if (representation_ == representation::string) {
-            bool qualified_name = qualification_ == qualification::qualified;       //Only qualify the name when explicitly requested.
+            bool qualified_name = qualification_ == qualification::qualified; //Only qualify the name when explicitly requested.
             bool qualified_fallback = qualification_ != qualification::unqualified; //Qualify the fallback by default.
 
             if constexpr (has_narrow_format_annotations(^^E)) {
-                return std::formatter<std::string_view, CharT>::format(::beman::enum_formatting::unexported::to_string<char>(value, qualified_name, qualified_fallback), ctx);
+                return std::formatter<std::string_view, CharT>::format(
+                    ::beman::enum_formatting::unexported::to_string<char>(value, qualified_name, qualified_fallback), ctx
+                );
             } else {
-                return std::formatter<std::u8string_view, CharT>::format(::beman::enum_formatting::unexported::to_string<char8_t>(value, qualified_name, qualified_fallback), ctx);
+                return std::formatter<std::u8string_view, CharT>::format(
+                    ::beman::enum_formatting::unexported::to_string<char8_t>(value, qualified_name, qualified_fallback), ctx
+                );
             }
         } else if (representation_ == representation::integer) {
             if (qualification_ == qualification::qualified) {
@@ -232,7 +241,7 @@ private:
 
     constexpr void apply_qualification(const format_specification& specification) noexcept
     {
-        switch(specification.get_qualification()) {
+        switch (specification.get_qualification()) {
             case format_specification::qualification::unspecified:
                 //Keep the current value.
                 break;
