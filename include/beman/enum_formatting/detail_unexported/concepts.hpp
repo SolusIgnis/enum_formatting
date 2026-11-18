@@ -21,10 +21,7 @@ namespace beman::enum_formatting::unexported {
     concept annotated_with = (!std::meta::annotations_of_with_type(^^T, ^^Annotation).empty());
 
     template<typename T>
-    concept annotated_as_formattable = annotated_with<T, basic_formattable_with_default<char, char>>
-                                    || annotated_with<T, basic_formattable_with_default<char, char8_t>>
-                                    || annotated_with<T, basic_formattable_with_default<char8_t, char>>
-                                    || annotated_with<T, basic_formattable_with_default<char8_t, char8_t>>;
+    concept annotated_as_formattable = is_annotated_as_formattable(^^T);
 } // namespace beman::enum_formatting::unexported
 
 #endif // BEMAN_ENUM_FORMATTING_UNEXPORTED_CONCEPTS_HPP
