@@ -83,7 +83,11 @@ namespace beman::enum_formatting::unexported {
                 return std::string{} + std::meta::identifier_of(^^E) + "::" + std::to_string(std::to_underlying(value));
             }
         } else {
-            return to_utf8(std::to_string(std::to_underlying(value)));
+            if constexpr (std::same_as<CharT, char8_t>) {
+                return to_utf8(std::to_string(std::to_underlying(value)));
+            } else {
+                return std::to_string(std::to_underlying(value));
+            }
         }
     }
 } // namespace beman::enum_formatting::unexported
