@@ -23,7 +23,7 @@
     #include <format>
 #endif
 
-template::beman::enum_formatting::unexported::scoped_enum E, typename CharT>
+template<::beman::enum_formatting::unexported::scoped_enum E, typename CharT>
     requires ::beman::enum_formatting::unexported::annotated_as_formattable<E>
           && (std::same_as<CharT, char>
 #ifdef BEMAN_ENUM_FORMATTING_FEATURE_SUPPORT_UTF8
