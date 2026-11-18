@@ -121,11 +121,11 @@ private:
     {
         try {
             if constexpr (has_narrow_format_annotations(^^E)) {
-                return {std::meta::extract<enum_formatting::formattable_with_default<CharT>>(
+                return {std::meta::extract<::beman::enum_formatting::formattable_with_default<CharT>>(
                     narrow_format_annotations_of(^^E).front()
                 )};
             } else {
-                return {std::meta::extract<enum_formatting::u8formattable_with_default<CharT>>(
+                return {std::meta::extract<::beman::enum_formatting::u8formattable_with_default<CharT>>(
                     utf8_format_annotations_of(^^E).front()
                 )};
             }
