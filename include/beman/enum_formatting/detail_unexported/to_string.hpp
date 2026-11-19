@@ -28,11 +28,16 @@ namespace beman::enum_formatting::unexported {
         return result;
     }
 
-    template<> constexpr auto str_convert<char>(const std::string& narrow) { return narrow; }
+    template<>
+    constexpr auto str_convert<char>(const std::string& narrow)
+    {
+        return narrow;
+    }
 
     template<typename CharT, unexported::enumerable_scoped_enum E>
         requires std::same_as<CharT, char> || std::same_as<CharT, char8_t>
-    constexpr std::basic_string<CharT> to_string(E value, bool use_qualified_name = false, bool use_qualified_fallback = true, bool use_empty_fallback = false)
+    constexpr std::basic_string<CharT>
+        to_string(E value, bool use_qualified_name = false, bool use_qualified_fallback = true, bool use_empty_fallback = false)
     {
         constexpr auto scope = [] consteval {
             if constexpr (std::same_as<CharT, char8_t>) {
@@ -42,7 +47,8 @@ namespace beman::enum_formatting::unexported {
             }
         }();
 
-        template for (constexpr auto enumerator : std::define_static_array(enumerators_of_by_tier(^^E))) {
+        template for (constexpr auto enumerator : std::define_static_array(enumerators_of_by_tier(^^E)))
+        {
             if (value == [:enumerator:]) {
                 if (use_qualified_name) {
                     return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope + identifier_of<CharT>(enumerator);
@@ -55,7 +61,8 @@ namespace beman::enum_formatting::unexported {
         if (use_empty_fallback) {
             return {};
         } else if (use_qualified_fallback) {
-            return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope + str_convert<CharT>(std::to_string(std::to_underlying(value)));
+            return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope
+                 + str_convert<CharT>(std::to_string(std::to_underlying(value)));
         } else {
             return str_convert<CharT>(std::to_string(std::to_underlying(value)));
         }
