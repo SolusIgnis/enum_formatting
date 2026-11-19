@@ -47,6 +47,7 @@ namespace beman::enum_formatting::unexported {
             }
         }();
 
+        (void)use_qualified_name; //GCC 16.2 warns "unused-but-set-parameter" because it can't see the branch below when the expansion statement is empty (i.e., `E` declares no enumerators).
         template for (constexpr auto enumerator : std::define_static_array(enumerators_of_by_tier(^^E)))
         {
             if (value == [:enumerator:]) {
