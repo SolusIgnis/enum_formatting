@@ -136,7 +136,7 @@ private:
             );
         }
     }
-    
+
     static constexpr auto make_qualification_format_prefix()
         requires std::same_as<CharT, char>
     {
