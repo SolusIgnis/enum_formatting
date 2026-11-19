@@ -38,7 +38,7 @@ namespace beman::enum_formatting::unexported {
             if constexpr (std::same_as<CharT, char8_t>) {
                 return u8"::";
             } else {
-                return "";
+                return "::";
             }
         }();
 
