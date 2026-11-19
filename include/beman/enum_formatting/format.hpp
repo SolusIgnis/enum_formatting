@@ -255,7 +255,7 @@ private:
         requires (has_narrow_format_annotations(^^E))
     {
         return std::formatter<std::string_view, CharT>::format(
-            enum_formatting::unexported::to_string<char>(value, qualified_name, qualified_fallback), ctx
+            ::beman::enum_formatting::unexported::to_string<char>(value, qualified_name, qualified_fallback), ctx
         );
     }
 
@@ -275,7 +275,7 @@ private:
         requires (has_utf8_format_annotations(^^E))
     {
         return std::formatter<std::u8string_view, CharT>::format(
-            enum_formatting::unexported::to_string<char8_t>(value, qualified_name, qualified_fallback), ctx
+            ::beman::enum_formatting::unexported::to_string<char8_t>(value, qualified_name, qualified_fallback), ctx
         );
     }
 
