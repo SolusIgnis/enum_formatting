@@ -11,6 +11,17 @@
 #endif
 
 namespace beman::enum_formatting::unexported {
+    template<typename CharT>
+        requires std::same_as<CharT, char> || std::same_as<CharT, char8_t>
+    consteval auto identifier_of(std::meta::info entity)
+    {
+        if constexpr (std::same_as<CharT, char8_t>) {
+            return std::meta::u8identifier_of(entity);
+        } else {
+            return std::meta::identifier_of(entity);
+        }
+    }
+
     consteval bool is_specialization_of(std::meta::info candidate, std::meta::info primary_template)
     {
         if (!std::meta::is_template(primary_template)) {

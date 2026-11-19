@@ -15,43 +15,39 @@
 #endif
 
 namespace beman::enum_formatting::unexported {
-    std::u8string to_utf8(std::string narrow)
+    template<typename TargetCharT>
+    constexpr auto str_convert(const std::string& narrow)
     {
-        std::u8string result;
+        std::basic_string<TargetCharT> result;
         result.reserve(narrow.size());
 
         for (auto character : narrow) {
-            result.push_back(static_cast<char8_t>(character));
+            result.push_back(static_cast<TargetCharT>(character));
         }
 
         return result;
     }
 
+    template<> constexpr auto str_convert<char>(const std::string& narrow) { return narrow; }
+
     template<typename CharT, unexported::enumerable_scoped_enum E>
         requires std::same_as<CharT, char> || std::same_as<CharT, char8_t>
-    constexpr std::basic_string<CharT> to_string(
-        E value,
-        [[maybe_unused]] bool use_qualified_name = false,
-        bool use_qualified_fallback              = true,
-        bool use_empty_fallback                  = false
-    )
+    constexpr std::basic_string<CharT> to_string(E value, bool use_qualified_name = false, bool use_qualified_fallback = true, bool use_empty_fallback = false)
     {
-        template for (constexpr auto enumerator : std::define_static_array(enumerators_of_by_tier(^^E)))
-        {
+        constexpr auto scope = [] consteval {
+            if constexpr (std::same_as<CharT, char8_t>) {
+                return u8"::";
+            } else {
+                return "";
+            }
+        }();
+
+        template for (constexpr auto enumerator : std::define_static_array(enumerators_of_by_tier(^^E))) {
             if (value == [:enumerator:]) {
                 if (use_qualified_name) {
-                    if constexpr (std::same_as<CharT, char8_t>) {
-                        return std::u8string{} + std::meta::u8identifier_of(^^E) + u8"::"
-                             + std::meta::u8identifier_of(enumerator);
-                    } else {
-                        return std::string{} + std::meta::identifier_of(^^E) + "::" + std::meta::identifier_of(enumerator);
-                    }
+                    return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope + identifier_of<CharT>(enumerator);
                 } else {
-                    if constexpr (std::same_as<CharT, char8_t>) {
-                        return std::u8string{std::meta::u8identifier_of(enumerator)};
-                    } else {
-                        return std::string{std::meta::identifier_of(enumerator)};
-                    }
+                    return std::basic_string<CharT>{identifier_of<CharT>(enumerator)};
                 }
             }
         }
@@ -59,18 +55,9 @@ namespace beman::enum_formatting::unexported {
         if (use_empty_fallback) {
             return {};
         } else if (use_qualified_fallback) {
-            if constexpr (std::same_as<CharT, char8_t>) {
-                return std::u8string{} + std::meta::u8identifier_of(^^E) + u8"::"
-                     + to_utf8(std::to_string(std::to_underlying(value)));
-            } else {
-                return std::string{} + std::meta::identifier_of(^^E) + "::" + std::to_string(std::to_underlying(value));
-            }
+            return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope + str_convert<CharT>(std::to_string(std::to_underlying(value)));
         } else {
-            if constexpr (std::same_as<CharT, char8_t>) {
-                return to_utf8(std::to_string(std::to_underlying(value)));
-            } else {
-                return std::to_string(std::to_underlying(value));
-            }
+            return str_convert<CharT>(std::to_string(std::to_underlying(value)));
         }
     }
 } // namespace beman::enum_formatting::unexported
