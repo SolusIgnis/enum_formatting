@@ -136,6 +136,19 @@ private:
             );
         }
     }
+    
+    static constexpr auto make_qualification_format_prefix()
+        requires std::same_as<CharT, char>
+    {
+        return std::string_view{"{}::"};
+    }
+#ifdef BEMAN_ENUM_FORMATTING_FEATURE_SUPPORT_UTF8
+    static constexpr auto make_qualification_format_prefix()
+        requires std::same_as<CharT, char8_t>
+    {
+        return std::u8string_view{u8"{}::"};
+    }
+#endif
 
     enum class representation : std::uint8_t {
         string,
@@ -249,7 +262,7 @@ private:
     auto format_integer_qualifier(auto& out) const
         requires (has_narrow_format_annotations(^^E))
     {
-        return std::format_to(out, std::basic_string_view<CharT>{"{}::"}, std::meta::identifier_of(^^E));
+        return std::format_to(out, make_qualification_format_prefix(), std::meta::identifier_of(^^E));
     }
 
     auto format_as_type(auto& ctx) const
@@ -269,7 +282,7 @@ private:
     auto format_integer_qualifier(auto& out) const
         requires (has_utf8_format_annotations(^^E))
     {
-        return std::format_to(out, std::basic_string_view<CharT>{"{}::"}, std::meta::u8identifier_of(^^E));
+        return std::format_to(out, make_qualification_format_prefix(), std::meta::u8identifier_of(^^E));
     }
 
     auto format_as_type(auto& ctx) const
