@@ -225,7 +225,9 @@ public:
             }
             return std::formatter<std::underlying_type_t<E>, CharT>::format(std::to_underlying(value), ctx);
         } else if (representation_ == representation::type) {
-            return std::formatter<std::basic_string_view<representation_character_type>, CharT>::format(::beman::enum_formatting::unexported::identifier_of<representation_character_type>(^^E), ctx);
+            return std::formatter<std::basic_string_view<representation_character_type>, CharT>::format(
+                ::beman::enum_formatting::unexported::identifier_of<representation_character_type>(^^E), ctx
+            );
         } else {
             std::unreachable();
         }
