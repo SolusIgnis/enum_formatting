@@ -11,6 +11,7 @@
     #include <algorithm>
     #include <meta>
     #include <string>
+    #include <type_traits>
     #include <utility>
 #endif
 
@@ -43,15 +44,22 @@ namespace beman::enum_formatting::unexported {
         bool use_empty_fallback                  = false
     )
     {
+        std::add_pointer_t<const CharT> scope_operator;
+        if constexpr (std::same_as<CharT, char8_t>) {
+            scope_operator = u8"::";
+        } else {
+            scope_operator = "::";
+        }
+
         template for (constexpr auto enumerator : std::define_static_array(enumerators_of_by_tier(^^E)))
         {
             if (value == [:enumerator:]) {
                 if (use_qualified_name) {
                     if constexpr (std::same_as<CharT, char8_t>) {
-                        return std::u8string{} + std::meta::u8identifier_of(^^E) + u8"::"
+                        return std::u8string{} + std::meta::u8identifier_of(^^E) + scope_operator
                              + std::meta::u8identifier_of(enumerator);
                     } else {
-                        return std::string{} + std::meta::identifier_of(^^E) + "::" + std::meta::identifier_of(enumerator);
+                        return std::string{} + std::meta::identifier_of(^^E) + scope_operator + std::meta::identifier_of(enumerator);
                     }
                 } else {
                     if constexpr (std::same_as<CharT, char8_t>) {
@@ -67,18 +75,14 @@ namespace beman::enum_formatting::unexported {
             return {};
         } else if (use_qualified_fallback) {
             if constexpr (std::same_as<CharT, char8_t>) {
-                return std::u8string{} + std::meta::u8identifier_of(^^E) + u8"::"
+                return std::u8string{} + std::meta::u8identifier_of(^^E) + scope_operator
                      + str_convert<CharT>(std::to_string(std::to_underlying(value)));
             } else {
                 return std::string{} + std::meta::identifier_of(^^E)
-                     + "::" + str_convert<CharT>(std::to_string(std::to_underlying(value)));
+                     + scope_operator + str_convert<CharT>(std::to_string(std::to_underlying(value)));
             }
         } else {
-            if constexpr (std::same_as<CharT, char8_t>) {
-                return str_convert<CharT>(std::to_string(std::to_underlying(value)));
-            } else {
-                return str_convert<CharT>(std::to_string(std::to_underlying(value)));
-            }
+            return str_convert<CharT>(std::to_string(std::to_underlying(value)));
         }
     }
 } // namespace beman::enum_formatting::unexported
