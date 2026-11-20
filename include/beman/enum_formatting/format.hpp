@@ -215,9 +215,9 @@ public:
             if (qualification_ == qualification::qualified) {
                 auto out = ctx.out();
                 if constexpr (has_narrow_format_annotations(^^E)) {
-                    out = std::format_to(out, std::basic_string_view<CharT>{"{}::"}, std::meta::identifier_of(^^E));
+                    out = std::format_to(out, make_qualification_format_prefix(), std::meta::identifier_of(^^E));
                 } else {
-                    out = std::format_to(out, std::basic_string_view<CharT>{"{}::"}, std::meta::u8identifier_of(^^E));
+                    out = std::format_to(out, make_qualification_format_prefix(), std::meta::u8identifier_of(^^E));
                 }
                 ctx.advance_to(out);
             }
