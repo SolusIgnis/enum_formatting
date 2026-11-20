@@ -70,7 +70,8 @@ namespace beman::enum_formatting::unexported {
                 return std::u8string{} + std::meta::u8identifier_of(^^E) + u8"::"
                      + str_convert<CharT>(std::to_string(std::to_underlying(value)));
             } else {
-                return std::string{} + std::meta::identifier_of(^^E) + "::" + str_convert<CharT>(std::to_string(std::to_underlying(value)));
+                return std::string{} + std::meta::identifier_of(^^E)
+                     + "::" + str_convert<CharT>(std::to_string(std::to_underlying(value)));
             }
         } else {
             if constexpr (std::same_as<CharT, char8_t>) {
