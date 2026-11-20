@@ -223,11 +223,7 @@ public:
             }
             return std::formatter<std::underlying_type_t<E>, CharT>::format(std::to_underlying(value), ctx);
         } else if (representation_ == representation::type) {
-            if constexpr (has_narrow_format_annotations(^^E)) {
-                return std::formatter<std::string_view, CharT>::format(std::meta::identifier_of(^^E), ctx);
-            } else {
-                return std::formatter<std::u8string_view, CharT>::format(std::meta::u8identifier_of(^^E), ctx);
-            }
+            return format_as_type(ctx);
         } else {
             std::unreachable();
         }
