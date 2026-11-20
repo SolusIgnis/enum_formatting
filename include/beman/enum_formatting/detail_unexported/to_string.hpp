@@ -37,12 +37,8 @@ namespace beman::enum_formatting::unexported {
 
     template<typename CharT, unexported::enumerable_scoped_enum E>
         requires std::same_as<CharT, char> || std::same_as<CharT, char8_t>
-    constexpr std::basic_string<CharT> to_string(
-        E value,
-        bool use_qualified_name     = false,
-        bool use_qualified_fallback = true,
-        bool use_empty_fallback     = false
-    )
+    constexpr std::basic_string<CharT>
+        to_string(E value, bool use_qualified_name = false, bool use_qualified_fallback = true, bool use_empty_fallback = false)
     {
         std::add_pointer_t<const CharT> scope_operator;
         if constexpr (std::same_as<CharT, char8_t>) {
