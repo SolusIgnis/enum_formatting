@@ -12,10 +12,11 @@ if(BEMAN_ENUM_FORMATTING_USE_MODULES)
                     annotations.hpp
                     detail_unexported/concepts.hpp
                     detail_unexported/formatter.hpp
+                    detail_unexported/meta.hpp
                     detail_unexported/to_string.hpp
+                    format.hpp
                     string.hpp
                     utility.hpp
-                    format.hpp
                     "${PROJECT_BINARY_DIR}/include/beman/enum_formatting/config_generated.hpp"
     )
 else()
@@ -29,10 +30,11 @@ else()
                     annotations.hpp
                     detail_unexported/concepts.hpp
                     detail_unexported/formatter.hpp
+                    detail_unexported/meta.hpp
                     detail_unexported/to_string.hpp
+                    format.hpp
                     string.hpp
                     utility.hpp
-                    format.hpp
                     "${PROJECT_BINARY_DIR}/include/beman/enum_formatting/config_generated.hpp"
     )
 endif()

@@ -14,7 +14,7 @@ namespace beman::enum_formatting {
     template<unexported::enumerable_scoped_enum E>
     constexpr std::string to_string(E value)
     {
-        return unexported::to_string(value);
+        return unexported::to_string<char>(value);
     }
 } // namespace beman::enum_formatting
 

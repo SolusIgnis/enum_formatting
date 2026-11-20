@@ -78,8 +78,8 @@ namespace beman::enum_formatting::unexported {
             }
         }
 
-        constexpr explicit format_specification(const std::basic_format_parse_context<CharT>& context)
-            : format_specification(std::basic_string_view<CharT>{context.begin(), context.end()})
+        constexpr explicit format_specification(const std::basic_format_parse_context<CharT>& ctx)
+            : format_specification(std::basic_string_view<CharT>{ctx.begin(), ctx.end()})
         {}
 
         [[nodiscard]] constexpr bool is_empty() const noexcept { return state_ == parser_state::empty; }
@@ -136,8 +136,6 @@ namespace beman::enum_formatting::unexported {
                     return handle_state_unexpected_specifier(specifiers);
                 case ready_to_forward:
                     return handle_state_ready_to_forward(specifiers);
-                case empty:
-                    return handle_state_empty(specifiers);
                 default:
                     std::unreachable();
             }
@@ -172,7 +170,7 @@ namespace beman::enum_formatting::unexported {
             } else if (specifiers.starts_with(format_delimiter)) {
                 return parser_state::ready_to_forward;
             } else if (representation_ == representation::type) {
-                throw std::format_error("Qualification ('q' or 'u') is invalid for type representation ('t').");
+                throw std::format_error("Qualification specifier ('q' or 'u') is invalid for type representation ('t').");
             } else if (match_qualification_specifier(specifiers)) {
                 return parser_state::valid_qualification;
             } else {
@@ -216,12 +214,6 @@ namespace beman::enum_formatting::unexported {
 
         [[nodiscard]] constexpr parser_state
             handle_state_ready_to_forward([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
-        {
-            return parser_state::done;
-        }
-
-        [[nodiscard]] constexpr parser_state
-            handle_state_empty([[maybe_unused]] std::basic_string_view<CharT> specifiers) noexcept
         {
             return parser_state::done;
         }

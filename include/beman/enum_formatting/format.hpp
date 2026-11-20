@@ -24,55 +24,113 @@
 #endif
 
 template<::beman::enum_formatting::unexported::scoped_enum E, typename CharT>
-    requires ::beman::enum_formatting::unexported::annotated_with<E, ::beman::enum_formatting::formattable_with_default>
+    requires ::beman::enum_formatting::unexported::annotated_as_formattable<E>
           && (std::same_as<CharT, char>
-        //|| std::same_as<CharT, char8_t>
-             )
-struct std::formatter<E, CharT> : private std::formatter<std::basic_string_view<CharT>, CharT>,
-                                  private std::formatter<std::underlying_type_t<E>, CharT> {
+#ifdef BEMAN_ENUM_FORMATTING_FEATURE_SUPPORT_UTF8
+          ||  std::same_as<CharT, char8_t>
+#endif
+          )
+struct std::formatter<E, CharT>
+    : private std::formatter<std::conditional_t<
+        !std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default<CharT>).empty(),
+        std::string_view,
+#ifdef BEMAN_ENUM_FORMATTING_FEATURE_SUPPORT_UTF8
+        std::u8string_view
+#else
+        std::string_view
+#endif
+    >, CharT>
+    , private std::formatter<std::underlying_type_t<E>, CharT> {
 private:
+    static consteval auto narrow_format_annotations_of(std::meta::info enumeration)
+    {
+        return std::meta::annotations_of_with_type(enumeration, ^^::beman::enum_formatting::formattable_with_default<CharT>);
+    }
+
+    static consteval bool has_narrow_format_annotations(std::meta::info enumeration)
+    {
+        return !narrow_format_annotations_of(enumeration).empty();
+    }
+
+    static consteval auto narrow_annotation_count(std::meta::info enumeration)
+    {
+        return narrow_format_annotations_of(enumeration).size();
+    }
+
+    static consteval auto utf8_format_annotations_of(std::meta::info enumeration)
+    {
+        return std::meta::annotations_of_with_type(enumeration, ^^::beman::enum_formatting::u8formattable_with_default<CharT>);
+    }
+
+    static consteval bool has_utf8_format_annotations(std::meta::info enumeration)
+    {
+        return !utf8_format_annotations_of(enumeration).empty();
+    }
+
+    static consteval auto utf8_annotation_count(std::meta::info enumeration)
+    {
+        return utf8_format_annotations_of(enumeration).size();
+    }
+
     consteval
     {
         using namespace std::literals;
-        const auto annotation_count = [](std::meta::info enumeration) consteval {
-            return std::meta::annotations_of_with_type(enumeration, ^^::beman::enum_formatting::formattable_with_default)
-                .size();
-        };
 
         const auto count_to_string = [](auto count) consteval {
             std::array<char, std::numeric_limits<decltype(count)>::digits10 + 2> buffer{};
             auto [ptr, _] = std::to_chars(buffer.begin(), buffer.end(), count);
 
-            return std::string{buffer.data(), ptr};
+            return std::string{buffer.begin(), ptr};
         };
 
         static_assert(
-            annotation_count(^^E) == 1,
-            "Only one 'formattable' or 'formattable_with_default' annotation may appertain to a single scoped enumeration type. '"s
-                + std::meta::identifier_of(^^E) + "' has "sv + count_to_string(annotation_count(^^E)) + "."sv
+            !(has_narrow_format_annotations(^^E) && has_utf8_format_annotations(^^E)),
+            "'"s + std::meta::identifier_of(^^E) + "' is annotated as both narrow-character formattable and utf8 formattable."sv
         );
+
+        static_assert(
+            narrow_annotation_count(^^E) <= 1,
+            "Only one 'formattable' or 'formattable_with_default' annotation with the same format specifier character type may appertain to a single scoped enumeration type. '"s
+                + std::meta::identifier_of(^^E) + "' has "sv + count_to_string(narrow_annotation_count(^^E)) + "."sv
+        );
+
+        static_assert(
+            utf8_annotation_count(^^E) <= 1,
+            "Only one 'u8formattable' or 'u8formattable_with_default' annotation with the same format specifier character type may appertain to a single scoped enumeration type. '"s
+                + std::meta::identifier_of(^^E) + "' has "sv + count_to_string(utf8_annotation_count(^^E)) + "."sv
+        );
+
+#ifndef BEMAN_ENUM_FORMATTING_FEATURE_SUPPORT_UTF8
+        static_assert(!has_utf8_format_annotations(^^E), "std::format does not currently support formatting utf8 strings.");
+#endif
     }
 
     using format_specification = ::beman::enum_formatting::unexported::format_specification<CharT>;
 
+    using representation_character_type = std::conditional_t<has_narrow_format_annotations(^^E), char, char8_t>;
+
     struct format_defaults_t {
         std::basic_format_parse_context<CharT> ctx;
         format_specification spec;
+
+        constexpr format_defaults_t(std::basic_string_view<CharT> specifiers) : ctx{specifiers}, spec{specifiers}
+        {
+            ctx.advance_to(spec.begin());
+        }
     };
 
-    static consteval auto get_validated_defaults()
+    static consteval format_defaults_t get_validated_defaults()
     {
-        auto default_specifiers = std::basic_string_view<CharT>{
-            std::meta::extract<::beman::enum_formatting::formattable_with_default>(
-                std::meta::annotations_of_with_type(^^E, ^^::beman::enum_formatting::formattable_with_default).front()
-            )
-        };
-
         try {
-            return format_defaults_t{
-                std::basic_format_parse_context<CharT>{default_specifiers},
-                format_specification{default_specifiers},
-            };
+            if constexpr (has_narrow_format_annotations(^^E)) {
+                return {std::meta::extract<::beman::enum_formatting::formattable_with_default<CharT>>(
+                    narrow_format_annotations_of(^^E).front()
+                )};
+            } else {
+                return {std::meta::extract<::beman::enum_formatting::u8formattable_with_default<CharT>>(
+                    utf8_format_annotations_of(^^E).front()
+                )};
+            }
         } catch (const std::format_error& error) {
             throw std::format_error(
                 "Invalid default format specification annotated onto '" + std::string{std::meta::identifier_of(^^E)}
@@ -80,6 +138,19 @@ private:
             );
         }
     }
+
+    static constexpr auto make_qualification_format_prefix()
+        requires std::same_as<CharT, char>
+    {
+        return std::string_view{"{}::"};
+    }
+#ifdef BEMAN_ENUM_FORMATTING_FEATURE_SUPPORT_UTF8
+    static constexpr auto make_qualification_format_prefix()
+        requires std::same_as<CharT, char8_t>
+    {
+        return std::u8string_view{u8"{}::"};
+    }
+#endif
 
     enum class representation : std::uint8_t {
         string,
@@ -130,22 +201,32 @@ public:
     constexpr auto format(E value, auto& ctx) const
     {
         if (representation_ == representation::string) {
-            const bool qualified_name     = qualification_
-                                         == qualification::qualified; //Only qualify the name when explicitly requested.
-            const bool qualified_fallback = qualification_ != qualification::unqualified; //Qualify the fallback by default.
+            bool qualified_name = qualification_ == qualification::qualified; //Only qualify the name when explicitly requested.
+            bool qualified_fallback = qualification_ != qualification::unqualified; //Qualify the fallback by default.
 
-            return std::formatter<std::basic_string_view<CharT>, CharT>::format(
-                ::beman::enum_formatting::unexported::to_string(value, qualified_name, qualified_fallback), ctx
+            return std::formatter<std::basic_string_view<representation_character_type>, CharT>::format(
+                ::beman::enum_formatting::unexported::to_string<representation_character_type>(
+                    value, qualified_name, qualified_fallback
+                ),
+                ctx
             );
         } else if (representation_ == representation::integer) {
             if (qualification_ == qualification::qualified) {
                 auto out = ctx.out();
-                out      = std::format_to(out, "{}::", std::meta::identifier_of(^^E));
+
+                out = std::format_to(
+                    out,
+                    make_qualification_format_prefix(),
+                    ::beman::enum_formatting::unexported::identifier_of<representation_character_type>(^^E)
+                );
+
                 ctx.advance_to(out);
             }
             return std::formatter<std::underlying_type_t<E>, CharT>::format(std::to_underlying(value), ctx);
         } else if (representation_ == representation::type) {
-            return std::formatter<std::basic_string_view<CharT>, CharT>::format(std::meta::identifier_of(^^E), ctx);
+            return std::formatter<std::basic_string_view<representation_character_type>, CharT>::format(
+                ::beman::enum_formatting::unexported::identifier_of<representation_character_type>(^^E), ctx
+            );
         } else {
             std::unreachable();
         }
@@ -156,7 +237,7 @@ private:
     {
         switch (specification.get_representation()) {
             case format_specification::representation::unspecified:
-                representation_ = representation::string;
+                //Keep the current value.
                 break;
             case format_specification::representation::string:
                 representation_ = representation::string;
@@ -174,7 +255,7 @@ private:
     {
         switch (specification.get_qualification()) {
             case format_specification::qualification::unspecified:
-                qualification_ = qualification::use_default;
+                //Keep the current value.
                 break;
             case format_specification::qualification::qualified:
                 qualification_ = qualification::qualified;

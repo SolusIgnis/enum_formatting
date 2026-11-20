@@ -22,22 +22,22 @@ TEST_CASE("formattable_with_default construction", "[unit][enum_formatting][anno
 
     SECTION("construction requires a bounded character array")
     {
-        CHECK(std::constructible_from<formattable_with_default, decltype("")>);
-        CHECK(std::constructible_from<formattable_with_default, decltype("s:>20.40")>);
-        CHECK(std::constructible_from<formattable_with_default, decltype("i:08b")>);
+        CHECK(std::constructible_from<formattable_with_default<char>, decltype("")>);
+        CHECK(std::constructible_from<formattable_with_default<char>, decltype("s:>20.40")>);
+        CHECK(std::constructible_from<formattable_with_default<char>, decltype("i:08b")>);
         CHECK(
             std::constructible_from<
-                formattable_with_default,
+                formattable_with_default<char>,
                 decltype("The quick brown fox jumps over the lazy dog. ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789")
             >
         );
-        CHECK_FALSE(std::constructible_from<formattable_with_default, const char*>);
-        CHECK_FALSE(std::constructible_from<formattable_with_default, char*>);
+        CHECK_FALSE(std::constructible_from<formattable_with_default<char>, const char*>);
+        CHECK_FALSE(std::constructible_from<formattable_with_default<char>, char*>);
     }
 
     SECTION("default construction")
     {
-        constexpr formattable_with_default annotation{};
+        constexpr formattable_with_default<char> annotation{};
 
         REQUIRE(annotation.please_use_other_door != nullptr);
         CHECK(std::string_view{annotation.please_use_other_door}.empty());
@@ -45,7 +45,7 @@ TEST_CASE("formattable_with_default construction", "[unit][enum_formatting][anno
 
     SECTION("construction with a format specification")
     {
-        constexpr formattable_with_default annotation{"i:#04X"};
+        constexpr formattable_with_default<char> annotation{"i:#04X"};
 
         REQUIRE(annotation.please_use_other_door[0] == 'i');
         REQUIRE(annotation.please_use_other_door[1] == ':');
@@ -60,7 +60,7 @@ TEST_CASE("formattable_with_default construction", "[unit][enum_formatting][anno
     {
         constexpr char expected[] =
             "The quick brown fox jumps over the lazy dog. ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789";
-        constexpr formattable_with_default annotation{expected};
+        constexpr formattable_with_default<char> annotation{expected};
 
         CHECK(std::string_view{annotation.please_use_other_door} == std::string_view{expected});
     }
@@ -107,7 +107,7 @@ TEST_CASE(
     using beman::enum_formatting::formattable_with_default;
     using beman::enum_formatting::formattable;
 
-    CHECK(std::same_as<std::remove_cv_t<decltype(formattable)>, formattable_with_default>);
+    CHECK(std::same_as<std::remove_cv_t<decltype(formattable)>, formattable_with_default<char>>);
     CHECK(std::string_view{formattable}.empty());
 }
 
@@ -121,7 +121,7 @@ TEST_CASE(
 
     SECTION("formattable_with_default is equality comparable")
     {
-        CHECK(std::equality_comparable<formattable_with_default>);
+        CHECK(std::equality_comparable<formattable_with_default<char>>);
     }
 
     SECTION("equality compares format specification strings")
@@ -165,8 +165,8 @@ TEST_CASE(
     enum class[[= formattable_with_default("i:#04X")]] q_word : std::uint64_t {};
 
     auto get_formattable_annotation = [](std::meta::info reflection) consteval {
-        return std::meta::extract<formattable_with_default>(
-            std::meta::annotations_of_with_type(reflection, ^^::beman::enum_formatting::formattable_with_default).front()
+        return std::meta::extract<formattable_with_default<char>>(
+            std::meta::annotations_of_with_type(reflection, ^^::beman::enum_formatting::formattable_with_default<char>).front()
         );
     };
 

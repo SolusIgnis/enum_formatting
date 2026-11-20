@@ -14,11 +14,15 @@ import std;
 // they include dependencies only when we have not
 // defined BEMAN_ENUM_FORMATTING_INCLUDED_FROM_INTERFACE_UNIT.
 
+export {
+#include <beman/enum_formatting/annotations.hpp>
+}
+
+#include <beman/enum_formatting/detail_unexported/meta.hpp>
 #include <beman/enum_formatting/detail_unexported/concepts.hpp>
 
 export {
 #include <beman/enum_formatting/utility.hpp>
-#include <beman/enum_formatting/annotations.hpp>
 }
 
 #include <beman/enum_formatting/detail_unexported/formatter.hpp>
