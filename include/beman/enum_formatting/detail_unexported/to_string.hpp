@@ -56,10 +56,10 @@ namespace beman::enum_formatting::unexported {
             if (value == [:enumerator:]) {
                 if (use_qualified_name) {
                     if constexpr (std::same_as<CharT, char8_t>) {
-                        return std::u8string{} + std::meta::u8identifier_of(^^E) + scope_operator
+                        return std::basic_string<CharT>{} + std::meta::u8identifier_of(^^E) + scope_operator
                              + std::meta::u8identifier_of(enumerator);
                     } else {
-                        return std::string{} + std::meta::identifier_of(^^E) + scope_operator
+                        return std::basic_string<CharT>{} + std::meta::identifier_of(^^E) + scope_operator
                              + std::meta::identifier_of(enumerator);
                     }
                 } else {
@@ -76,10 +76,10 @@ namespace beman::enum_formatting::unexported {
             return {};
         } else if (use_qualified_fallback) {
             if constexpr (std::same_as<CharT, char8_t>) {
-                return std::u8string{} + std::meta::u8identifier_of(^^E) + scope_operator
+                return std::basic_string<CharT>{} + std::meta::u8identifier_of(^^E) + scope_operator
                      + str_convert<CharT>(std::to_string(std::to_underlying(value)));
             } else {
-                return std::string{} + std::meta::identifier_of(^^E) + scope_operator
+                return std::basic_string<CharT>{} + std::meta::identifier_of(^^E) + scope_operator
                      + str_convert<CharT>(std::to_string(std::to_underlying(value)));
             }
         } else {
