@@ -9,6 +9,7 @@
     #include "meta.hpp"
 
     #include <algorithm>
+    #include <functional>
     #include <meta>
     #include <string>
     #include <utility>
