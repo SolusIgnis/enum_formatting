@@ -55,19 +55,10 @@ namespace beman::enum_formatting::unexported {
         {
             if (value == [:enumerator:]) {
                 if (use_qualified_name) {
-                    if constexpr (std::same_as<CharT, char8_t>) {
-                        return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope_operator
-                             + identifier_of<CharT>(enumerator);
-                    } else {
-                        return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope_operator
-                             + identifier_of<CharT>(enumerator);
-                    }
+                    return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope_operator
+                         + identifier_of<CharT>(enumerator);
                 } else {
-                    if constexpr (std::same_as<CharT, char8_t>) {
-                        return std::basic_string<CharT>{identifier_of<CharT>(enumerator)};
-                    } else {
-                        return std::basic_string<CharT>{identifier_of<CharT>(enumerator)};
-                    }
+                    return std::basic_string<CharT>{identifier_of<CharT>(enumerator)};
                 }
             }
         }
@@ -75,13 +66,8 @@ namespace beman::enum_formatting::unexported {
         if (use_empty_fallback) {
             return {};
         } else if (use_qualified_fallback) {
-            if constexpr (std::same_as<CharT, char8_t>) {
-                return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope_operator
-                     + str_convert<CharT>(std::to_string(std::to_underlying(value)));
-            } else {
-                return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope_operator
-                     + str_convert<CharT>(std::to_string(std::to_underlying(value)));
-            }
+            return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope_operator
+                 + str_convert<CharT>(std::to_string(std::to_underlying(value)));
         } else {
             return str_convert<CharT>(std::to_string(std::to_underlying(value)));
         }
