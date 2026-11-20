@@ -204,11 +204,20 @@ public:
             bool qualified_name = qualification_ == qualification::qualified; //Only qualify the name when explicitly requested.
             bool qualified_fallback = qualification_ != qualification::unqualified; //Qualify the fallback by default.
 
-            return std::formatter<std::basic_string_view<representation_character_type>, CharT>::format(::beman::enum_formatting::unexported::to_string<representation_character_type>(value, qualified_name, qualified_fallback), ctx);
+            return std::formatter<std::basic_string_view<representation_character_type>, CharT>::format(
+                ::beman::enum_formatting::unexported::to_string<representation_character_type>(
+                    value, qualified_name, qualified_fallback
+                ),
+                ctx
+            );
         } else if (representation_ == representation::integer) {
             if (qualification_ == qualification::qualified) {
                 auto out = ctx.out();
-                out = std::format_to(out, make_qualification_format_prefix(), ::beman::enum_formatting::unexported::identifier_of<representation_character_type>(^^E));
+                out      = std::format_to(
+                    out,
+                    make_qualification_format_prefix(),
+                    ::beman::enum_formatting::unexported::identifier_of<representation_character_type>(^^E)
+                );
                 ctx.advance_to(out);
             }
             return std::formatter<std::underlying_type_t<E>, CharT>::format(std::to_underlying(value), ctx);
