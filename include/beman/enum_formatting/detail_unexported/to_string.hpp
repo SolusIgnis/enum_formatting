@@ -53,7 +53,8 @@ namespace beman::enum_formatting::unexported {
         {
             if (value == [:enumerator:]) {
                 if (use_qualified_name) {
-                    return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope_operator + identifier_of<CharT>(enumerator);
+                    return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope_operator
+                         + identifier_of<CharT>(enumerator);
                 } else {
                     return std::basic_string<CharT>{identifier_of<CharT>(enumerator)};
                 }
