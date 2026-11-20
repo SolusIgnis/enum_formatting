@@ -213,11 +213,13 @@ public:
         } else if (representation_ == representation::integer) {
             if (qualification_ == qualification::qualified) {
                 auto out = ctx.out();
-                out      = std::format_to(
+
+                out = std::format_to(
                     out,
                     make_qualification_format_prefix(),
                     ::beman::enum_formatting::unexported::identifier_of<representation_character_type>(^^E)
                 );
+
                 ctx.advance_to(out);
             }
             return std::formatter<std::underlying_type_t<E>, CharT>::format(std::to_underlying(value), ctx);
