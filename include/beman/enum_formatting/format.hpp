@@ -266,6 +266,47 @@ private:
                 break;
         }
     }
+    
+    auto format_as_string(E value, auto& ctx, bool qualified_name, bool qualified_fallback) const
+        requires (has_narrow_format_annotations(^^E))
+    {
+        return std::formatter<std::string_view, CharT>::format(
+            ::beman::enum_formatting::unexported::to_string<char>(value, qualified_name, qualified_fallback), ctx
+        );
+    }
+
+    auto format_integer_qualifier(auto& out) const
+        requires (has_narrow_format_annotations(^^E))
+    {
+        return std::format_to(out, make_qualification_format_prefix(), std::meta::identifier_of(^^E));
+    }
+
+    auto format_as_type(auto& ctx) const
+        requires (has_narrow_format_annotations(^^E))
+    {
+        return std::formatter<std::string_view, CharT>::format(std::meta::identifier_of(^^E), ctx);
+    }
+#ifdef BEMAN_ENUM_FORMATTING_FEATURE_SUPPORT_UTF8
+    auto format_as_string(E value, auto& ctx, bool qualified_name, bool qualified_fallback) const
+        requires (has_utf8_format_annotations(^^E))
+    {
+        return std::formatter<std::u8string_view, CharT>::format(
+            ::beman::enum_formatting::unexported::to_string<char8_t>(value, qualified_name, qualified_fallback), ctx
+        );
+    }
+
+    auto format_integer_qualifier(auto& out) const
+        requires (has_utf8_format_annotations(^^E))
+    {
+        return std::format_to(out, make_qualification_format_prefix(), std::meta::u8identifier_of(^^E));
+    }
+
+    auto format_as_type(auto& ctx) const
+        requires (has_utf8_format_annotations(^^E))
+    {
+        return std::formatter<std::u8string_view, CharT>::format(std::meta::u8identifier_of(^^E), ctx);
+    }
+#endif
 };
 
 #endif // BEMAN_ENUM_FORMATTING_FORMAT_HPP
