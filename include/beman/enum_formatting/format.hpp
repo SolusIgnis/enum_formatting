@@ -107,6 +107,8 @@ private:
 
     using format_specification = ::beman::enum_formatting::unexported::format_specification<CharT>;
 
+    using representation_character_type = std::conditional_t<has_narrow_format_annotations(^^E), char, char8_t>;
+
     struct format_defaults_t {
         std::basic_format_parse_context<CharT> ctx;
         format_specification spec;
@@ -202,16 +204,18 @@ public:
             bool qualified_name = qualification_ == qualification::qualified; //Only qualify the name when explicitly requested.
             bool qualified_fallback = qualification_ != qualification::unqualified; //Qualify the fallback by default.
 
-            return format_as_string(value, ctx, qualified_name, qualified_fallback);
+            return std::formatter<std::basic_string_view<representation_character_type>, CharT>::format(::beman::enum_formatting::unexported::to_string<representation_character_type>(value, qualified_name, qualified_fallback), ctx);
         } else if (representation_ == representation::integer) {
             if (qualification_ == qualification::qualified) {
                 auto out = ctx.out();
-                out      = format_integer_qualifier(out);
+                out = std::format_to(out, make_qualification_format_prefix(), ::beman::enum_formatting::unexported::identifier_of<representation_character_type>(^^E));
                 ctx.advance_to(out);
             }
             return std::formatter<std::underlying_type_t<E>, CharT>::format(std::to_underlying(value), ctx);
         } else if (representation_ == representation::type) {
-            return format_as_type(ctx);
+            return std::formatter<std::basic_string_view<representation_character_type>, CharT>::format(
+                ::beman::enum_formatting::unexported::identifier_of<representation_character_type>(^^E), ctx
+            );
         } else {
             std::unreachable();
         }
@@ -250,47 +254,6 @@ private:
                 break;
         }
     }
-
-    auto format_as_string(E value, auto& ctx, bool qualified_name, bool qualified_fallback) const
-        requires (has_narrow_format_annotations(^^E))
-    {
-        return std::formatter<std::string_view, CharT>::format(
-            ::beman::enum_formatting::unexported::to_string<char>(value, qualified_name, qualified_fallback), ctx
-        );
-    }
-
-    auto format_integer_qualifier(auto& out) const
-        requires (has_narrow_format_annotations(^^E))
-    {
-        return std::format_to(out, make_qualification_format_prefix(), std::meta::identifier_of(^^E));
-    }
-
-    auto format_as_type(auto& ctx) const
-        requires (has_narrow_format_annotations(^^E))
-    {
-        return std::formatter<std::string_view, CharT>::format(std::meta::identifier_of(^^E), ctx);
-    }
-#ifdef BEMAN_ENUM_FORMATTING_FEATURE_SUPPORT_UTF8
-    auto format_as_string(E value, auto& ctx, bool qualified_name, bool qualified_fallback) const
-        requires (has_utf8_format_annotations(^^E))
-    {
-        return std::formatter<std::u8string_view, CharT>::format(
-            ::beman::enum_formatting::unexported::to_string<char8_t>(value, qualified_name, qualified_fallback), ctx
-        );
-    }
-
-    auto format_integer_qualifier(auto& out) const
-        requires (has_utf8_format_annotations(^^E))
-    {
-        return std::format_to(out, make_qualification_format_prefix(), std::meta::u8identifier_of(^^E));
-    }
-
-    auto format_as_type(auto& ctx) const
-        requires (has_utf8_format_annotations(^^E))
-    {
-        return std::formatter<std::u8string_view, CharT>::format(std::meta::u8identifier_of(^^E), ctx);
-    }
-#endif
 };
 
 #endif // BEMAN_ENUM_FORMATTING_FORMAT_HPP
