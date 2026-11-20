@@ -39,13 +39,13 @@ namespace beman::enum_formatting::unexported {
     constexpr std::basic_string<CharT>
         to_string(E value, bool use_qualified_name = false, bool use_qualified_fallback = true, bool use_empty_fallback = false)
     {
-        constexpr auto scope = [] consteval {
+        constexpr auto scope_operator = std::invoke([] consteval {
             if constexpr (std::same_as<CharT, char8_t>) {
                 return u8"::";
             } else {
                 return "::";
             }
-        }();
+        });
 
         (void)
             use_qualified_name; //GCC 16.2 warns "unused-but-set-parameter" because it can't see the branch below when the expansion statement is empty (i.e., `E` declares no enumerators).
@@ -53,7 +53,7 @@ namespace beman::enum_formatting::unexported {
         {
             if (value == [:enumerator:]) {
                 if (use_qualified_name) {
-                    return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope + identifier_of<CharT>(enumerator);
+                    return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope_operator + identifier_of<CharT>(enumerator);
                 } else {
                     return std::basic_string<CharT>{identifier_of<CharT>(enumerator)};
                 }
@@ -63,7 +63,7 @@ namespace beman::enum_formatting::unexported {
         if (use_empty_fallback) {
             return {};
         } else if (use_qualified_fallback) {
-            return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope
+            return std::basic_string<CharT>{} + identifier_of<CharT>(^^E) + scope_operator
                  + str_convert<CharT>(std::to_string(std::to_underlying(value)));
         } else {
             return str_convert<CharT>(std::to_string(std::to_underlying(value)));
