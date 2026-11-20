@@ -15,16 +15,23 @@
 #endif
 
 namespace beman::enum_formatting::unexported {
-    std::u8string to_utf8(std::string narrow)
+    template<typename TargetCharT>
+    constexpr auto str_convert(const std::string& narrow)
     {
-        std::u8string result;
+        std::basic_string<TargetCharT> result;
         result.reserve(narrow.size());
 
         for (auto character : narrow) {
-            result.push_back(static_cast<char8_t>(character));
+            result.push_back(static_cast<TargetCharT>(character));
         }
 
         return result;
+    }
+
+    template<>
+    constexpr auto str_convert<char>(const std::string& narrow)
+    {
+        return narrow;
     }
 
     template<typename CharT, unexported::enumerable_scoped_enum E>
@@ -61,15 +68,15 @@ namespace beman::enum_formatting::unexported {
         } else if (use_qualified_fallback) {
             if constexpr (std::same_as<CharT, char8_t>) {
                 return std::u8string{} + std::meta::u8identifier_of(^^E) + u8"::"
-                     + to_utf8(std::to_string(std::to_underlying(value)));
+                     + str_convert<CharT>(std::to_string(std::to_underlying(value)));
             } else {
-                return std::string{} + std::meta::identifier_of(^^E) + "::" + std::to_string(std::to_underlying(value));
+                return std::string{} + std::meta::identifier_of(^^E) + "::" + str_convert<CharT>(std::to_string(std::to_underlying(value)));
             }
         } else {
             if constexpr (std::same_as<CharT, char8_t>) {
-                return to_utf8(std::to_string(std::to_underlying(value)));
+                return str_convert<CharT>(std::to_string(std::to_underlying(value)));
             } else {
-                return std::to_string(std::to_underlying(value));
+                return str_convert<CharT>(std::to_string(std::to_underlying(value)));
             }
         }
     }
