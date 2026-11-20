@@ -266,7 +266,7 @@ private:
                 break;
         }
     }
-    
+
     auto format_as_string(E value, auto& ctx, bool qualified_name, bool qualified_fallback) const
         requires (has_narrow_format_annotations(^^E))
     {
