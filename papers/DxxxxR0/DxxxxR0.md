@@ -92,7 +92,8 @@ Describe the impact on the C++ standard, including:
 
 ## Overview
 
-Explain the overall design and its guiding principles.
+The core principle of the proposed design is to respect programmer intent, whether expressed or reasonably inferred. This sometimes means crafting a more complex structure behind a simple facade in order to facilitate that expression. C++ is a multi-paradigm language with a broad base of users and a rich history of trusting those individuals to decide what is best for their projects rather than forcing one-size-fits-all policy decisions.[^de-rules] The proposal also strives to maintain both backward and forward compatibility with the evolution of the Standard.
+[^de-rules]: See [@D&E] Chapter 4: Rules X and Y.
 
 ## Alternatives Considered
 
@@ -255,8 +256,25 @@ Use markup tags like `[added text]{.add}`, `[removed text]{.rm}`, and `[removed 
 
 Acknowledge contributors and reviewers.
 
-# References
+# Placeholder Biblio
 
 - [Nxxxx] ISO/IEC 14882: Programming Languages — C++.
 - [Pxxxx] Related WG21 proposal.
 - [Pxxxx] Related WG21 proposal.
+
+---
+references:
+  - id: D&E
+    citation-label: D&E
+    type: book
+    title: "The Design and Evolution of C++"
+    author:
+      - family: Stroustrup
+        given: Bjarne
+    publisher: Addison-Wesley
+    publisher-place: Reading, MA
+    issued:
+      date-parts:
+        - [1994]
+    ISBN: "0-201-54330-3"
+---
