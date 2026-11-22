@@ -1875,8 +1875,10 @@ proposed here provides that functionality:</p>
 <tbody>
 <tr>
 <td><div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>is_enumerated_value<span class="op">(</span>black<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    black_str <span class="op">=</span> std<span class="op">::</span>to_string<span class="op">(</span>std<span class="op">::</span>to_underlying<span class="op">(</span>black<span class="op">));</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    black_str <span class="op">=</span> std<span class="op">::</span>to_string<span class="op">(</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        std<span class="op">::</span>to_underlying<span class="op">(</span>black<span class="op">)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
 <td><div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>is_enumerated_value<span class="op">(</span>black<span class="op">))</span> <span class="op">{</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    black_str <span class="op">=</span> std<span class="op">::</span>string<span class="op">{</span><span class="st">&quot;&lt;UNNAMED&gt;&quot;</span><span class="op">};</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
