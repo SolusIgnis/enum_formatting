@@ -130,7 +130,9 @@ Should the programmer desire either of the last two options, the `is_enumerated_
 #### Fallback to Pure Value
 ```cpp
 if (!is_enumerated_value(black)) {
-    black_str = std::to_string(std::to_underlying(black));
+    black_str = std::to_string(
+        std::to_underlying(black)
+    );
 }
 ```
 
