@@ -32,7 +32,7 @@ Describe the problem being addressed and why existing facilities are insufficien
 
 ## Scope
 
-Define what this proposal intends to address and what remains outside its scope.
+This proposal does not address stringifying or formatting unscoped enumerations. Due to implicit conversions, both `std::to_string` and `std::format` can accept unscoped enumerations and treat them as integers. As such, applying these overloads to them would change the behavior of existing code. Should the committee prefer to do so, this proposal could trivially be extended to them, but such extension is **not** currently proposed.
 
 ## Examples
 
@@ -98,17 +98,61 @@ Explain the overall design and its guiding principles.
 
 Describe alternative approaches and the rationale for accepting or rejecting them.
 
-::: cmptable
-### Option A
+### Unified Syntax
+
+### String Representation of Unenumerated Values
+
 ```cpp
-//chose this one
+enum class rgb_color : std::uint32_t {
+    red   = 0xFF0000,
+    green = 0x00FF00,
+    blue  = 0x0000FF,
+};
+
+auto black     = rgb_color{0x000000};
+auto black_str = std::to_string(black);
 ```
 
-### Option B
-```cpp {.not_proposed}
-//didn't do this
+Considering this basic scoped enumeration representing RGB colors, what should be the string representation of an unnamed color? Since named enumerators are written `rgb_color::red`, `rgb_color::green`, and `rgb_color::blue`, this proposal uses a parallel syntax for unenumerated values and produces `rgb_color::0`, treating the underlying value as a pseudo-enumerator. This preserves the enumeration type and underlying value for debugging/logging purposes. Other candidate representations discard some of this information or treat unenumerated values as construction expressions.
+
+| Representation | Output for `black` | Status | Trade-Off |
+| :--- | :--- | :--- | :--- |
+| **Type-Qualified Value** | `"rgb_color::0"` | **Proposed** | Keeps both type and value; parallels scoped enumerator syntax. |
+| **Cast Expression** | `"rgb_color(0)"` | Alternative | Keeps both type and value; valid C++ expression, but breaks `enumeration::enumerator` visual symmetry. |
+| **Braced Initializer** | `"rgb_color{0}"` | Alternative | Same as cast expression. |
+| **`std::optional`** | `std::nullopt` | *Not Proposed* | Changes return type from other `std::to_string` overloads; may break generic code. |
+| **Raw Underlying Value** | `"0"` | *Not Proposed* | Loses the enumeration type; indistinguishable from plain integers. |
+| **Fixed Fallback** | `"<UNNAMED>"` / `"<UNKNOWN>"` | *Not Proposed* | Loses both type and value. |
+
+Should the programmer desire either of the last two options, the `is_enumerated_value` utility function proposed here provides that functionality:
+
+:::cmptable
+#### Fallback to Pure Value
+```cpp
+if (!is_enumerated_value(black)) {
+    black_str = std::to_string(std::to_underlying(black));
+}
+```
+
+#### Fixed Fallback
+```cpp
+if (!is_enumerated_value(black)) {
+    black_str = std::string{"<UNNAMED>"};
+}
 ```
 :::
+
+### Default Representation
+
+### Default Type-Qualification
+
+### Format Specifiers
+
+### Unenumerable Types
+
+#### Representation (Name String vs Underlying Integral Value)
+
+#### 
 
 ## Naming and Interface Design
 
@@ -145,11 +189,19 @@ Describe canonical enumerator selection and alias handling.
 
 Describe the annotation facilities and their semantics.
 
+### `std::annotations::canonical`
+
+### `std::annotations::basic_formattable_with_default`
+
 ### `std::annotations::formattable_with_default`
 
 ### `std::annotations::formattable`
 
-### `std::annotations::canonical`
+### UTF8 Support
+
+#### `std::annotations::u8formattable_with_default`
+
+#### `std::annotations::u8formattable`
 
 ## Examples
 
