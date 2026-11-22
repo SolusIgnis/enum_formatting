@@ -88,7 +88,27 @@ code span.st { color: #9f6807; }
 code span.va { } 
 code span.vs { color: #9f6807; } 
 code span.wa { color: #6a737d; font-weight: bold; } 
-</style>
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+} </style>
   <style type="text/css">
 body {
 margin: 5em;
@@ -1663,7 +1683,8 @@ Changes</a></li>
 Changes</a></li>
 </ul></li>
 <li><a href="#acknowledgements" id="toc-acknowledgements"><span class="toc-section-number">10</span> Acknowledgements</a></li>
-<li><a href="#references" id="toc-references"><span class="toc-section-number">11</span> References</a></li>
+<li><a href="#placeholder-biblio" id="toc-placeholder-biblio"><span class="toc-section-number">11</span> Placeholder Biblio</a></li>
+<li><a href="#bibliography" id="toc-bibliography"><span class="toc-section-number">12</span> References</a></li>
 </ul>
 </nav>
 <h1 data-number="1" id="abstract"><span class="header-section-number">1</span> Abstract<a href="#abstract" class="self-link"></a></h1>
@@ -1751,7 +1772,15 @@ functionality.</p>
 </ul>
 <h1 data-number="5" id="design-decisions"><span class="header-section-number">5</span> Design Decisions<a href="#design-decisions" class="self-link"></a></h1>
 <h2 data-number="5.1" id="overview"><span class="header-section-number">5.1</span> Overview<a href="#overview" class="self-link"></a></h2>
-<p>Explain the overall design and its guiding principles.</p>
+<p>The core principle of the proposed design is to respect programmer
+intent, whether expressed or reasonably inferred. This sometimes means
+crafting a more complex structure behind a simple facade in order to
+facilitate that expression. C++ is a multi-paradigm language with a
+broad base of users and a rich history of trusting those individuals to
+decide what is best for their projects rather than forcing
+one-size-fits-all policy decisions.[^de-rules] The proposal also strives
+to maintain both backward and forward compatibility with the evolution
+of the Standard. [^de-rules]: See <span class="citation" data-cites="D&amp;E"><a href="#ref-D&amp;E" role="doc-biblioref">[D&amp;E]</a></span> Chapter 4: Rules X and Y.</p>
 <h2 data-number="5.2" id="alternatives-considered"><span class="header-section-number">5.2</span> Alternatives Considered<a href="#alternatives-considered" class="self-link"></a></h2>
 <p>Describe alternative approaches and the rationale for accepting or
 rejecting them.</p>
@@ -1962,12 +1991,19 @@ and
 <p>[Insert proposed wording.]</p>
 <h1 data-number="10" id="acknowledgements"><span class="header-section-number">10</span> Acknowledgements<a href="#acknowledgements" class="self-link"></a></h1>
 <p>Acknowledge contributors and reviewers.</p>
-<h1 data-number="11" id="references"><span class="header-section-number">11</span> References<a href="#references" class="self-link"></a></h1>
+<h1 data-number="11" id="placeholder-biblio"><span class="header-section-number">11</span> Placeholder Biblio<a href="#placeholder-biblio" class="self-link"></a></h1>
 <ul>
 <li>[Nxxxx] ISO/IEC 14882: Programming Languages — C++.</li>
 <li>[Pxxxx] Related WG21 proposal.</li>
 <li>[Pxxxx] Related WG21 proposal.</li>
 </ul>
+<h1 data-number="12" id="bibliography"><span class="header-section-number">12</span> References<a href="#bibliography" class="self-link"></a></h1>
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-D&amp;E" class="csl-entry" role="listitem">
+[D&amp;E] Bjarne Stroustrup. 1994. <em>The Design and Evolution of
+C++</em>. Addison-Wesley, Reading, MA.
+</div>
+</div>
 </div>
 </div>
 <script>
