@@ -1795,7 +1795,7 @@ functionality.</p>
 <p>This is a <strong>pure library extension</strong>.</p>
 <p>This proposal <strong>does not</strong> require any changes in the
 core language. It <strong>does not</strong> alter the meaning or
-behavior of any existing well-formed program (save observability of new
+behavior of existing well-formed programs (save observability of new
 function overloads). It <strong>does not</strong> depend on any other
 library extensions; however, it <strong>would</strong> evolve to take
 advantage of the adoption of attribute reflection or changes to
@@ -1855,7 +1855,7 @@ to use the <code class="sourceCode cpp"><span class="op">:</span></code>
 different character into the format grammar and naturally extends the
 replacement field to give the appearance of a third section. This
 results in replacement fields that look like
-<code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">:</span><span class="er">#04X}</span></code>,
+<code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">:</span><span class="bn">02</span><span class="er">X</span><span class="op">}</span></code>,
 <code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">}</span></code>,
 <code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">:}</span></code>,
 <code class="sourceCode cpp"><span class="op">{:}</span></code>, or
@@ -1943,8 +1943,78 @@ annotation type which still allows the creator of the type to select a
 per-type default.</p>
 <h3 data-number="5.7.2" id="annotation-class-template-vs.-separate-annotation-types"><span class="header-section-number">5.7.2</span> Annotation Class Template
 vs. Separate Annotation Types<a href="#annotation-class-template-vs.-separate-annotation-types" class="self-link"></a></h3>
+<p>The initial draft of the reference implementation had
+<code class="sourceCode cpp">formattable_with_default</code> and
+<code class="sourceCode cpp">formattable</code> annotations. When
+considering how to be forward compatible with UTF-8 formatting, the
+obvious solution was
+<code class="sourceCode cpp">u8formattable_with_default</code> and
+<code class="sourceCode cpp">u8formattable</code>. This works, but the
+definitions of the two classes are, aside from identifier names,
+identical. In addition to duplicating the definitions, the
+<code class="sourceCode cpp">formatter</code> specialization had to
+replicate its annotation detection for both annotation types. The
+straightforward solution was to make the representation character type a
+template parameter that distinguishes the representation families and
+unify the definitions into a single class template. When exploring
+options for supporting
+non-<code class="sourceCode cpp"><span class="dt">char</span></code>-based
+format specification strings, adding the format specification character
+type as a template parameter and connecting it with the character type
+of the
+<code class="sourceCode cpp">std<span class="op">::</span>formatter</code>
+made that support relatively simple.</p>
+<p>Thus, this paper relies on
+<code class="sourceCode cpp">std<span class="op">::</span>basic_formattable_with_default<span class="op">&lt;</span><span class="kw">typename</span> RepresentationCharT<span class="op">,</span> <span class="kw">typename</span> FormatSpecifierCharT<span class="op">&gt;</span></code>
+to build an extensible mechanism capable of supporting future
+<code class="sourceCode cpp"><span class="dt">char8_t</span></code>
+formatting. It further provides
+<code class="sourceCode cpp">std<span class="op">::</span>formattable_with_default<span class="op">&lt;</span><span class="kw">typename</span> CharT<span class="op">&gt;</span></code>
+as a user-facing alias for
+<code class="sourceCode cpp">std<span class="op">::</span>basic_formattable_with_default<span class="op">&lt;</span><span class="dt">char</span><span class="op">,</span> CharT<span class="op">&gt;</span></code>
+and holds space for
+<code class="sourceCode cpp">std<span class="op">::</span>u8formattable_with_default<span class="op">&lt;</span><span class="kw">typename</span> CharT<span class="op">&gt;</span></code>
+as the corresponding alias for
+<code class="sourceCode cpp">std<span class="op">::</span>basic_formattable_with_default<span class="op">&lt;</span><span class="dt">char8_t</span><span class="op">,</span> CharT<span class="op">&gt;</span></code>.
+The annotation object
+<code class="sourceCode cpp">std<span class="op">::</span>formattable</code>
+(like the as-yet-unproposed
+<code class="sourceCode cpp">std<span class="op">::</span>u8formattable</code>)
+simplifies the case where no default format specification is provided.
+Because the constructor of
+<code class="sourceCode cpp">std<span class="op">::</span>basic_formattable_with_default</code>
+takes a reference to an array of
+<code class="sourceCode cpp">FormatSpecifierCharT</code>, CTAD correctly
+deduces
+<code class="sourceCode cpp"><span class="op">[[=</span><span class="at">formattable_with_default</span><span class="op">(</span><span class="st">&quot;i&quot;</span><span class="op">)]]</span></code>
+as
+<code class="sourceCode cpp">std<span class="op">::</span>basic_formattable_with_default<span class="op">&lt;</span><span class="dt">char</span><span class="op">,</span> <span class="dt">char</span><span class="op">&gt;</span></code>.
+This provides the best of both worlds: clean annotation syntax, a
+unified annotation family, and a clear path for extension.</p>
 <h3 data-number="5.7.3" id="accessing-the-annotated-default-format-specification"><span class="header-section-number">5.7.3</span> Accessing the Annotated
 Default Format Specification<a href="#accessing-the-annotated-default-format-specification" class="self-link"></a></h3>
+<p>The syntax for accessing the default format specification stored by a
+<code class="sourceCode cpp">std<span class="op">::</span>basic_formattable_with_default</code>
+object could take practically infinite forms. Directly accessing the
+pointer stored by the constructor would work, but it would be preferable
+to avoid exposing a raw pointer or a public data member. After
+considering many member function names such as
+<code class="sourceCode cpp">get</code>,
+<code class="sourceCode cpp">value</code>,
+<code class="sourceCode cpp">as_string</code>,
+<code class="sourceCode cpp">get_string_view</code>,
+<code class="sourceCode cpp">as_string_view</code>,
+<code class="sourceCode cpp">get_basic_string_view</code>,
+<code class="sourceCode cpp">as_basic_string_view</code>, a pattern
+appeared. This operation requires converting the stored representation
+into a type-safe view of the characters stored by the annotation, which
+is idiomatically spelled
+<code class="sourceCode cpp"><span class="kw">operator</span> std<span class="op">::</span>basic_string_view</code>
+for the stored character type. Using the conversion operator provides a
+clean interface that does not require selecting a name. Furthermore,
+should another type such as an explicit
+<code class="sourceCode cpp">std<span class="op">::</span>string</code>
+copy be desired in the future, the door is open to extension.</p>
 <h3 data-number="5.7.4" id="string-representation-of-unenumerated-values"><span class="header-section-number">5.7.4</span> String Representation of
 Unenumerated Values<a href="#string-representation-of-unenumerated-values" class="self-link"></a></h3>
 <div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> <span class="kw">class</span> rgb_color <span class="op">:</span> std<span class="op">::</span><span class="dt">uint32_t</span> <span class="op">{</span></span>
