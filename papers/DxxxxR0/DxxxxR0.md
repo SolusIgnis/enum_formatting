@@ -32,11 +32,15 @@ Describe the problem being addressed and why existing facilities are insufficien
 
 ## Scope
 
-This proposal intentionally excludes unscoped enumerations from `std::to_string` overloads. It includes both scoped and unscoped enumerations in the `std::formatter` specialization on an **opt-in** basis.
+This proposal intentionally excludes unscoped enumerations from `std::to_string` overloads.
+It includes both scoped and unscoped enumerations in the `std::formatter` specialization on an **opt-in** basis.
 
-Unscoped enumerations implicitly convert to their underlying integral types, meaning calls such as `std::to_string(e)` are already well-formed today and produce numeric output. Defining additional `std::to_string` overloads for unscoped enumerations would inevitably change the meaning of some existing code, violating the proposal's status as a pure extension.
+Unscoped enumerations implicitly convert to their underlying integral types, meaning calls such as `std::to_string(e)` are already well-formed today and produce numeric output.
+Defining additional `std::to_string` overloads for unscoped enumerations would inevitably change the meaning of some existing code, violating the proposal's status as a pure extension.
 
-As scoped enumerations do not have this implicit conversion, calls like `std::to_string(e)` are not currently valid for them, and the proposed overloads support them unconditionally. However, programmers may have supplied their own `std::formatter` specializations for some enumeration types. To avoid potential conflicts with existing user-supplied formatting customizations, the proposed partial specialization restricts participation to enumerations annotated as formattable with one of the proposed annotations.
+As scoped enumerations do not have this implicit conversion, calls like `std::to_string(e)` are not currently valid for them, and the proposed overloads support them unconditionally.
+However, programmers may have supplied their own `std::formatter` specializations for some enumeration types.
+To avoid potential conflicts with existing user-supplied formatting customizations, the proposed partial specialization restricts participation to enumerations annotated as formattable with one of the proposed annotations.
 
 ## Examples
 
@@ -87,7 +91,7 @@ void proposed_way() {
 This is a **pure library extension**.
 
 This proposal **does not** require any changes in the core language.
-It **does not** alter the meaning or behavior of any existing well-formed program (save observability of new function overloads).
+It **does not** alter the meaning or behavior of existing well-formed programs (save observability of new function overloads).
 It **does not** depend on any other library extensions; however, it **would** evolve to take advantage of the adoption of attribute reflection or changes to structural type requirements.
 It **does** account for and accommodate the eventual adoption of UTF-8 support in `std::formatter`.
 
@@ -123,7 +127,7 @@ Explain the public interface and naming decisions.
 
 After considering several characters to separate the enumeration-specific portion of the format specification from the portion for formatting the specified representation, this proposal chose to use the `:` (format-specifier separator) as the delimiter.
 This avoids introducing a different character into the format grammar and naturally extends the replacement field to give the appearance of a third section.
-This results in replacement fields that look like `{:i:#04X}`, `{:i}`, `{:i:}`, `{:}`, or `{::}`.
+This results in replacement fields that look like `{:i:02X}`, `{:i}`, `{:i:}`, `{:}`, or `{::}`.
 
 ## Default Representation
 
@@ -155,21 +159,44 @@ The revised definition would also employ the `structural` class-property-specifi
 
 ### UTF-8 Support in `std::formatter`
 
-This proposal does not extend `std::formatter` to support formatting UTF-8 strings or character types directly. If support such as that proposed in [@P3258] were to be adopted, the mechanism proposed here could be extended to connect that facility with `std::meta::u8identifier_of` by means of a `std::u8formattable_with_default` type alias.
+This proposal does not extend `std::formatter` to support formatting UTF-8 strings or character types directly.
+If support such as that proposed in [@P3258] were to be adopted, the mechanism proposed here could be extended to connect that facility with `std::meta::u8identifier_of` by means of a `std::u8formattable_with_default` type alias.
 
-This paper also does not propose to extend `std::formatter` to support UTF-8 characters in format strings. If support were to be adopted, the mechanism proposed here would automatically interoperate through its character type template parameters that accept `char8_t` arguments.
+This paper also does not propose to extend `std::formatter` to support UTF-8 characters in format strings.
+If support were to be adopted, the mechanism proposed here would automatically interoperate through its character type template parameters that accept `char8_t` arguments.
 
 ## Alternatives Considered
 
 ### Unified Syntax vs. Separate Annotations
 
-[@P4267R1] proposes `std::format_as_identifier` and `std::format_as_underlying` as separate annotations. This requires enumeration type authors to select the representation of their enumeration types at the point of declaration and prevents users of those types from overriding that choice at their call sites.
+[@P4267R1] proposes `std::format_as_identifier` and `std::format_as_underlying` as separate annotations.
+This requires enumeration type authors to select the representation of their enumeration types at the point of declaration and prevents users of those types from overriding that choice at their call sites.
 
 This paper, instead, provides a unified format specification syntax to defer the choice of representation to the caller and a single format annotation type which still allows the creator of the type to select a per-type default.
 
 ### Annotation Class Template vs. Separate Annotation Types
 
+The initial draft of the reference implementation had `formattable_with_default` and `formattable` annotations.
+When considering how to be forward compatible with UTF-8 formatting, the obvious solution was `u8formattable_with_default` and `u8formattable`.
+This works, but the definitions of the two classes are, aside from identifier names, identical.
+In addition to duplicating the definitions, the `formatter` specialization had to replicate its annotation detection for both annotation types.
+The straightforward solution was to make the representation character type a template parameter that distinguishes the representation families and unify the definitions into a single class template.
+When exploring options for supporting non-`char`-based format specification strings, adding the format specification character type as a template parameter and connecting it with the character type of the `std::formatter` made that support relatively simple.
+
+Thus, this paper relies on `std::basic_formattable_with_default<typename RepresentationCharT, typename FormatSpecifierCharT>` to build an extensible mechanism capable of supporting future `char8_t` formatting.
+It further provides `std::formattable_with_default<typename CharT>` as a user-facing alias for `std::basic_formattable_with_default<char, CharT>` and holds space for `std::u8formattable_with_default<typename CharT>` as the corresponding alias for `std::basic_formattable_with_default<char8_t, CharT>`.
+The annotation object `std::formattable` (like the as-yet-unproposed `std::u8formattable`) simplifies the case where no default format specification is provided.
+Because the constructor of `std::basic_formattable_with_default` takes a reference to an array of `FormatSpecifierCharT`, CTAD correctly deduces `[[=formattable_with_default("i")]]` as `std::basic_formattable_with_default<char, char>`.
+This provides the best of both worlds: clean annotation syntax, a unified annotation family, and a clear path for extension.
+
 ### Accessing the Annotated Default Format Specification
+
+The syntax for accessing the default format specification stored by a `std::basic_formattable_with_default` object could take practically infinite forms.
+Directly accessing the pointer stored by the constructor would work, but it would be preferable to avoid exposing a raw pointer or a public data member.
+After considering many member function names such as `get`, `value`, `as_string`, `get_string_view`, `as_string_view`, `get_basic_string_view`, `as_basic_string_view`, a pattern appeared.
+This operation requires converting the stored representation into a type-safe view of the characters stored by the annotation, which is idiomatically spelled `operator std::basic_string_view` for the stored character type.
+Using the conversion operator provides a clean interface that does not require selecting a name.
+Furthermore, should another type such as an explicit `std::string` copy be desired in the future, the door is open to extension.
 
 ### String Representation of Unenumerated Values
 
@@ -184,7 +211,11 @@ auto black     = rgb_color{0x000000};
 auto black_str = std::to_string(black);
 ```
 
-Considering this basic scoped enumeration representing RGB colors, what should be the string representation of an unnamed color? Since named enumerators are written `rgb_color::red`, `rgb_color::green`, and `rgb_color::blue`, this proposal uses a parallel syntax for unenumerated values and produces `rgb_color::0`, treating the underlying value as a pseudo-enumerator. This preserves the enumeration type and underlying value for debugging/logging purposes. Other candidate representations discard some of this information or treat unenumerated values as construction expressions that are less readily parsed by consumers. The proposed representation also avoids favoring either parenthesized or braced initialization syntax, each of which has its own stylistic advocates and semantic distinctions in C++.
+Considering this basic scoped enumeration representing RGB colors, what should be the string representation of an unnamed color?
+Since named enumerators are written `rgb_color::red`, `rgb_color::green`, and `rgb_color::blue`, this proposal uses a parallel syntax for unenumerated values and produces `rgb_color::0`, treating the underlying value as a pseudo-enumerator.
+This preserves the enumeration type and underlying value for debugging/logging purposes.
+Other candidate representations discard some of this information or treat unenumerated values as construction expressions that are less readily parsed by consumers.
+The proposed representation also avoids favoring either parenthesized or braced initialization syntax, each of which has its own stylistic advocates and semantic distinctions in C++.
 
 | Representation | Output for `black` | Status | Trade-Off |
 | :--- | :--- | :--- | :--- |
@@ -217,7 +248,9 @@ if (!is_enumerated_value(black)) {
 
 ### Rejecting Non-Enumerable Types at `formatter` Instantiation
 
-The `std::formatter` specialization could be constrained to require enumerable enumerations, matching `std::to_string`. This paper finds that approach unacceptable because `std::formatter` supports formatting modes (i.e., the underlying numeric value and the enumeration type name) that do not depend on enumerator names and remain valid for non-enumerable types. The chosen design follows the [@D&E] principle that C++ rejects actual errors rather than potential errors.
+The `std::formatter` specialization could be constrained to require enumerable enumerations, matching `std::to_string`.
+This paper finds that approach unacceptable because `std::formatter` supports formatting modes (i.e., the underlying numeric value and the enumeration type name) that do not depend on enumerator names and remain valid for non-enumerable types.
+The chosen design follows the [@D&E] principle that C++ rejects actual errors rather than potential errors.
 
 # Proposal
 
