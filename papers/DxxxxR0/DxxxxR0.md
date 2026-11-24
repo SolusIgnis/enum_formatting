@@ -32,7 +32,11 @@ Describe the problem being addressed and why existing facilities are insufficien
 
 ## Scope
 
-This proposal does not address stringifying or formatting unscoped enumerations. Due to implicit conversions, both `std::to_string` and `std::format` can accept unscoped enumerations and treat them as integers. As such, applying these overloads to them would change the behavior of existing code. Should the committee prefer to do so, this proposal could trivially be extended to them, but such extension is **not** currently proposed.
+This proposal intentionally excludes unscoped enumerations from `std::to_string` overloads. It includes both scoped and unscoped enumerations in the `std::formatter` specialization on an **opt-in** basis.
+
+Unscoped enumerations implicitly convert to their underlying integral types, meaning calls such as `std::to_string(e)` are already well-formed today and produce numeric output. Defining additional `std::to_string` overloads for unscoped enumerations would inevitably change the meaning of some existing code, violating the proposal's status as a pure extension.
+
+As scoped enumerations do not have this implicit conversion, calls like `std::to_string(e)` are not currently valid for them, and the proposed overloads support them unconditionally. However, programmers may have supplied their own `std::formatter` specializations for some enumeration types. To avoid potential conflicts with existing user-supplied formatting customizations, the proposed partial specialization restricts participation to enumerations annotated as formattable with one of the proposed annotations.
 
 ## Examples
 
@@ -80,27 +84,26 @@ void proposed_way() {
 
 # Impact on the Standard
 
-Describe the impact on the C++ standard, including:
+This is a **pure library extension**.
 
-- Which existing library components are affected.
-- Whether new library components are introduced.
-- Whether the proposal changes existing behavior.
-- Whether the proposal requires language changes.
-- Compatibility and implementation considerations.
+This proposal **does not** require any changes in the core language.
+It **does not** alter the meaning or behavior of any existing well-formed program (save observability of new function overloads).
+It **does not** depend on any other library extensions; however, it **would** evolve to take advantage of the adoption of attribute reflection or changes to structural type requirements.
+It **does** account for and accommodate the eventual adoption of UTF-8 support in `std::formatter`.
+
+This proposal introduces a new header, `<annotations>`, containing a new inline namespace, `std::annotations`.
+It further introduces the class template `std::basic_formattable_with_default`, the alias template `std::formattable_with_default`, and the annotation objects `std::formattable` and `std::canonical` therein.
+It also introduces the utility predicate `std::is_enumerated_value` in `<utility>`, a constrained partial specialization of `std::formatter` for annotated enumerations in `<format>`, and overloads of `std::to_string` for enumerable scoped enumerations in `<string>`.
 
 # Design Decisions
 
 ## Overview
 
-The core principle of the proposed design is to respect programmer intent, whether expressed or reasonably inferred. This sometimes means crafting a more complex structure behind a simple facade in order to facilitate that expression. C++ is a multi-paradigm language with a broad base of users and a rich history of trusting those individuals to decide what is best for their projects rather than forcing one-size-fits-all policy decisions. (See [@D&E] section 4.2's rule: "Don't try to force people.") The proposal also strives to maintain both backward and forward compatibility with the evolution of the Standard.
-
-## Constraints and Limitations
-
-This proposal intentionally excludes unscoped enumerations from `std::formatter` specialization and `std::to_string` overloads. It further only includes scoped enumerations in the `std::formatter` specialization on an **opt-in** basis.
-
-Unscoped enumerations implicitly convert to their underlying integral types, meaning calls such as `std::format("{}", e)` and `std::to_string(e)` are already well-formed today and produce numeric output. Defining a constrained `std::formatter` specialization or additional `std::to_string` overloads for unscoped enumerations would inevitably change the meaning of existing code. Furthermore, unscoped enumerations are frequently used in legacy code as named integer constants or bitwise flag masks rather than discrete symbolic values. Restricting support to scoped enumerations preserves strict backward compatibility while reinforcing modern C++ type safety.
-
-As scoped enumerations do not have this implicit conversion, calls like `std::to_string(e)` are not currently valid for them, and the proposed overloads support them unconditionally. However, programmers may have supplied their own `std::formatter` specializations for some scoped enumeration types. To avoid conflicts with existing user-supplied specializations, scoped enumerations are excluded from the proposed partial specialization unless they are annotated as formattable with one of the proposed annotations.
+The core principle of the proposed design is to respect programmer intent, whether expressed or reasonably inferred.
+This sometimes means crafting a more complex structure behind a simple facade in order to facilitate that expression.
+C++ is a multi-paradigm language with a broad base of users and a rich history of trusting those individuals to decide what is best for their projects rather than forcing one-size-fits-all policy decisions.
+(See [@D&E] section 4.2's rule: "Don't try to force people.")
+The proposal also strives to maintain both backward and forward compatibility with the evolution of the Standard.
 
 ## Naming and Interface Design
 
@@ -116,23 +119,57 @@ Explain the public interface and naming decisions.
 
 #### Type-Qualification
 
+#### Format Specification Delimiter
+
+After considering several characters to separate the enumeration-specific portion of the format specification from the portion for formatting the specified representation, this proposal chose to use the `:` (format-specifier separator) as the delimiter.
+This avoids introducing a different character into the format grammar and naturally extends the replacement field to give the appearance of a third section.
+This results in replacement fields that look like `{:i:#04X}`, `{:i}`, `{:i:}`, `{:}`, or `{::}`.
+
 ## Default Representation
+
+
 
 ## Default Type-Qualification
 
-This paper proposes a "smart default" type-qualification where the default depends on the specified representation and whether the value corresponds to a named enumerator. As the name of an enumerator often carries sufficient context for a familiar user to identify its probable type, the default in this case is unqualified. For values without a named enumerator, the default for the string representation treats the value as a type-qualified pseudo-enumerator because the numeric value alone carries no context. These defaults apply to both the `formatter` and to `std::to_string`. When the specified format representation is the underlying integral type, the default is an unqualified number, trusting the caller to provide appropriate context (or to specify a type-qualified format if desired).
+This paper proposes a "smart default" type-qualification where the default depends on the specified representation and whether the value corresponds to a named enumerator.
+As the name of an enumerator often carries sufficient context for a familiar user to identify its probable type, the default in this case is unqualified.
+For values without a named enumerator, the default for the string representation treats the value as a type-qualified pseudo-enumerator because the numeric value alone carries no context.
+These defaults apply to both the `formatter` and to `std::to_string`.
+When the specified format representation is the underlying integral type, the default is an unqualified number, trusting the caller to provide appropriate context (or to specify a type-qualified format if desired).
 
 ## Non-Enumerable Types
 
 The `std::to_string` overloads are constrained to require enumerable scoped enumerations, so calls will fail to compile. The `formatter` specialization, on the other hand, rejects non-enumerable types during format-string parsing, at the moment the caller specifies representing the value as an enumerator name string. Instantiation of the `formatter` or annotation of an enumeration is permitted because it is perfectly reasonable for a programmer to format an enumeration value as a number or format the enumeration type name without the type being enumerable.
 
-## Alternatives Considered
+## Constraints and Limitations
 
-Describe alternative approaches and the rationale for accepting or rejecting them.
+### Reflecting on Attributes
+
+Should [@P3385] be adopted into the Working Draft, this proposal would use its facilities to favor non-deprecated enumerator names over deprecated names.
+
+### Structural Types
+
+Should [@P4414] be adopted into the Working Draft, this proposal would modify the proposed definition of `std::basic_formattable_with_default` to encapsulate a `std::basic_string_view` rather than storing public non-static data members.
+These data members are currently *unspecified* with the intent that implementations could plausibly replace them without breaking the binary representation of the annotation objects if the standard were to permit it in the future.
+The revised definition would also employ the `structural` class-property-specifier to allow real encapsulation.
+
+### UTF-8 Support in `std::formatter`
+
+This proposal does not extend `std::formatter` to support formatting UTF-8 strings or character types directly. If support such as that proposed in [@P3258] were to be adopted, the mechanism proposed here could be extended to connect that facility with `std::meta::u8identifier_of` by means of a `std::u8formattable_with_default` type alias.
+
+This paper also does not propose to extend `std::formatter` to support UTF-8 characters in format strings. If support were to be adopted, the mechanism proposed here would automatically interoperate through its character type template parameters that accept `char8_t` arguments.
+
+## Alternatives Considered
 
 ### Unified Syntax vs. Separate Annotations
 
+[@P4267R1] proposes `std::format_as_identifier` and `std::format_as_underlying` as separate annotations. This requires enumeration type authors to select the representation of their enumeration types at the point of declaration and prevents users of those types from overriding that choice at their call sites.
+
+This paper, instead, provides a unified format specification syntax to defer the choice of representation to the caller and a single format annotation type which still allows the creator of the type to select a per-type default.
+
 ### Annotation Class Template vs. Separate Annotation Types
+
+### Accessing the Annotated Default Format Specification
 
 ### String Representation of Unenumerated Values
 
@@ -147,13 +184,13 @@ auto black     = rgb_color{0x000000};
 auto black_str = std::to_string(black);
 ```
 
-Considering this basic scoped enumeration representing RGB colors, what should be the string representation of an unnamed color? Since named enumerators are written `rgb_color::red`, `rgb_color::green`, and `rgb_color::blue`, this proposal uses a parallel syntax for unenumerated values and produces `rgb_color::0`, treating the underlying value as a pseudo-enumerator. This preserves the enumeration type and underlying value for debugging/logging purposes. Other candidate representations discard some of this information or treat unenumerated values as construction expressions.
+Considering this basic scoped enumeration representing RGB colors, what should be the string representation of an unnamed color? Since named enumerators are written `rgb_color::red`, `rgb_color::green`, and `rgb_color::blue`, this proposal uses a parallel syntax for unenumerated values and produces `rgb_color::0`, treating the underlying value as a pseudo-enumerator. This preserves the enumeration type and underlying value for debugging/logging purposes. Other candidate representations discard some of this information or treat unenumerated values as construction expressions that are less readily parsed by consumers. The proposed representation also avoids favoring either parenthesized or braced initialization syntax, each of which has its own stylistic advocates and semantic distinctions in C++.
 
 | Representation | Output for `black` | Status | Trade-Off |
 | :--- | :--- | :--- | :--- |
 | **Type-Qualified Value** | `"rgb_color::0"` | **Proposed** | Keeps both type and value; parallels scoped enumerator syntax. |
-| **Cast Expression** | `"rgb_color(0)"` | Alternative | Keeps both type and value; valid C++ expression, but breaks `enumeration::enumerator` visual symmetry. |
-| **Braced Initializer** | `"rgb_color{0}"` | Alternative | Same as cast expression. |
+| **Cast Expression** | `"rgb_color(0)"` | Alternative | Keeps both type and value; valid C++ expression but requires an additional token after the value. |
+| **Braced Initializer** | `"rgb_color{0}"` | Alternative | Same as cast expression but with braces instead of parentheses. |
 | **`std::optional`** | `std::nullopt` | *Not Proposed* | Changes return type from other `std::to_string` overloads; may break generic code. |
 | **Raw Underlying Value** | `"0"` | *Not Proposed* | Loses the enumeration type; indistinguishable from plain integers. |
 | **Fixed Fallback** | `"<UNNAMED>"` / `"<UNKNOWN>"` | *Not Proposed* | Loses both type and value. |
@@ -180,7 +217,7 @@ if (!is_enumerated_value(black)) {
 
 ### Rejecting Non-Enumerable Types at `formatter` Instantiation
 
-We considered constraining the `std::formatter` specialization to require enumerable scoped enumerations, matching `std::to_string`. That approach is unacceptable because `std::formatter` supports formatting modes (i.e., the underlying numeric value and the enumeration type name) that do not depend on enumerator names and remain valid for non-enumerable types. The chosen design follows the [@D&E] principle that C++ rejects actual errors rather than potential errors.
+The `std::formatter` specialization could be constrained to require enumerable enumerations, matching `std::to_string`. This paper finds that approach unacceptable because `std::formatter` supports formatting modes (i.e., the underlying numeric value and the enumeration type name) that do not depend on enumerator names and remain valid for non-enumerable types. The chosen design follows the [@D&E] principle that C++ rejects actual errors rather than potential errors.
 
 # Proposal
 
