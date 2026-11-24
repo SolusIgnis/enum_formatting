@@ -117,6 +117,34 @@ Explain the public interface and naming decisions.
 
 ### Annotations
 
+Annotations are vocabulary.
+They add a new dimension in which code can communicate both with other code and with programmers.
+Absent standard terminology, everyone will invent their own, and like with natural languages, speakers of one dialect will not understand the slang of other dialects.
+Introducing sound annotations into the standard in an ergonomic way will have a large impact as the feature becomes widely used.
+
+This paper proposes the introduction of the `<annotations>` header to contain standard annotations.
+This avoids needing to include `<format>` just to declare an enumeration, prevents the header proliferation that would ensue if every header had a corresponding `<X_annotations>`, and prefers the option that is easiest to teach.
+"Where is the annotation for ...?" always has the same obvious answer.
+
+Likewise, this paper defines its annotation types and objects in the proposed `std::annotations` inline namespace.
+The syntax for annotations becomes unwieldy with deeply nested names, so facilitating forms like `[[=std::some_annotation]]` and `[[=some_annotation]]` enhance developer ergonomics.
+The nested namespace, inspired by `std::literals`, allows users to access annotation names directly from `std` or use `std::annotations` to limit the names brought into their current scope.
+
+The author is not particularly attached to any of the annotation names themselves.
+
+#### Designating Canonical Names
+
+When selecting the enumerator name for a given value, one must sometimes select among a set of aliases all corresponding to the same value.
+At present, there is no mechanism to favor one over another, and there is no mechanism to recognize that one is deprecated in favor of another.
+This proposal introduces the `std::annotations::canonical` annotation to allow the designation of canonical enumerators inside their declaration.
+When an enumerator is annotated as canonical, its name is favored over unannotated enumerators with the same value.
+
+#### Format Opt-In Annotations
+
+Modeled on the pattern used throughout the STL, the proposed formatting opt-in annotations specialize the class template `std::annotations::basic_formattable_with_default`.
+The `char` instantiation is thus exposed as `std::annotations::formattable_with_default`, and its default-constructed object is `std::annotations::formattable`.
+This leaves the door open for `u8formattable_with_default`, `wformattable_with_default`, et cetera as the need arises to provide per-type formatting defaults in additional contexts.
+
 ### Format Specifiers
 
 #### Representation (Name String vs Underlying Integral Value)
@@ -153,14 +181,14 @@ Should [@P3385] be adopted into the Working Draft, this proposal would use its f
 
 ### Structural Types
 
-Should [@P4414] be adopted into the Working Draft, this proposal would modify the proposed definition of `std::basic_formattable_with_default` to encapsulate a `std::basic_string_view` rather than storing public non-static data members.
+Should [@P4414R0] be adopted into the Working Draft, this proposal would modify the proposed definition of `std::basic_formattable_with_default` to encapsulate a `std::basic_string_view` rather than storing public non-static data members.
 These data members are currently *unspecified* with the intent that implementations could plausibly replace them without breaking the binary representation of the annotation objects if the standard were to permit it in the future.
 The revised definition would also employ the `structural` class-property-specifier to allow real encapsulation.
 
 ### UTF-8 Support in `std::formatter`
 
 This proposal does not extend `std::formatter` to support formatting UTF-8 strings or character types directly.
-If support such as that proposed in [@P3258] were to be adopted, the mechanism proposed here could be extended to connect that facility with `std::meta::u8identifier_of` by means of a `std::u8formattable_with_default` type alias.
+If support such as that proposed in [@P3258R0] were to be adopted, the mechanism proposed here could be extended to connect that facility with `std::meta::u8identifier_of` by means of a `std::u8formattable_with_default` type alias.
 
 This paper also does not propose to extend `std::formatter` to support UTF-8 characters in format strings.
 If support were to be adopted, the mechanism proposed here would automatically interoperate through its character type template parameters that accept `char8_t` arguments.
@@ -183,10 +211,10 @@ In addition to duplicating the definitions, the `formatter` specialization had t
 The straightforward solution was to make the representation character type a template parameter that distinguishes the representation families and unify the definitions into a single class template.
 When exploring options for supporting non-`char`-based format specification strings, adding the format specification character type as a template parameter and connecting it with the character type of the `std::formatter` made that support relatively simple.
 
-Thus, this paper relies on `std::basic_formattable_with_default<typename RepresentationCharT, typename FormatSpecifierCharT>` to build an extensible mechanism capable of supporting future `char8_t` formatting.
-It further provides `std::formattable_with_default<typename CharT>` as a user-facing alias for `std::basic_formattable_with_default<char, CharT>` and holds space for `std::u8formattable_with_default<typename CharT>` as the corresponding alias for `std::basic_formattable_with_default<char8_t, CharT>`.
-The annotation object `std::formattable` (like the as-yet-unproposed `std::u8formattable`) simplifies the case where no default format specification is provided.
-Because the constructor of `std::basic_formattable_with_default` takes a reference to an array of `FormatSpecifierCharT`, CTAD correctly deduces `[[=formattable_with_default("i")]]` as `std::basic_formattable_with_default<char, char>`.
+Thus, this paper relies on `std::annotations::basic_formattable_with_default<typename RepresentationCharT, typename FormatSpecifierCharT>` to build an extensible mechanism capable of supporting future `char8_t` formatting.
+It further provides `std::annotations::formattable_with_default<typename CharT>` as a user-facing alias for `std::annotations::basic_formattable_with_default<char, CharT>` and holds space for `std::annotations::u8formattable_with_default<typename CharT>` as the corresponding alias for `std::annotations::basic_formattable_with_default<char8_t, CharT>`.
+The annotation object `std::annotations::formattable` (like the as-yet-unproposed `std::annotations::u8formattable`) simplifies the case where no default format specification is provided.
+Because the constructor of `std::annotations::basic_formattable_with_default` takes a reference to an array of `FormatSpecifierCharT`, CTAD correctly deduces `[[=formattable_with_default("i")]]` as `std::annotations::basic_formattable_with_default<char, char>` (assuming the relevant using directive/declaration).
 This provides the best of both worlds: clean annotation syntax, a unified annotation family, and a clear path for extension.
 
 ### Accessing the Annotated Default Format Specification
@@ -245,6 +273,10 @@ if (!is_enumerated_value(black)) {
 }
 ```
 :::
+
+### Format Specifiers
+
+
 
 ### Rejecting Non-Enumerable Types at `formatter` Instantiation
 
