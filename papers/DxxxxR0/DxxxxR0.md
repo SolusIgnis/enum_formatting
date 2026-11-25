@@ -125,7 +125,7 @@ Explain the public interface and naming decisions.
 
 After considering several characters to separate the enumeration-specific portion of the format specification from the portion for formatting the specified representation, this proposal chose to use the `:` (format-specifier separator) as the delimiter.
 This avoids introducing a different character into the format grammar and naturally extends the replacement field to give the appearance of a third section.
-This results in replacement fields that look like `{:i:02X}`, `{:i}`, `{:i:}`, `{:}`, or `{::}`.
+This results in replacement fields that look like `"{:i:02X}"`, `"{:i}"`, `"{:i:}"`, `"{:}"`, or `"{::}"`.
 
 ### Annotations
 
@@ -272,16 +272,20 @@ This provides the best of both worlds: clean annotation syntax, a unified annota
 
 ### Uniform vs. Inferred Default Representation
 
-An alternative design would infer the default representation from whether the enumeration declares any enumerators: using string representation (`s`) when at least one enumerator is declared, and falling back to integer representation (`i`) when the enumerator list is empty.
+An alternative design would infer the default representation from the presence or absence of declared enumerators, selecting integer representation when no enumerator is declared and string representation otherwise.
 
-This inferred approach has practical appeal for enumerations used purely as strong integer aliases (such as `enum class user_id : std::uint64_t {};`).
-Because an enumeration with no declared enumerators can never produce an enumerator identifier—every value is unenumerated—authors annotating such a type with `[[=std::formattable]]` may frequently want bare numeric output rather than type-qualified pseudo-enumerators (such as `user_id::42`).
+This inferred approach has practical appeal for enumerations used purely as strong integer aliases (such as `std::byte`).
+Because every value in an enumeration with no declared enumerators is unenumerated, authors annotating such a type with `[[=std::formattable]]` may frequently want bare numeric output rather than type-qualified pseudo-enumerators (such as `byte::42`).
 
-However, a uniform string default is preferable for three reasons:
+However, a uniform string default is preferable for several reasons.
 
-* **Predictability and generic programming:** A single rule—`{}` always defaults to string representation unless overridden by `formattable_with_default` or the call-site format specification—is trivial to teach and reason about. Under an inferred rule, generic code cannot know an unannotated enumeration's default representation without inspecting its enumerators (for example, via a `has_named_enumerators` helper).
-* **Evolution stability:** Under an inferred rule, adding a sentinel enumerator (such as `invalid = 0` or `none = 0`) to a previously empty enumeration would silently change the default representation from integer to string. Worse, any existing call site relying on that inferred integer default with numeric format specifiers—such as `{:#010b}`—would suddenly fail to compile, because `#` and `0` are invalid in string format specifications.
-* **Explicit intent for strong types:** Enumerations without enumerators are typically introduced specifically to distinguish a domain type from a raw integer. Producing a type-qualified pseudo-enumerator by default preserves that distinction, while `[[=std::formattable_with_default("i")]]` gives authors a concise, explicit way to opt into bare integer formatting when desired.
+A single rule, "`{}` always defaults to string representation", is trivial to teach and reason about.
+With an inferred default, generic code cannot know an enumeration's default representation without inspecting its enumerators (for example, with a `has_named_enumerators` helper).
+Furthermore, adding a sentinel enumerator to a previously empty enumeration would silently change the default representation from integer to string.
+Worse, any existing call site relying on that inferred integer default with numeric format specifiers (e.g., `"{:#010b}"`) would suddenly fail to compile, because `'#'` and `'0'` are invalid in string format specifications.
+
+Enumerations without enumerators are often introduced specifically to distinguish a domain type from a raw integer.
+Producing a type-qualified pseudo-enumerator by default preserves that distinction, while `[[=std::formattable_with_default("i")]]` gives authors a concise, explicit way to opt into bare integer formatting when desired.
 
 ### Accessing the Annotated Default Format Specification
 
