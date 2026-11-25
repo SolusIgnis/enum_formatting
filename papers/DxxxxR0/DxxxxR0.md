@@ -115,6 +115,18 @@ Explain the public interface and naming decisions.
 
 ### Utility Functions
 
+### Format Specifiers
+
+#### Representation (Name String vs Underlying Integral Value)
+
+#### Type-Qualification
+
+#### Format Specification Delimiter
+
+After considering several characters to separate the enumeration-specific portion of the format specification from the portion for formatting the specified representation, this proposal chose to use the `:` (format-specifier separator) as the delimiter.
+This avoids introducing a different character into the format grammar and naturally extends the replacement field to give the appearance of a third section.
+This results in replacement fields that look like `{:i:02X}`, `{:i}`, `{:i:}`, `{:}`, or `{::}`.
+
 ### Annotations
 
 Annotations are vocabulary.
@@ -150,17 +162,31 @@ The `std::annotations::basic_formattable_with_default` template takes both the r
 This gives the committee slack as UTF-8 formatting support evolves because the formatting annotations can adapt to fit new proposals without substantial design changes.
 Class template argument deduction allows `std::annotations::formattable_with_default` (and any future aliases selecting different representation character types) to deduce its format specifier character type from its constructor argument.
 
-### Format Specifiers
+#### User-Defined Formatting Annotations
 
-#### Representation (Name String vs Underlying Integral Value)
+```cpp 
+namespace application {
 
-#### Type-Qualification
+inline constexpr std::formattable_with_default hexadecimal{":i:#04X"};
+inline constexpr std::formattable_with_default identifier{":s:"};
 
-#### Format Specification Delimiter
+}
 
-After considering several characters to separate the enumeration-specific portion of the format specification from the portion for formatting the specified representation, this proposal chose to use the `:` (format-specifier separator) as the delimiter.
-This avoids introducing a different character into the format grammar and naturally extends the replacement field to give the appearance of a third section.
-This results in replacement fields that look like `{:i:02X}`, `{:i}`, `{:i:}`, `{:}`, or `{::}`.
+enum class status_code [[=application::hexadecimal]] {
+    success = 0,
+    failure = 1,
+};
+
+enum class color [[=application::identifier]] {
+    red,
+    green,
+    blue,
+};
+```
+
+Because the formatter recognizes annotations by their type rather than by the name of the annotation object, users may define their own annotation objects of type `std::formattable_with_default<char>` to establish reusable formatting conventions.
+These objects can be declared in user-defined namespaces and applied to enumeration types without requiring additional annotation types or special handling by the formatter.
+Such annotations establish defaults, which may still be overridden by the format specification at the call site.
 
 ## Default Representation
 
@@ -211,10 +237,10 @@ This requires enumeration type authors to select the representation of their enu
 
 This paper, instead, provides a unified format specification syntax to defer the choice of representation to the caller and a single format annotation type which still allows the creator of the type to select a per-type default.
 
-Should the committee prefer the ergonomics of `std::format_as_underlying` or `std::format_as_identifier`, they could be implemented under this proposal:
+Should the committee prefer the syntax of discrete named annotation objects like `std::format_as_identifier` and `std::format_as_underlying`, they could be implemented under this proposal:
 ```cpp {.not_proposed}
-inline constexpr formattable_with_default format_as_identifier{":s:"};
-inline constexpr formattable_with_default format_as_underlying{":i:"};
+inline constexpr formattable_with_default format_as_identifier{"s"};
+inline constexpr formattable_with_default format_as_underlying{"i"};
 ```
 The user would retain the ability to override the representation at the call site.
 
@@ -254,6 +280,10 @@ After considering many member function names such as `get`, `value`, `as_string`
 This operation requires converting the stored representation into a type-safe view of the characters stored by the annotation, which is idiomatically spelled `operator std::basic_string_view` for the stored character type.
 Using the conversion operator provides a clean interface that does not require selecting a name.
 Furthermore, should another type such as an explicit `std::string` copy be desired in the future, the door is open to extension.
+
+### Default Format Specification Syntax
+
+
 
 ### String Representation of Unenumerated Values
 
