@@ -118,7 +118,7 @@ Explain the public interface and naming decisions.
 ### Annotations
 
 Annotations are vocabulary.
-They add a new dimension in which code can communicate both with other code and with programmers.
+Introduced in [@P3393R4], they bring a new dimension in which code can communicate both with other code and with programmers.
 Absent standard terminology, everyone will invent their own, and like with natural languages, speakers of one dialect will not understand the slang of other dialects.
 Introducing sound annotations into the standard in an ergonomic way will have a large impact as the feature becomes widely used.
 
@@ -127,23 +127,28 @@ This avoids needing to include `<format>` just to declare an enumeration, preven
 "Where is the annotation for ...?" always has the same obvious answer.
 
 Likewise, this paper defines its annotation types and objects in the proposed `std::annotations` inline namespace.
-The syntax for annotations becomes unwieldy with deeply nested names, so facilitating forms like `[[=std::some_annotation]]` and `[[=some_annotation]]` enhance developer ergonomics.
+The syntax for annotations becomes unwieldy with deeply nested names, so facilitating forms like `[[=std::some_annotation]]` and `[[=some_annotation]]` enhances developer ergonomics.
 The nested namespace, inspired by `std::literals`, allows users to access annotation names directly from `std` or use `std::annotations` to limit the names brought into their current scope.
 
-The author is not particularly attached to any of the annotation names themselves.
+While the annotations proposed here are designed to enable the proposed stringification and formatting facilities, they have been developed with broader use in mind.
+The author therefore invites feedback on the exact spelling of the annotation names to ensure they serve the wider ecosystem.
 
 #### Designating Canonical Names
 
 When selecting the enumerator name for a given value, one must sometimes select among a set of aliases all corresponding to the same value.
-At present, there is no mechanism to favor one over another, and there is no mechanism to recognize that one is deprecated in favor of another.
+At present, there is no mechanism to favor one over another, and there is no mechanism to recognize that one is `[[deprecated]]` in favor of another.
 This proposal introduces the `std::annotations::canonical` annotation to allow the designation of canonical enumerators inside their declaration.
 When an enumerator is annotated as canonical, its name is favored over unannotated enumerators with the same value.
 
 #### Format Opt-In Annotations
 
 Modeled on the pattern used throughout the STL, the proposed formatting opt-in annotations specialize the class template `std::annotations::basic_formattable_with_default`.
-The `char` instantiation is thus exposed as `std::annotations::formattable_with_default`, and its default-constructed object is `std::annotations::formattable`.
+The `char` representation is thus exposed as the alias template `std::annotations::formattable_with_default`, and its default-constructed object is `std::annotations::formattable`.
 This leaves the door open for `u8formattable_with_default`, `wformattable_with_default`, et cetera as the need arises to provide per-type formatting defaults in additional contexts.
+
+The `std::annotations::basic_formattable_with_default` template takes both the representation and format specifier character types as independent template parameters for maximum flexibility.
+This gives the committee slack as UTF-8 formatting support evolves because the formatting annotations can adapt to fit new proposals without substantial design changes.
+Class template argument deduction allows `std::annotations::formattable_with_default` (and any future aliases selecting different representation character types) to deduce its format specifier character type from its constructor argument.
 
 ### Format Specifiers
 
@@ -159,7 +164,11 @@ This results in replacement fields that look like `{:i:02X}`, `{:i}`, `{:i:}`, `
 
 ## Default Representation
 
+The proposed formatter uses the string representation when unspecified by the caller and the annotation.
+Users directly formatting an enumeration with `{}` rather than converting it to its underlying integral type typically want to display its symbolic name.
+This is the primary reason for giving enumerations formatter support in the first place.
 
+While it would be possible to infer intent and default to integer representation for enumeration types with no declared enumerators should the committee prefer it, that would complicate the interface and reduce usability in generic contexts. See [Uniform vs. Inferred Default Representation].
 
 ## Default Type-Qualification
 
@@ -177,7 +186,7 @@ The `std::to_string` overloads are constrained to require enumerable scoped enum
 
 ### Reflecting on Attributes
 
-Should [@P3385] be adopted into the Working Draft, this proposal would use its facilities to favor non-deprecated enumerator names over deprecated names.
+Should [@P3385R8] be adopted into the Working Draft, this proposal would use its facilities to favor non-deprecated enumerator names over deprecated names.
 
 ### Structural Types
 
@@ -202,6 +211,13 @@ This requires enumeration type authors to select the representation of their enu
 
 This paper, instead, provides a unified format specification syntax to defer the choice of representation to the caller and a single format annotation type which still allows the creator of the type to select a per-type default.
 
+Should the committee prefer the ergonomics of `std::format_as_underlying` or `std::format_as_identifier`, they could be implemented under this proposal:
+```cpp {.not_proposed}
+inline constexpr formattable_with_default format_as_identifier{":s:"};
+inline constexpr formattable_with_default format_as_underlying{":i:"};
+```
+The user would retain the ability to override the representation at the call site.
+
 ### Annotation Class Template vs. Separate Annotation Types
 
 The initial draft of the reference implementation had `formattable_with_default` and `formattable` annotations.
@@ -216,6 +232,19 @@ It further provides `std::annotations::formattable_with_default<typename CharT>`
 The annotation object `std::annotations::formattable` (like the as-yet-unproposed `std::annotations::u8formattable`) simplifies the case where no default format specification is provided.
 Because the constructor of `std::annotations::basic_formattable_with_default` takes a reference to an array of `FormatSpecifierCharT`, CTAD correctly deduces `[[=formattable_with_default("i")]]` as `std::annotations::basic_formattable_with_default<char, char>` (assuming the relevant using directive/declaration).
 This provides the best of both worlds: clean annotation syntax, a unified annotation family, and a clear path for extension.
+
+### Uniform vs. Inferred Default Representation
+
+An alternative design would infer the default representation from whether the enumeration declares any enumerators: using string representation (`s`) when at least one enumerator is declared, and falling back to integer representation (`i`) when the enumerator list is empty.
+
+This inferred approach has practical appeal for enumerations used purely as strong integer aliases (such as `enum class user_id : std::uint64_t {};`).
+Because an enumeration with no declared enumerators can never produce an enumerator identifier—every value is unenumerated—authors annotating such a type with `[[=std::formattable]]` may frequently want bare numeric output rather than type-qualified pseudo-enumerators (such as `user_id::42`).
+
+However, a uniform string default is preferable for three reasons:
+
+* **Predictability and generic programming:** A single rule—`{}` always defaults to string representation unless overridden by `formattable_with_default` or the call-site format specification—is trivial to teach and reason about. Under an inferred rule, generic code cannot know an unannotated enumeration's default representation without inspecting its enumerators (for example, via a `has_named_enumerators` helper).
+* **Evolution stability:** Under an inferred rule, adding a sentinel enumerator (such as `invalid = 0` or `none = 0`) to a previously empty enumeration would silently change the default representation from integer to string. Worse, any existing call site relying on that inferred integer default with numeric format specifiers—such as `{:#010b}`—would suddenly fail to compile, because `#` and `0` are invalid in string format specifications.
+* **Explicit intent for strong types:** Enumerations without enumerators are typically introduced specifically to distinguish a domain type from a raw integer. Producing a type-qualified pseudo-enumerator by default preserves that distinction, while `[[=std::formattable_with_default("i")]]` gives authors a concise, explicit way to opt into bare integer formatting when desired.
 
 ### Accessing the Annotated Default Format Specification
 
