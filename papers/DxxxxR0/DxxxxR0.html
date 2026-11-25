@@ -1940,14 +1940,14 @@ argument.</p>
 <h4 data-number="5.2.3.3" id="user-defined-formatting-annotations"><span class="header-section-number">5.2.3.3</span> User-Defined Formatting
 Annotations<a href="#user-defined-formatting-annotations" class="self-link"></a></h4>
 <div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> application <span class="op">{</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">inline</span> <span class="kw">constexpr</span> std<span class="op">::</span>formattable_with_default hexadecimal<span class="op">{</span><span class="st">&quot;i:#08X&quot;</span><span class="op">};</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">inline</span> <span class="kw">constexpr</span> std<span class="op">::</span>formattable_with_default hex_dword<span class="op">{</span><span class="st">&quot;i:#10X&quot;</span><span class="op">};</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> layout_table <span class="op">{</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">static</span> <span class="kw">constexpr</span> std<span class="op">::</span>formattable_with_default heading<span class="op">{</span><span class="st">&quot;s:^20.20&quot;</span><span class="op">};</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">//...elided for brevity</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">};</span></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">enum</span> <span class="kw">class</span> color24 <span class="op">[[=</span><span class="at">hexadecimal</span><span class="op">]]</span> <span class="op">{</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">enum</span> <span class="kw">class</span> color24 <span class="op">[[=</span><span class="at">hex_dword</span><span class="op">]]</span> <span class="op">{</span></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        red   <span class="op">=</span> <span class="bn">0xFF0000</span><span class="op">,</span></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        green <span class="op">=</span> <span class="bn">0x00FF00</span><span class="op">,</span></span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        blue  <span class="op">=</span> <span class="bn">0x0000FF</span><span class="op">,</span></span>
@@ -1967,7 +1967,7 @@ than by the name of the annotation object, users may define their own
 annotation objects of type
 <code class="sourceCode cpp">std<span class="op">::</span>formattable_with_default</code>
 to establish reusable formatting conventions. These objects can be
-declared in user-defined scopes and applied to enumeration types without
+declared in user scopes and applied to enumeration types without
 requiring additional annotation types or special handling by the
 formatter. Such annotations establish defaults, which may still be
 overridden by the format specification at the call site.</p>
