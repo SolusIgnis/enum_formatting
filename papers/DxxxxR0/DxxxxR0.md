@@ -154,13 +154,13 @@ When an enumerator is annotated as canonical, its name is favored over unannotat
 
 #### Format Opt-In Annotations
 
-Modeled on the pattern used throughout the STL, the proposed formatting opt-in annotations specialize the class template `std::annotations::basic_formattable_with_default`.
+Modeled on the pattern used throughout the STL, the proposed formatting opt-in annotation types specialize the class template `std::annotations::basic_formattable_with_default`.
 The `char` representation is thus exposed as the alias template `std::annotations::formattable_with_default`, and its default-constructed object is `std::annotations::formattable`.
 This leaves the door open for `u8formattable_with_default`, `wformattable_with_default`, et cetera as the need arises to provide per-type formatting defaults in additional contexts.
 
-The `std::annotations::basic_formattable_with_default` template takes both the representation and format specifier character types as independent template parameters for maximum flexibility.
+The `basic_formattable_with_default` template takes both the representation and format specifier character types as independent template parameters for maximum flexibility.
 This gives the committee slack as UTF-8 formatting support evolves because the formatting annotations can adapt to fit new proposals without substantial design changes.
-Class template argument deduction allows `std::annotations::formattable_with_default` (and any future aliases selecting different representation character types) to deduce its format specifier character type from its constructor argument.
+Class template argument deduction allows `formattable_with_default` (and any future aliases selecting different representation character types) to deduce its format specifier character type from its constructor argument.
 
 #### User-Defined Formatting Annotations
 
@@ -201,12 +201,14 @@ While it would be possible to infer intent and default to integer representation
 This paper proposes a "smart default" type-qualification where the default depends on the specified representation and whether the value corresponds to a named enumerator.
 As the name of an enumerator often carries sufficient context for a familiar user to identify its probable type, the default in this case is unqualified.
 For values without a named enumerator, the default for the string representation treats the value as a type-qualified pseudo-enumerator because the numeric value alone carries no context.
-These defaults apply to both the `formatter` and to `std::to_string`.
+These defaults apply to both the `std::formatter` and to `std::to_string`.
 When the specified format representation is the underlying integral type, the default is an unqualified number, trusting the caller to provide appropriate context (or to specify a type-qualified format if desired).
 
 ## Non-Enumerable Types
 
-The `std::to_string` overloads are constrained to require enumerable scoped enumerations, so calls will fail to compile. The `formatter` specialization, on the other hand, rejects non-enumerable types during format-string parsing, at the moment the caller specifies representing the value as an enumerator name string. Instantiation of the `formatter` or annotation of an enumeration is permitted because it is perfectly reasonable for a programmer to format an enumeration value as a number or format the enumeration type name without the type being enumerable.
+The `std::to_string` overloads are constrained to require enumerable scoped enumerations, so calls will fail to compile.
+The `std::formatter` specialization, on the other hand, rejects non-enumerable types during format-string parsing, at the moment the caller specifies representing the value as an enumerator name string.
+Instantiation of the `std::formatter` or annotation of an enumeration is permitted because it is perfectly reasonable for a programmer to format an enumeration value as a number or format the enumeration type name without the type being enumerable.
 
 ## Constraints and Limitations
 
@@ -243,6 +245,9 @@ inline constexpr formattable_with_default format_as_identifier{"s"};
 inline constexpr formattable_with_default format_as_underlying{"i"};
 ```
 The user would retain the ability to override the representation at the call site.
+
+As a practical matter, should a developer wish to enforce their choice of formatting representation on users, the **only** way within the `std::format` framework is to explicitly specialize `std::formatter` for the type.
+An annotation-based facility cannot enforce such a choice, as users remain free to explicitly specialize `std::formatter` for the type and format it as they wish.
 
 ### Annotation Class Template vs. Separate Annotation Types
 
