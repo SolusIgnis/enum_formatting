@@ -1634,8 +1634,8 @@ and
 <li><a href="#naming-and-interface-design" id="toc-naming-and-interface-design"><span class="toc-section-number">5.2</span> Naming and Interface Design</a>
 <ul>
 <li><a href="#utility-functions" id="toc-utility-functions"><span class="toc-section-number">5.2.1</span> Utility Functions</a></li>
-<li><a href="#annotations" id="toc-annotations"><span class="toc-section-number">5.2.2</span> Annotations</a></li>
-<li><a href="#format-specifiers" id="toc-format-specifiers"><span class="toc-section-number">5.2.3</span> Format Specifiers</a></li>
+<li><a href="#format-specifiers" id="toc-format-specifiers"><span class="toc-section-number">5.2.2</span> Format Specifiers</a></li>
+<li><a href="#annotations" id="toc-annotations"><span class="toc-section-number">5.2.3</span> Annotations</a></li>
 </ul></li>
 <li><a href="#default-representation" id="toc-default-representation"><span class="toc-section-number">5.3</span> Default Representation</a></li>
 <li><a href="#default-type-qualification" id="toc-default-type-qualification"><span class="toc-section-number">5.4</span> Default
@@ -1659,10 +1659,12 @@ vs. Separate Annotation Types</a></li>
 Representation</a></li>
 <li><a href="#accessing-the-annotated-default-format-specification" id="toc-accessing-the-annotated-default-format-specification"><span class="toc-section-number">5.7.4</span> Accessing the Annotated Default
 Format Specification</a></li>
-<li><a href="#string-representation-of-unenumerated-values" id="toc-string-representation-of-unenumerated-values"><span class="toc-section-number">5.7.5</span> String Representation of
+<li><a href="#default-format-specification-syntax" id="toc-default-format-specification-syntax"><span class="toc-section-number">5.7.5</span> Default Format Specification
+Syntax</a></li>
+<li><a href="#string-representation-of-unenumerated-values" id="toc-string-representation-of-unenumerated-values"><span class="toc-section-number">5.7.6</span> String Representation of
 Unenumerated Values</a></li>
-<li><a href="#format-specifiers-1" id="toc-format-specifiers-1"><span class="toc-section-number">5.7.6</span> Format Specifiers</a></li>
-<li><a href="#rejecting-non-enumerable-types-at-formatter-instantiation" id="toc-rejecting-non-enumerable-types-at-formatter-instantiation"><span class="toc-section-number">5.7.7</span> Rejecting Non-Enumerable Types
+<li><a href="#format-specifiers-1" id="toc-format-specifiers-1"><span class="toc-section-number">5.7.7</span> Format Specifiers</a></li>
+<li><a href="#rejecting-non-enumerable-types-at-formatter-instantiation" id="toc-rejecting-non-enumerable-types-at-formatter-instantiation"><span class="toc-section-number">5.7.8</span> Rejecting Non-Enumerable Types
 at <code class="sourceCode cpp">formatter</code> Instantiation</a></li>
 </ul></li>
 </ul></li>
@@ -1843,7 +1845,26 @@ and forward compatibility with the evolution of the Standard.</p>
 <h2 data-number="5.2" id="naming-and-interface-design"><span class="header-section-number">5.2</span> Naming and Interface Design<a href="#naming-and-interface-design" class="self-link"></a></h2>
 <p>Explain the public interface and naming decisions.</p>
 <h3 data-number="5.2.1" id="utility-functions"><span class="header-section-number">5.2.1</span> Utility Functions<a href="#utility-functions" class="self-link"></a></h3>
-<h3 data-number="5.2.2" id="annotations"><span class="header-section-number">5.2.2</span> Annotations<a href="#annotations" class="self-link"></a></h3>
+<h3 data-number="5.2.2" id="format-specifiers"><span class="header-section-number">5.2.2</span> Format Specifiers<a href="#format-specifiers" class="self-link"></a></h3>
+<h4 data-number="5.2.2.1" id="representation-name-string-vs-underlying-integral-value"><span class="header-section-number">5.2.2.1</span> Representation (Name String
+vs Underlying Integral Value)<a href="#representation-name-string-vs-underlying-integral-value" class="self-link"></a></h4>
+<h4 data-number="5.2.2.2" id="type-qualification"><span class="header-section-number">5.2.2.2</span> Type-Qualification<a href="#type-qualification" class="self-link"></a></h4>
+<h4 data-number="5.2.2.3" id="format-specification-delimiter"><span class="header-section-number">5.2.2.3</span> Format Specification
+Delimiter<a href="#format-specification-delimiter" class="self-link"></a></h4>
+<p>After considering several characters to separate the
+enumeration-specific portion of the format specification from the
+portion for formatting the specified representation, this proposal chose
+to use the <code class="sourceCode cpp"><span class="op">:</span></code>
+(format-specifier separator) as the delimiter. This avoids introducing a
+different character into the format grammar and naturally extends the
+replacement field to give the appearance of a third section. This
+results in replacement fields that look like
+<code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">:</span><span class="bn">02</span><span class="er">X</span><span class="op">}</span></code>,
+<code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">}</span></code>,
+<code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">:}</span></code>,
+<code class="sourceCode cpp"><span class="op">{:}</span></code>, or
+<code class="sourceCode cpp"><span class="op">{::}</span></code>.</p>
+<h3 data-number="5.2.3" id="annotations"><span class="header-section-number">5.2.3</span> Annotations<a href="#annotations" class="self-link"></a></h3>
 <p>Annotations are vocabulary. Introduced in <span class="citation" data-cites="P3393R4"><a href="#ref-P3393R4" role="doc-biblioref"><strong>P3393R4?</strong></a></span>, they bring a
 new dimension in which code can communicate both with other code and
 with programmers. Absent standard terminology, everyone will invent
@@ -1879,7 +1900,7 @@ proposed stringification and formatting facilities, they have been
 developed with broader use in mind. The author therefore invites
 feedback on the exact spelling of the annotation names to ensure they
 serve the wider ecosystem.</p>
-<h4 data-number="5.2.2.1" id="designating-canonical-names"><span class="header-section-number">5.2.2.1</span> Designating Canonical
+<h4 data-number="5.2.3.1" id="designating-canonical-names"><span class="header-section-number">5.2.3.1</span> Designating Canonical
 Names<a href="#designating-canonical-names" class="self-link"></a></h4>
 <p>When selecting the enumerator name for a given value, one must
 sometimes select among a set of aliases all corresponding to the same
@@ -1891,7 +1912,7 @@ in favor of another. This proposal introduces the
 annotation to allow the designation of canonical enumerators inside
 their declaration. When an enumerator is annotated as canonical, its
 name is favored over unannotated enumerators with the same value.</p>
-<h4 data-number="5.2.2.2" id="format-opt-in-annotations"><span class="header-section-number">5.2.2.2</span> Format Opt-In Annotations<a href="#format-opt-in-annotations" class="self-link"></a></h4>
+<h4 data-number="5.2.3.2" id="format-opt-in-annotations"><span class="header-section-number">5.2.3.2</span> Format Opt-In Annotations<a href="#format-opt-in-annotations" class="self-link"></a></h4>
 <p>Modeled on the pattern used throughout the STL, the proposed
 formatting opt-in annotations specialize the class template
 <code class="sourceCode cpp">std<span class="op">::</span>annotations<span class="op">::</span>basic_formattable_with_default</code>.
@@ -1916,25 +1937,34 @@ substantial design changes. Class template argument deduction allows
 (and any future aliases selecting different representation character
 types) to deduce its format specifier character type from its
 constructor argument.</p>
-<h3 data-number="5.2.3" id="format-specifiers"><span class="header-section-number">5.2.3</span> Format Specifiers<a href="#format-specifiers" class="self-link"></a></h3>
-<h4 data-number="5.2.3.1" id="representation-name-string-vs-underlying-integral-value"><span class="header-section-number">5.2.3.1</span> Representation (Name String
-vs Underlying Integral Value)<a href="#representation-name-string-vs-underlying-integral-value" class="self-link"></a></h4>
-<h4 data-number="5.2.3.2" id="type-qualification"><span class="header-section-number">5.2.3.2</span> Type-Qualification<a href="#type-qualification" class="self-link"></a></h4>
-<h4 data-number="5.2.3.3" id="format-specification-delimiter"><span class="header-section-number">5.2.3.3</span> Format Specification
-Delimiter<a href="#format-specification-delimiter" class="self-link"></a></h4>
-<p>After considering several characters to separate the
-enumeration-specific portion of the format specification from the
-portion for formatting the specified representation, this proposal chose
-to use the <code class="sourceCode cpp"><span class="op">:</span></code>
-(format-specifier separator) as the delimiter. This avoids introducing a
-different character into the format grammar and naturally extends the
-replacement field to give the appearance of a third section. This
-results in replacement fields that look like
-<code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">:</span><span class="bn">02</span><span class="er">X</span><span class="op">}</span></code>,
-<code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">}</span></code>,
-<code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">:}</span></code>,
-<code class="sourceCode cpp"><span class="op">{:}</span></code>, or
-<code class="sourceCode cpp"><span class="op">{::}</span></code>.</p>
+<h4 data-number="5.2.3.3" id="user-defined-formatting-annotations"><span class="header-section-number">5.2.3.3</span> User-Defined Formatting
+Annotations<a href="#user-defined-formatting-annotations" class="self-link"></a></h4>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> application <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> std<span class="op">::</span>formattable_with_default hexadecimal<span class="op">{</span><span class="st">&quot;:i:#04X&quot;</span><span class="op">};</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> std<span class="op">::</span>formattable_with_default identifier<span class="op">{</span><span class="st">&quot;:s:&quot;</span><span class="op">};</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> <span class="kw">class</span> status_code <span class="op">[[=</span><span class="at">application</span><span class="op">::</span><span class="at">hexadecimal</span><span class="op">]]</span> <span class="op">{</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    success <span class="op">=</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    failure <span class="op">=</span> <span class="dv">1</span><span class="op">,</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> <span class="kw">class</span> color <span class="op">[[=</span><span class="at">application</span><span class="op">::</span><span class="at">identifier</span><span class="op">]]</span> <span class="op">{</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    red<span class="op">,</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    green<span class="op">,</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    blue<span class="op">,</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p>Because the formatter recognizes annotations by their type rather
+than by the name of the annotation object, users may define their own
+annotation objects of type
+<code class="sourceCode cpp">std<span class="op">::</span>formattable_with_default<span class="op">&lt;</span><span class="dt">char</span><span class="op">&gt;</span></code>
+to establish reusable formatting conventions. These objects can be
+declared in user-defined namespaces and applied to enumeration types
+without requiring additional annotation types or special handling by the
+formatter. Such annotations establish defaults, which may still be
+overridden by the format specification at the call site.</p>
 <h2 data-number="5.3" id="default-representation"><span class="header-section-number">5.3</span> Default Representation<a href="#default-representation" class="self-link"></a></h2>
 <p>The proposed formatter uses the string representation when
 unspecified by the caller and the annotation. Users directly formatting
@@ -2028,13 +2058,14 @@ choice at their call sites.</p>
 to defer the choice of representation to the caller and a single format
 annotation type which still allows the creator of the type to select a
 per-type default.</p>
-<p>Should the committee prefer the ergonomics of
-<code class="sourceCode cpp">std<span class="op">::</span>format_as_underlying</code>
-or
-<code class="sourceCode cpp">std<span class="op">::</span>format_as_identifier</code>,
+<p>Should the committee prefer the syntax of discrete named annotation
+objects like
+<code class="sourceCode cpp">std<span class="op">::</span>format_as_identifier</code>
+and
+<code class="sourceCode cpp">std<span class="op">::</span>format_as_underlying</code>,
 they could be implemented under this proposal:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp not_proposed"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> formattable_with_default format_as_identifier<span class="op">{</span><span class="st">&quot;:s:&quot;</span><span class="op">};</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> formattable_with_default format_as_underlying<span class="op">{</span><span class="st">&quot;:i:&quot;</span><span class="op">};</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode cpp not_proposed"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> formattable_with_default format_as_identifier<span class="op">{</span><span class="st">&quot;s&quot;</span><span class="op">};</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> formattable_with_default format_as_underlying<span class="op">{</span><span class="st">&quot;i&quot;</span><span class="op">};</span></span></code></pre></div>
 <p>The user would retain the ability to override the representation at
 the call site.</p>
 <h3 data-number="5.7.2" id="annotation-class-template-vs.-separate-annotation-types"><span class="header-section-number">5.7.2</span> Annotation Class Template
@@ -2164,16 +2195,18 @@ clean interface that does not require selecting a name. Furthermore,
 should another type such as an explicit
 <code class="sourceCode cpp">std<span class="op">::</span>string</code>
 copy be desired in the future, the door is open to extension.</p>
-<h3 data-number="5.7.5" id="string-representation-of-unenumerated-values"><span class="header-section-number">5.7.5</span> String Representation of
+<h3 data-number="5.7.5" id="default-format-specification-syntax"><span class="header-section-number">5.7.5</span> Default Format Specification
+Syntax<a href="#default-format-specification-syntax" class="self-link"></a></h3>
+<h3 data-number="5.7.6" id="string-representation-of-unenumerated-values"><span class="header-section-number">5.7.6</span> String Representation of
 Unenumerated Values<a href="#string-representation-of-unenumerated-values" class="self-link"></a></h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> <span class="kw">class</span> rgb_color <span class="op">:</span> std<span class="op">::</span><span class="dt">uint32_t</span> <span class="op">{</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    red   <span class="op">=</span> <span class="bn">0xFF0000</span><span class="op">,</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    green <span class="op">=</span> <span class="bn">0x00FF00</span><span class="op">,</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    blue  <span class="op">=</span> <span class="bn">0x0000FF</span><span class="op">,</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> black     <span class="op">=</span> rgb_color<span class="op">{</span><span class="bn">0x000000</span><span class="op">};</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> black_str <span class="op">=</span> std<span class="op">::</span>to_string<span class="op">(</span>black<span class="op">);</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> <span class="kw">class</span> rgb_color <span class="op">:</span> std<span class="op">::</span><span class="dt">uint32_t</span> <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    red   <span class="op">=</span> <span class="bn">0xFF0000</span><span class="op">,</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    green <span class="op">=</span> <span class="bn">0x00FF00</span><span class="op">,</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    blue  <span class="op">=</span> <span class="bn">0x0000FF</span><span class="op">,</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> black     <span class="op">=</span> rgb_color<span class="op">{</span><span class="bn">0x000000</span><span class="op">};</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> black_str <span class="op">=</span> std<span class="op">::</span>to_string<span class="op">(</span>black<span class="op">);</span></span></code></pre></div>
 <p>Considering this basic scoped enumeration representing RGB colors,
 what should be the string representation of an unnamed color? Since
 named enumerators are written
@@ -2285,20 +2318,20 @@ proposed here provides that functionality:</p>
 </thead>
 <tbody>
 <tr>
-<td><div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>is_enumerated_value<span class="op">(</span>black<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    black_str <span class="op">=</span> std<span class="op">::</span>to_string<span class="op">(</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        std<span class="op">::</span>to_underlying<span class="op">(</span>black<span class="op">)</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
 <td><div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>is_enumerated_value<span class="op">(</span>black<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    black_str <span class="op">=</span> std<span class="op">::</span>string<span class="op">{</span><span class="st">&quot;&lt;UNNAMED&gt;&quot;</span><span class="op">};</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    black_str <span class="op">=</span> std<span class="op">::</span>to_string<span class="op">(</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        std<span class="op">::</span>to_underlying<span class="op">(</span>black<span class="op">)</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
+<td><div class="sourceCode" id="cb10"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>is_enumerated_value<span class="op">(</span>black<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    black_str <span class="op">=</span> std<span class="op">::</span>string<span class="op">{</span><span class="st">&quot;&lt;UNNAMED&gt;&quot;</span><span class="op">};</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
 </tr>
 </tbody>
 </table>
 </div>
-<h3 data-number="5.7.6" id="format-specifiers-1"><span class="header-section-number">5.7.6</span> Format Specifiers<a href="#format-specifiers-1" class="self-link"></a></h3>
-<h3 data-number="5.7.7" id="rejecting-non-enumerable-types-at-formatter-instantiation"><span class="header-section-number">5.7.7</span> Rejecting Non-Enumerable
+<h3 data-number="5.7.7" id="format-specifiers-1"><span class="header-section-number">5.7.7</span> Format Specifiers<a href="#format-specifiers-1" class="self-link"></a></h3>
+<h3 data-number="5.7.8" id="rejecting-non-enumerable-types-at-formatter-instantiation"><span class="header-section-number">5.7.8</span> Rejecting Non-Enumerable
 Types at <code class="sourceCode cpp">formatter</code> Instantiation<a href="#rejecting-non-enumerable-types-at-formatter-instantiation" class="self-link"></a></h3>
 <p>The
 <code class="sourceCode cpp">std<span class="op">::</span>formatter</code>
