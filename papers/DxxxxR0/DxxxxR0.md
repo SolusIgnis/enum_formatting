@@ -166,26 +166,32 @@ Class template argument deduction allows `formattable_with_default` (and any fut
 
 ```cpp 
 namespace application {
+    inline constexpr std::formattable_with_default hexadecimal{"i:#08X"};
 
-inline constexpr std::formattable_with_default hexadecimal{":i:#04X"};
-inline constexpr std::formattable_with_default identifier{":s:"};
+    struct layout_table {
+        static constexpr std::formattable_with_default heading{"s:^20.20"};
+        //...elided for brevity
+    };
 
-}
+    enum class color24 [[=hexadecimal]] {
+        red   = 0xFF0000,
+        green = 0x00FF00,
+        blue  = 0x0000FF,
+    };
 
-enum class status_code [[=application::hexadecimal]] {
-    success = 0,
-    failure = 1,
-};
-
-enum class color [[=application::identifier]] {
-    red,
-    green,
-    blue,
-};
+    enum class cake [[=layout_table::heading]] {
+        vanilla,
+        chocolate,
+        strawberry,
+        butterscotch,
+        sarsaparilla,
+        pumpkin,
+    };
+} //namespace application
 ```
 
-Because the formatter recognizes annotations by their type rather than by the name of the annotation object, users may define their own annotation objects of type `std::formattable_with_default<char>` to establish reusable formatting conventions.
-These objects can be declared in user-defined namespaces and applied to enumeration types without requiring additional annotation types or special handling by the formatter.
+Because the formatter recognizes annotations by their type rather than by the name of the annotation object, users may define their own annotation objects of type `std::formattable_with_default` to establish reusable formatting conventions.
+These objects can be declared in user-defined scopes and applied to enumeration types without requiring additional annotation types or special handling by the formatter.
 Such annotations establish defaults, which may still be overridden by the format specification at the call site.
 
 ## Default Representation
