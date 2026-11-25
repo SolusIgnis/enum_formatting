@@ -1914,7 +1914,7 @@ their declaration. When an enumerator is annotated as canonical, its
 name is favored over unannotated enumerators with the same value.</p>
 <h4 data-number="5.2.3.2" id="format-opt-in-annotations"><span class="header-section-number">5.2.3.2</span> Format Opt-In Annotations<a href="#format-opt-in-annotations" class="self-link"></a></h4>
 <p>Modeled on the pattern used throughout the STL, the proposed
-formatting opt-in annotations specialize the class template
+formatting opt-in annotation types specialize the class template
 <code class="sourceCode cpp">std<span class="op">::</span>annotations<span class="op">::</span>basic_formattable_with_default</code>.
 The <code class="sourceCode cpp"><span class="dt">char</span></code>
 representation is thus exposed as the alias template
@@ -1927,16 +1927,16 @@ This leaves the door open for
 as the need arises to provide per-type formatting defaults in additional
 contexts.</p>
 <p>The
-<code class="sourceCode cpp">std<span class="op">::</span>annotations<span class="op">::</span>basic_formattable_with_default</code>
+<code class="sourceCode cpp">basic_formattable_with_default</code>
 template takes both the representation and format specifier character
 types as independent template parameters for maximum flexibility. This
 gives the committee slack as UTF-8 formatting support evolves because
 the formatting annotations can adapt to fit new proposals without
 substantial design changes. Class template argument deduction allows
-<code class="sourceCode cpp">std<span class="op">::</span>annotations<span class="op">::</span>formattable_with_default</code>
-(and any future aliases selecting different representation character
-types) to deduce its format specifier character type from its
-constructor argument.</p>
+<code class="sourceCode cpp">formattable_with_default</code> (and any
+future aliases selecting different representation character types) to
+deduce its format specifier character type from its constructor
+argument.</p>
 <h4 data-number="5.2.3.3" id="user-defined-formatting-annotations"><span class="header-section-number">5.2.3.3</span> User-Defined Formatting
 Annotations<a href="#user-defined-formatting-annotations" class="self-link"></a></h4>
 <div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> application <span class="op">{</span></span>
@@ -1987,7 +1987,8 @@ type, the default in this case is unqualified. For values without a
 named enumerator, the default for the string representation treats the
 value as a type-qualified pseudo-enumerator because the numeric value
 alone carries no context. These defaults apply to both the
-<code class="sourceCode cpp">formatter</code> and to
+<code class="sourceCode cpp">std<span class="op">::</span>formatter</code>
+and to
 <code class="sourceCode cpp">std<span class="op">::</span>to_string</code>.
 When the specified format representation is the underlying integral
 type, the default is an unqualified number, trusting the caller to
@@ -1998,14 +1999,15 @@ desired).</p>
 <code class="sourceCode cpp">std<span class="op">::</span>to_string</code>
 overloads are constrained to require enumerable scoped enumerations, so
 calls will fail to compile. The
-<code class="sourceCode cpp">formatter</code> specialization, on the
-other hand, rejects non-enumerable types during format-string parsing,
-at the moment the caller specifies representing the value as an
-enumerator name string. Instantiation of the
-<code class="sourceCode cpp">formatter</code> or annotation of an
-enumeration is permitted because it is perfectly reasonable for a
-programmer to format an enumeration value as a number or format the
-enumeration type name without the type being enumerable.</p>
+<code class="sourceCode cpp">std<span class="op">::</span>formatter</code>
+specialization, on the other hand, rejects non-enumerable types during
+format-string parsing, at the moment the caller specifies representing
+the value as an enumerator name string. Instantiation of the
+<code class="sourceCode cpp">std<span class="op">::</span>formatter</code>
+or annotation of an enumeration is permitted because it is perfectly
+reasonable for a programmer to format an enumeration value as a number
+or format the enumeration type name without the type being
+enumerable.</p>
 <h2 data-number="5.6" id="constraints-and-limitations"><span class="header-section-number">5.6</span> Constraints and Limitations<a href="#constraints-and-limitations" class="self-link"></a></h2>
 <h3 data-number="5.6.1" id="reflecting-on-attributes"><span class="header-section-number">5.6.1</span> Reflecting on Attributes<a href="#reflecting-on-attributes" class="self-link"></a></h3>
 <p>Should <span class="citation" data-cites="P3385R8"><a href="https://wg21.link/p3385r8">[P3385R8]</a></span> be adopted into
@@ -2068,6 +2070,16 @@ they could be implemented under this proposal:</p>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> formattable_with_default format_as_underlying<span class="op">{</span><span class="st">&quot;i&quot;</span><span class="op">};</span></span></code></pre></div>
 <p>The user would retain the ability to override the representation at
 the call site.</p>
+<p>As a practical matter, should a developer wish to enforce their
+choice of formatting representation on users, the <strong>only</strong>
+way within the
+<code class="sourceCode cpp">std<span class="op">::</span>format</code>
+framework is to explicitly specialize
+<code class="sourceCode cpp">std<span class="op">::</span>formatter</code>
+for the type. An annotation-based facility cannot enforce such a choice,
+as users remain free to explicitly specialize
+<code class="sourceCode cpp">std<span class="op">::</span>formatter</code>
+for the type and format it as they wish.</p>
 <h3 data-number="5.7.2" id="annotation-class-template-vs.-separate-annotation-types"><span class="header-section-number">5.7.2</span> Annotation Class Template
 vs. Separate Annotation Types<a href="#annotation-class-template-vs.-separate-annotation-types" class="self-link"></a></h3>
 <p>The initial draft of the reference implementation had
