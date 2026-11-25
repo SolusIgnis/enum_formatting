@@ -1859,11 +1859,12 @@ to use the <code class="sourceCode cpp"><span class="op">:</span></code>
 different character into the format grammar and naturally extends the
 replacement field to give the appearance of a third section. This
 results in replacement fields that look like
-<code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">:</span><span class="bn">02</span><span class="er">X</span><span class="op">}</span></code>,
-<code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">}</span></code>,
-<code class="sourceCode cpp"><span class="op">{:</span>i<span class="op">:}</span></code>,
-<code class="sourceCode cpp"><span class="op">{:}</span></code>, or
-<code class="sourceCode cpp"><span class="op">{::}</span></code>.</p>
+<code class="sourceCode cpp"><span class="st">&quot;{:i:02X}&quot;</span></code>,
+<code class="sourceCode cpp"><span class="st">&quot;{:i}&quot;</span></code>,
+<code class="sourceCode cpp"><span class="st">&quot;{:i:}&quot;</span></code>,
+<code class="sourceCode cpp"><span class="st">&quot;</span><span class="sc">{:}</span><span class="st">&quot;</span></code>,
+or
+<code class="sourceCode cpp"><span class="st">&quot;{::}&quot;</span></code>.</p>
 <h3 data-number="5.2.3" id="annotations"><span class="header-section-number">5.2.3</span> Annotations<a href="#annotations" class="self-link"></a></h3>
 <p>Annotations are vocabulary. Introduced in <span class="citation" data-cites="P3393R4"><a href="#ref-P3393R4" role="doc-biblioref"><strong>P3393R4?</strong></a></span>, they bring a
 new dimension in which code can communicate both with other code and
@@ -2139,56 +2140,44 @@ best of both worlds: clean annotation syntax, a unified annotation
 family, and a clear path for extension.</p>
 <h3 data-number="5.7.3" id="uniform-vs.-inferred-default-representation"><span class="header-section-number">5.7.3</span> Uniform vs. Inferred Default
 Representation<a href="#uniform-vs.-inferred-default-representation" class="self-link"></a></h3>
-<p>An alternative design would infer the default representation from
-whether the enumeration declares any enumerators: using string
-representation (<code class="sourceCode cpp">s</code>) when at least one
-enumerator is declared, and falling back to integer representation
-(<code class="sourceCode cpp">i</code>) when the enumerator list is
-empty.</p>
+<p>An alternative design would infer the default representation from the
+presence or absence of declared enumerators, selecting integer
+representation when no enumerator is declared and string representation
+otherwise.</p>
 <p>This inferred approach has practical appeal for enumerations used
 purely as strong integer aliases (such as
-<code class="sourceCode cpp"><span class="kw">enum</span> <span class="kw">class</span> user_id <span class="op">:</span> std<span class="op">::</span><span class="dt">uint64_t</span> <span class="op">{};</span></code>).
-Because an enumeration with no declared enumerators can never produce an
-enumerator identifier—every value is unenumerated—authors annotating
-such a type with
+<code class="sourceCode cpp">std<span class="op">::</span>byte</code>).
+Because every value in an enumeration with no declared enumerators is
+unenumerated, authors annotating such a type with
 <code class="sourceCode cpp"><span class="op">[[=</span><span class="at">std</span><span class="op">::</span><span class="at">formattable</span><span class="op">]]</span></code>
 may frequently want bare numeric output rather than type-qualified
 pseudo-enumerators (such as
-<code class="sourceCode cpp">user_id<span class="op">::</span><span class="dv">42</span></code>).</p>
-<p>However, a uniform string default is preferable for three
-reasons:</p>
-<ul>
-<li><strong>Predictability and generic programming:</strong> A single
-rule—<code class="sourceCode cpp"><span class="op">{}</span></code>
-always defaults to string representation unless overridden by
-<code class="sourceCode cpp">formattable_with_default</code> or the
-call-site format specification—is trivial to teach and reason about.
-Under an inferred rule, generic code cannot know an unannotated
+<code class="sourceCode cpp">byte<span class="op">::</span><span class="dv">42</span></code>).</p>
+<p>However, a uniform string default is preferable for several
+reasons.</p>
+<p>A single rule,
+“<code class="sourceCode cpp"><span class="op">{}</span></code> always
+defaults to string representation”, is trivial to teach and reason
+about. With an inferred default, generic code cannot know an
 enumeration’s default representation without inspecting its enumerators
-(for example, via a
-<code class="sourceCode cpp">has_named_enumerators</code> helper).</li>
-<li><strong>Evolution stability:</strong> Under an inferred rule, adding
-a sentinel enumerator (such as
-<code class="sourceCode cpp">invalid <span class="op">=</span> <span class="dv">0</span></code>
-or
-<code class="sourceCode cpp">none <span class="op">=</span> <span class="dv">0</span></code>)
-to a previously empty enumeration would silently change the default
-representation from integer to string. Worse, any existing call site
-relying on that inferred integer default with numeric format
-specifiers—such as
-<code class="sourceCode cpp"><span class="op">{:</span><span class="er">#010b}</span></code>—would
-suddenly fail to compile, because
-<code class="sourceCode cpp"><span class="er">#</span></code> and
-<code class="sourceCode cpp"><span class="dv">0</span></code> are
-invalid in string format specifications.</li>
-<li><strong>Explicit intent for strong types:</strong> Enumerations
-without enumerators are typically introduced specifically to distinguish
-a domain type from a raw integer. Producing a type-qualified
+(for example, with a
+<code class="sourceCode cpp">has_named_enumerators</code> helper).
+Furthermore, adding a sentinel enumerator to a previously empty
+enumeration would silently change the default representation from
+integer to string. Worse, any existing call site relying on that
+inferred integer default with numeric format specifiers (e.g.,
+<code class="sourceCode cpp"><span class="st">&quot;</span><span class="sc">{:#010b}</span><span class="st">&quot;</span></code>)
+would suddenly fail to compile, because
+<code class="sourceCode cpp"><span class="ch">&#39;#&#39;</span></code>
+and
+<code class="sourceCode cpp"><span class="ch">&#39;0&#39;</span></code>
+are invalid in string format specifications.</p>
+<p>Enumerations without enumerators are often introduced specifically to
+distinguish a domain type from a raw integer. Producing a type-qualified
 pseudo-enumerator by default preserves that distinction, while
 <code class="sourceCode cpp"><span class="op">[[=</span><span class="at">std</span><span class="op">::</span><span class="at">formattable_with_default</span><span class="op">(</span><span class="st">&quot;i&quot;</span><span class="op">)]]</span></code>
 gives authors a concise, explicit way to opt into bare integer
-formatting when desired.</li>
-</ul>
+formatting when desired.</p>
 <h3 data-number="5.7.4" id="accessing-the-annotated-default-format-specification"><span class="header-section-number">5.7.4</span> Accessing the Annotated
 Default Format Specification<a href="#accessing-the-annotated-default-format-specification" class="self-link"></a></h3>
 <p>The syntax for accessing the default format specification stored by a
