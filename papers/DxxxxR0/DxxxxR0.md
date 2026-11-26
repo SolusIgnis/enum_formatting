@@ -115,9 +115,18 @@ _Explain the public interface and naming decisions._
 
 ### Utility Functions
 
+The utility predicate `std::is_enumerated_value`, proposed for addition to `<utility>`, complements the formatting and stringification features at the center of the proposal.
+It allows users to detect unenumerated values directly.
+This provides opportunities to cleanly enforce function preconditions or establish fallbacks.
+
+The name `is_enumerated_value` is proposed instead of `is_unenumerated_value` in keeping with the standard library's preference for naming predicates in the positive sense.
+
+While there is an obvious implementation that parallels the example of `enum_to_string` from [@P2996R13], that paper points out that implementations can exploit properties of the enumeration type known to the compiler to optimize performance.
+Therefore, the specific algorithm for the function is not specified by this proposal.
+
 ### Format Specifiers
 
-#### Representation (Name String vs Underlying Integral Value)
+#### Representation (Enumerator Identifier String vs Underlying Integral Value)
 
 #### Type-Qualification
 
@@ -243,7 +252,7 @@ If support were to be adopted, the mechanism proposed here would automatically i
 [@P4267R1] proposes `std::format_as_identifier` and `std::format_as_underlying` as separate annotations.
 This requires enumeration type authors to select the representation of their enumeration types at the point of declaration and prevents users of those types from overriding that choice at their call sites.
 
-This paper, instead, provides a unified format specification syntax to defer the choice of representation to the caller and a single format annotation type which still allows the creator of the type to select a per-type default.
+This paper, instead, provides a unified format specification syntax to defer the choice of representation to the caller and a single format annotation class template which still allows the creator of the type to select a per-type default.
 
 Should the committee prefer the syntax of discrete named annotation objects like `std::format_as_identifier` and `std::format_as_underlying`, they could be implemented under this proposal:
 ```cpp {.not_proposed}
@@ -318,7 +327,7 @@ auto black_str = std::to_string(black);
 ```
 
 Considering this basic scoped enumeration representing RGB colors, what should be the string representation of an unnamed color?
-Since named enumerators are written `rgb_color::red`, `rgb_color::green`, and `rgb_color::blue`, this proposal uses a parallel syntax for unenumerated values and produces `rgb_color::0`, treating the underlying value as a pseudo-enumerator.
+Since named enumerators are written `rgb_color::red`, `rgb_color::green`, and `rgb_color::blue`, this proposal uses a parallel syntax for unenumerated values and produces `"rgb_color::0"`, treating the underlying value as a pseudo-enumerator.
 This preserves the enumeration type and underlying value for debugging/logging purposes.
 Other candidate representations discard some of this information or treat unenumerated values as construction expressions that are less readily parsed by consumers.
 The proposed representation also avoids favoring either parenthesized or braced initialization syntax, each of which has its own stylistic advocates and semantic distinctions in C++.
