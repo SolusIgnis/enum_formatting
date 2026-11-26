@@ -1633,9 +1633,27 @@ and
 <li><a href="#overview" id="toc-overview"><span class="toc-section-number">5.1</span> Overview</a></li>
 <li><a href="#naming-and-interface-design" id="toc-naming-and-interface-design"><span class="toc-section-number">5.2</span> Naming and Interface Design</a>
 <ul>
-<li><a href="#utility-functions" id="toc-utility-functions"><span class="toc-section-number">5.2.1</span> Utility Functions</a></li>
-<li><a href="#format-specifiers" id="toc-format-specifiers"><span class="toc-section-number">5.2.2</span> Format Specifiers</a></li>
-<li><a href="#annotations" id="toc-annotations"><span class="toc-section-number">5.2.3</span> Annotations</a></li>
+<li><a href="#enumeration-membership-predicate" id="toc-enumeration-membership-predicate"><span class="toc-section-number">5.2.1</span> Enumeration Membership
+Predicate</a></li>
+<li><a href="#formatting-specifiers-and-semantics" id="toc-formatting-specifiers-and-semantics"><span class="toc-section-number">5.2.2</span> Formatting Specifiers and
+Semantics</a>
+<ul>
+<li><a href="#representation-enumerator-identifier-string-vs-underlying-integral-value" id="toc-representation-enumerator-identifier-string-vs-underlying-integral-value"><span class="toc-section-number">5.2.2.1</span> Representation (Enumerator
+Identifier String vs Underlying Integral Value)</a></li>
+<li><a href="#type-qualification" id="toc-type-qualification"><span class="toc-section-number">5.2.2.2</span> Type-Qualification</a></li>
+<li><a href="#format-specification-delimiter" id="toc-format-specification-delimiter"><span class="toc-section-number">5.2.2.3</span> Format Specification
+Delimiter</a></li>
+<li><a href="#enumerator-aliases" id="toc-enumerator-aliases"><span class="toc-section-number">5.2.2.4</span> Enumerator Aliases</a></li>
+</ul></li>
+<li><a href="#annotations" id="toc-annotations"><span class="toc-section-number">5.2.3</span> Annotations</a>
+<ul>
+<li><a href="#designating-canonical-names" id="toc-designating-canonical-names"><span class="toc-section-number">5.2.3.1</span> Designating Canonical
+Names</a></li>
+<li><a href="#format-opt-in-annotations" id="toc-format-opt-in-annotations"><span class="toc-section-number">5.2.3.2</span> Format Opt-In
+Annotations</a></li>
+<li><a href="#user-defined-formatting-annotations" id="toc-user-defined-formatting-annotations"><span class="toc-section-number">5.2.3.3</span> User-Defined Formatting
+Annotations</a></li>
+</ul></li>
 </ul></li>
 <li><a href="#default-representation" id="toc-default-representation"><span class="toc-section-number">5.3</span> Default Representation</a></li>
 <li><a href="#default-type-qualification" id="toc-default-type-qualification"><span class="toc-section-number">5.4</span> Default
@@ -1651,19 +1669,21 @@ Attributes</a></li>
 </ul></li>
 <li><a href="#alternatives-considered" id="toc-alternatives-considered"><span class="toc-section-number">5.7</span> Alternatives Considered</a>
 <ul>
-<li><a href="#unified-syntax-vs.-separate-annotations" id="toc-unified-syntax-vs.-separate-annotations"><span class="toc-section-number">5.7.1</span> Unified Syntax vs. Separate
+<li><a href="#stringification-function-name" id="toc-stringification-function-name"><span class="toc-section-number">5.7.1</span> Stringification Function
+Name</a></li>
+<li><a href="#unified-syntax-vs.-separate-annotations" id="toc-unified-syntax-vs.-separate-annotations"><span class="toc-section-number">5.7.2</span> Unified Syntax vs. Separate
 Annotations</a></li>
-<li><a href="#annotation-class-template-vs.-separate-annotation-types" id="toc-annotation-class-template-vs.-separate-annotation-types"><span class="toc-section-number">5.7.2</span> Annotation Class Template
+<li><a href="#annotation-class-template-vs.-separate-annotation-types" id="toc-annotation-class-template-vs.-separate-annotation-types"><span class="toc-section-number">5.7.3</span> Annotation Class Template
 vs. Separate Annotation Types</a></li>
-<li><a href="#uniform-vs.-inferred-default-representation" id="toc-uniform-vs.-inferred-default-representation"><span class="toc-section-number">5.7.3</span> Uniform vs. Inferred Default
+<li><a href="#uniform-vs.-inferred-default-representation" id="toc-uniform-vs.-inferred-default-representation"><span class="toc-section-number">5.7.4</span> Uniform vs. Inferred Default
 Representation</a></li>
-<li><a href="#accessing-the-annotated-default-format-specification" id="toc-accessing-the-annotated-default-format-specification"><span class="toc-section-number">5.7.4</span> Accessing the Annotated Default
+<li><a href="#accessing-the-annotated-default-format-specification" id="toc-accessing-the-annotated-default-format-specification"><span class="toc-section-number">5.7.5</span> Accessing the Annotated Default
 Format Specification</a></li>
-<li><a href="#default-format-specification-syntax" id="toc-default-format-specification-syntax"><span class="toc-section-number">5.7.5</span> Default Format Specification
+<li><a href="#default-format-specification-syntax" id="toc-default-format-specification-syntax"><span class="toc-section-number">5.7.6</span> Default Format Specification
 Syntax</a></li>
-<li><a href="#string-representation-of-unenumerated-values" id="toc-string-representation-of-unenumerated-values"><span class="toc-section-number">5.7.6</span> String Representation of
+<li><a href="#string-representation-of-unenumerated-values" id="toc-string-representation-of-unenumerated-values"><span class="toc-section-number">5.7.7</span> String Representation of
 Unenumerated Values</a></li>
-<li><a href="#rejecting-non-enumerable-types-at-formatter-instantiation" id="toc-rejecting-non-enumerable-types-at-formatter-instantiation"><span class="toc-section-number">5.7.7</span> Rejecting Non-Enumerable Types
+<li><a href="#rejecting-non-enumerable-types-at-formatter-instantiation" id="toc-rejecting-non-enumerable-types-at-formatter-instantiation"><span class="toc-section-number">5.7.8</span> Rejecting Non-Enumerable Types
 at <code class="sourceCode cpp">formatter</code> Instantiation</a></li>
 </ul></li>
 </ul></li>
@@ -1682,7 +1702,13 @@ at <code class="sourceCode cpp">formatter</code> Instantiation</a></li>
 <code class="sourceCode cpp">std<span class="op">::</span>annotations<span class="op">::</span>formattable_with_default</code></a></li>
 <li><a href="#stdannotationsformattable" id="toc-stdannotationsformattable"><span class="toc-section-number">6.4.4</span>
 <code class="sourceCode cpp">std<span class="op">::</span>annotations<span class="op">::</span>formattable</code></a></li>
-<li><a href="#utf8-support" id="toc-utf8-support"><span class="toc-section-number">6.4.5</span> UTF8 Support</a></li>
+<li><a href="#utf8-support" id="toc-utf8-support"><span class="toc-section-number">6.4.5</span> UTF8 Support</a>
+<ul>
+<li><a href="#stdannotationsu8formattable_with_default" id="toc-stdannotationsu8formattable_with_default"><span class="toc-section-number">6.4.5.1</span>
+<code class="sourceCode cpp">std<span class="op">::</span>annotations<span class="op">::</span>u8formattable_with_default</code></a></li>
+<li><a href="#stdannotationsu8formattable" id="toc-stdannotationsu8formattable"><span class="toc-section-number">6.4.5.2</span>
+<code class="sourceCode cpp">std<span class="op">::</span>annotations<span class="op">::</span>u8formattable</code></a></li>
+</ul></li>
 </ul></li>
 <li><a href="#examples-1" id="toc-examples-1"><span class="toc-section-number">6.5</span> Examples</a></li>
 </ul></li>
@@ -1840,8 +1866,8 @@ one-size-fits-all policy decisions. (See <span class="citation" data-cites="D&am
 to force people.”) The proposal also strives to maintain both backward
 and forward compatibility with the evolution of the Standard.</p>
 <h2 data-number="5.2" id="naming-and-interface-design"><span class="header-section-number">5.2</span> Naming and Interface Design<a href="#naming-and-interface-design" class="self-link"></a></h2>
-<p><em>Explain the public interface and naming decisions.</em></p>
-<h3 data-number="5.2.1" id="utility-functions"><span class="header-section-number">5.2.1</span> Utility Functions<a href="#utility-functions" class="self-link"></a></h3>
+<h3 data-number="5.2.1" id="enumeration-membership-predicate"><span class="header-section-number">5.2.1</span> Enumeration Membership
+Predicate<a href="#enumeration-membership-predicate" class="self-link"></a></h3>
 <p>The utility predicate
 <code class="sourceCode cpp">std<span class="op">::</span>is_enumerated_value</code>,
 proposed for addition to
@@ -1861,34 +1887,93 @@ points out that implementations can exploit properties of the
 enumeration type known to the compiler to optimize performance.
 Therefore, the specific algorithm for the function is not specified by
 this proposal.</p>
-<h3 data-number="5.2.2" id="format-specifiers"><span class="header-section-number">5.2.2</span> Format Specifiers<a href="#format-specifiers" class="self-link"></a></h3>
+<h3 data-number="5.2.2" id="formatting-specifiers-and-semantics"><span class="header-section-number">5.2.2</span> Formatting Specifiers and
+Semantics<a href="#formatting-specifiers-and-semantics" class="self-link"></a></h3>
+<p>Rather than complicating the <em>std-format-spec</em> <a href="https://eel.is/c++draft/format.string" title="28.5.2 Format string">[format.string]</a> grammar with additional
+characters, this proposal defines its own formatting mini-language of
+which <em>std-format-spec</em> is a subset. The specification grammar
+proposed for enumeration formatting consists of a representation
+specifier, a qualification specifier, and a delimiter followed by a
+<em>std-format-spec</em> valid for the selected representation.</p>
 <h4 data-number="5.2.2.1" id="representation-enumerator-identifier-string-vs-underlying-integral-value"><span class="header-section-number">5.2.2.1</span> Representation (Enumerator
 Identifier String vs Underlying Integral Value)<a href="#representation-enumerator-identifier-string-vs-underlying-integral-value" class="self-link"></a></h4>
+<p>When the representation specifier is omitted, the
+<em>format-spec</em> portion of the replacement field must contain only
+an optional delimiter followed by a <em>std-format-spec</em> valid for
+the default representation. When the representation specifier is
+present, it selects between the string formatter and the built-in
+formatter for the enumeration’s underlying integral type. Specifying the
+<em>type</em> representation selects the string formatter.</p>
+<p>The <em>string</em> representation, specified by
+<code class="sourceCode cpp"><span class="ch">&#39;s&#39;</span></code>,
+represents the value as the chosen identifier of its named enumerator.
+See <a href="#string-representation-of-unenumerated-values">String
+Representation of Unenumerated Values</a> for the case where the value
+does not correspond to any named enumerator and <a href="#enumerator-aliases">Enumerator Aliases</a> for the case where it
+corresponds to multiple named enumerators.</p>
+<p>The <em>integer</em> representation, specified by
+<code class="sourceCode cpp"><span class="ch">&#39;i&#39;</span></code>,
+represents the value as its representation in the enumeration’s
+underlying integral type.</p>
+<p>The <em>type</em> representation, specified by
+<code class="sourceCode cpp"><span class="ch">&#39;t&#39;</span></code>,
+represents the value as the identifier of the enumeration type itself.
+This allows the user to separately format the type name and the value
+from the same positional argument (e.g.,
+<code class="sourceCode cpp">std<span class="op">::</span>format<span class="op">(</span><span class="st">&quot;{0:t:&gt;9}::{0:i:#04x}&quot;</span><span class="op">,</span> e<span class="op">);</span></code>).</p>
 <h4 data-number="5.2.2.2" id="type-qualification"><span class="header-section-number">5.2.2.2</span> Type-Qualification<a href="#type-qualification" class="self-link"></a></h4>
+<p>When a representation other than <em>type</em> is specified, the
+optional qualification specifier selects whether to
+<em>type-qualify</em> the output. This prepends the enumeration type’s
+identifier and two colons in the form of the scope resolution operator
+(<code class="sourceCode cpp"><span class="op">::</span></code>) to the
+string or integer representation. When the representation is
+<em>string</em>, the type qualification is prepended before forwarding
+to the string formatter. Since the underlying integral type formatter
+does not format arbitrary characters, the <em>integer</em>
+representation prepends the type qualification to the result.</p>
+<p>Type-qualified output is specified by
+<code class="sourceCode cpp"><span class="ch">&#39;q&#39;</span></code>,
+and unqualified output is specified by
+<code class="sourceCode cpp"><span class="ch">&#39;u&#39;</span></code>.</p>
 <h4 data-number="5.2.2.3" id="format-specification-delimiter"><span class="header-section-number">5.2.2.3</span> Format Specification
 Delimiter<a href="#format-specification-delimiter" class="self-link"></a></h4>
-<p>After considering several characters to separate the
-enumeration-specific portion of the format specification from the
-portion for formatting the specified representation, this proposal chose
-to use the <code class="sourceCode cpp"><span class="op">:</span></code>
-(format-specifier separator) as the delimiter. This avoids introducing a
-different character into the format grammar and naturally extends the
-replacement field to give the appearance of a third section. This
-results in replacement fields that look like
+<p>This proposal uses
+<code class="sourceCode cpp"><span class="ch">&#39;:&#39;</span></code>
+(the format-specifier separator) to separate the enumeration-specific
+portion of the format specification from the portion for formatting the
+specified representation. This avoids introducing a different character
+into the format grammar and naturally extends the replacement field to
+give the appearance of a third section. This results in replacement
+fields that look like
 <code class="sourceCode cpp"><span class="st">&quot;{:i:02X}&quot;</span></code>,
 <code class="sourceCode cpp"><span class="st">&quot;{:i}&quot;</span></code>,
 <code class="sourceCode cpp"><span class="st">&quot;{:i:}&quot;</span></code>,
 <code class="sourceCode cpp"><span class="st">&quot;</span><span class="sc">{:}</span><span class="st">&quot;</span></code>,
 or
 <code class="sourceCode cpp"><span class="st">&quot;{::}&quot;</span></code>.</p>
+<h4 data-number="5.2.2.4" id="enumerator-aliases"><span class="header-section-number">5.2.2.4</span> Enumerator Aliases<a href="#enumerator-aliases" class="self-link"></a></h4>
+<p>Choosing the named enumerator whose identifier represents an
+enumerated value is an exercise in discerning programmer intent. When
+multiple names alias the same value, this exercise becomes non-trivial.
+This proposal divides the set of enumerators into tiers and selects the
+first name in declaration order from the highest priority tier. The
+<em>canonical</em> tier holds the highest priority and consists of
+enumerators designated as in <a href="#designating-canonical-names">Designating Canonical Names</a>. The
+<em>normal</em> tier follows and consists of enumerators not so
+designated. (See <a href="#reflecting-on-attributes">Reflecting on
+Attributes</a> for an as-yet-unproposed extension to disfavor
+<code class="sourceCode cpp"><span class="op">[[</span><span class="at">deprecated</span><span class="op">]]</span></code>
+enumerators.)</p>
 <h3 data-number="5.2.3" id="annotations"><span class="header-section-number">5.2.3</span> Annotations<a href="#annotations" class="self-link"></a></h3>
 <p>Annotations are vocabulary. Introduced in <span class="citation" data-cites="P3393R4"><a href="#ref-P3393R4" role="doc-biblioref"><strong>P3393R4?</strong></a></span>, they bring a
 new dimension in which code can communicate both with other code and
-with programmers. Absent standard terminology, everyone will invent
-their own, and like with natural languages, speakers of one dialect will
-not understand the slang of other dialects. Introducing sound
-annotations into the standard in an ergonomic way will have a large
-impact as the feature becomes widely used.</p>
+with programmers. Absent standard terminology, libraries will inevitably
+invent their own, and like with natural languages, speakers of one
+dialect will not understand the slang of other dialects. Introducing
+sound annotations into the standard in an ergonomic way will have a
+large impact on compatibility, interoperability, and consistency as the
+feature becomes widely used.</p>
 <p>This paper proposes the introduction of the
 <code class="sourceCode cpp"><span class="op">&lt;</span>annotations<span class="op">&gt;</span></code>
 header to contain standard annotations. This avoids needing to include
@@ -1924,11 +2009,14 @@ sometimes select among a set of aliases all corresponding to the same
 value. At present, there is no mechanism to favor one over another, and
 there is no mechanism to recognize that one is
 <code class="sourceCode cpp"><span class="op">[[</span><span class="at">deprecated</span><span class="op">]]</span></code>
-in favor of another. This proposal introduces the
+in favor of another (see <a href="#reflecting-on-attributes">Reflecting
+on Attributes</a>). This proposal introduces the
 <code class="sourceCode cpp">std<span class="op">::</span>annotations<span class="op">::</span>canonical</code>
 annotation to allow the designation of canonical enumerators inside
-their declaration. When an enumerator is annotated as canonical, its
-name is favored over unannotated enumerators with the same value.</p>
+their declaration. When the
+<code class="sourceCode cpp">canonical</code> annotation appertains to
+an enumerator, its name is favored over unannotated enumerators with the
+same value.</p>
 <h4 data-number="5.2.3.2" id="format-opt-in-annotations"><span class="header-section-number">5.2.3.2</span> Format Opt-In Annotations<a href="#format-opt-in-annotations" class="self-link"></a></h4>
 <p>Modeled on the pattern used throughout the STL, the proposed
 formatting opt-in annotation types specialize the class template
@@ -2035,7 +2123,12 @@ enumerable.</p>
 <h3 data-number="5.6.1" id="reflecting-on-attributes"><span class="header-section-number">5.6.1</span> Reflecting on Attributes<a href="#reflecting-on-attributes" class="self-link"></a></h3>
 <p>Should <span class="citation" data-cites="P3385R8"><a href="https://wg21.link/p3385r8">[P3385R8]</a></span> be adopted into
 the Working Draft, this proposal would use its facilities to favor
-non-deprecated enumerator names over deprecated names.</p>
+non-deprecated enumerator names over deprecated names. The tiers
+discussed in <a href="#enumerator-aliases">Enumerator Aliases</a> would
+simply be extended with a <em>deprecated</em> tier below the
+<em>normal</em> tier consisting of enumerators to which the
+<code class="sourceCode cpp"><span class="op">[[</span><span class="at">deprecated</span><span class="op">]]</span></code>
+attribute appertains.</p>
 <h3 data-number="5.6.2" id="structural-types"><span class="header-section-number">5.6.2</span> Structural Types<a href="#structural-types" class="self-link"></a></h3>
 <p>Should <span class="citation" data-cites="P4414R0"><a href="https://wg21.link/p4414r0">[P4414R0]</a></span> be adopted into
 the Working Draft, this proposal would modify the proposed definition of
@@ -2069,7 +2162,114 @@ through its character type template parameters that accept
 <code class="sourceCode cpp"><span class="dt">char8_t</span></code>
 arguments.</p>
 <h2 data-number="5.7" id="alternatives-considered"><span class="header-section-number">5.7</span> Alternatives Considered<a href="#alternatives-considered" class="self-link"></a></h2>
-<h3 data-number="5.7.1" id="unified-syntax-vs.-separate-annotations"><span class="header-section-number">5.7.1</span> Unified Syntax vs. Separate
+<h3 data-number="5.7.1" id="stringification-function-name"><span class="header-section-number">5.7.1</span> Stringification Function
+Name<a href="#stringification-function-name" class="self-link"></a></h3>
+<p>Extending the existing
+<code class="sourceCode cpp">std<span class="op">::</span>to_string</code>
+overload set for enumerable scoped enumerations rather than introducing
+a distinct function name (e.g.,
+<code class="sourceCode cpp">enum_to_string</code>) keeps
+stringification familiar and integrates directly with generic code
+expecting
+<code class="sourceCode cpp">std<span class="op">::</span>to_string</code>
+to take a value argument and return
+<code class="sourceCode cpp">std<span class="op">::</span>string</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">requires</span> <span class="kw">requires</span> <span class="op">(</span>T t<span class="op">)</span> <span class="op">{</span> std<span class="op">::</span>to_string<span class="op">(</span>t<span class="op">);</span> <span class="op">}</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> log_invalid<span class="op">(</span>T t<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>     std<span class="op">::</span>cerr <span class="op">&lt;&lt;</span> <span class="st">&quot;Invalid Value: &quot;</span> <span class="op">&lt;&lt;</span> std<span class="op">::</span>to_string<span class="op">(</span>t<span class="op">);</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> <span class="kw">class</span> color <span class="op">{</span> red<span class="op">,</span> blue <span class="op">};</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> contrived_use<span class="op">(</span>color hue<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>hue <span class="op">!=</span> color<span class="op">::</span>red<span class="op">)</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        log_invalid<span class="op">(</span>hue<span class="op">);</span> <span class="co">//previously failed constraint satisfaction</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">//...elided for brevity</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>However, introducing
+<code class="sourceCode cpp">std<span class="op">::</span>to_string</code>
+overloads can introduce overload ambiguity in existing code that brings
+<code class="sourceCode cpp">std<span class="op">::</span>to_string</code>
+into scope with a
+<code class="sourceCode cpp"><span class="kw">using</span></code>
+declaration and performs unqualified calls:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> ambiguity <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">enum</span> <span class="kw">class</span> status <span class="op">{</span> ok<span class="op">,</span> err <span class="op">};</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">template</span><span class="op">&lt;</span><span class="kw">typename</span> E<span class="op">&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">requires</span> std<span class="op">::</span>is_scoped_enum_v<span class="op">&lt;</span>E<span class="op">&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    std<span class="op">::</span>string to_string<span class="op">(</span>E value<span class="op">)</span> <span class="op">{</span> <span class="co">/* elided for brevity */</span> <span class="op">}</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> contrived_ambiguous_adl_use<span class="op">(</span>ambiguity<span class="op">::</span>status result_status<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">using</span> std<span class="op">::</span>to_string<span class="op">;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> str <span class="op">=</span> to_string<span class="op">(</span>result_status<span class="op">);</span> <span class="co">//previously unambiguous; ambiguous under this proposal</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> safety <span class="op">{</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">enum</span> <span class="kw">class</span> status <span class="op">{</span> ok<span class="op">,</span> err <span class="op">};</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    std<span class="op">::</span>string to_string<span class="op">(</span>status value<span class="op">)</span> <span class="op">{</span> <span class="co">/* elided for brevity */</span> <span class="op">}</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> contrived_safe_adl_use<span class="op">(</span>safety<span class="op">::</span>status result_status<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">using</span> std<span class="op">::</span>to_string<span class="op">;</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> str <span class="op">=</span> to_string<span class="op">(</span>result_status<span class="op">);</span> <span class="co">//still unambiguous</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>When
+<code class="sourceCode cpp"><span class="kw">using</span> std<span class="op">::</span>to_string<span class="op">;</span></code>
+is in scope and <code class="sourceCode cpp">to_string</code> is called
+unqualified, argument-dependent lookup (ADL) considers
+<code class="sourceCode cpp">ambiguity<span class="op">::</span>to_string</code>
+and
+<code class="sourceCode cpp">safety<span class="op">::</span>to_string</code>
+alongside the overloads found in
+<code class="sourceCode cpp">std</code>. Adding a viable
+<code class="sourceCode cpp">std<span class="op">::</span>to_string</code>
+overload for scoped enumerations would make this previously unambiguous
+call ambiguous when both overloads are equally viable. For an exact
+match on
+<code class="sourceCode cpp">safety<span class="op">::</span>status</code>,
+both candidates have equally ranked conversion sequences, and overload
+resolution prefers the non-template function over a function template
+specialization. For
+<code class="sourceCode cpp">ambiguity<span class="op">::</span>status</code>,
+the user-defined <code class="sourceCode cpp">to_string</code> is itself
+an equally constrained template (i.e., a template of equal or lesser
+partial-ordering specificity); therefore, the viable candidates have
+equal conversion rank and neither wins tie-breaking, and the call is
+ambiguous. Because the proposed
+<code class="sourceCode cpp">std<span class="op">::</span>to_string</code>
+overloads rely on reflection metafunctions instead of type traits for
+their constraints, neither template is more constrained than the other
+in this example. If
+<code class="sourceCode cpp">ambiguity<span class="op">::</span>to_string</code>
+had used
+<code class="sourceCode cpp">std<span class="op">::</span>meta<span class="op">::</span>is_scoped_enum_type<span class="op">(^^</span>E<span class="op">)</span></code>
+instead, the proposed
+<code class="sourceCode cpp">std<span class="op">::</span>to_string</code>
+overload, which additionally requires
+<code class="sourceCode cpp">std<span class="op">::</span>meta<span class="op">::</span>is_enumerable_type<span class="op">(^^</span>E<span class="op">)</span></code>,
+would be more constrained and thus called unambiguously.</p>
+<p>The exact prevalence of such cases across existing C++ codebases is
+not empirically measured, as syntactic text search alone cannot reliably
+distinguish namespace-scoped
+<code class="sourceCode cpp">to_string</code> definitions, template
+vs. non-template declarations, and active
+<code class="sourceCode cpp"><span class="kw">using</span> std<span class="op">::</span>to_string<span class="op">;</span></code>
+ADL call sites. However, the practical impact is expected to be bounded:
+scoped enumerations do not implicitly convert to arithmetic types,
+<code class="sourceCode cpp">std<span class="op">::</span>to_string</code>
+is not widely established as an ADL customization point for user
+enumerations, generic stringification was limited before the C++26, and
+affected call sites can be resolved by qualifying the call or removing
+the redundant local overload. This paper considers the ergonomics and
+uniformity of supporting
+<code class="sourceCode cpp">std<span class="op">::</span>to_string</code>
+for enumerable scoped enumerations to outweigh this potential
+compatibility cost.</p>
+<h3 data-number="5.7.2" id="unified-syntax-vs.-separate-annotations"><span class="header-section-number">5.7.2</span> Unified Syntax vs. Separate
 Annotations<a href="#unified-syntax-vs.-separate-annotations" class="self-link"></a></h3>
 <p><span class="citation" data-cites="P4267R1"><a href="https://wg21.link/p4267r1">[P4267R1]</a></span> proposes
 <code class="sourceCode cpp">std<span class="op">::</span>format_as_identifier</code>
@@ -2089,8 +2289,8 @@ objects like
 and
 <code class="sourceCode cpp">std<span class="op">::</span>format_as_underlying</code>,
 they could be implemented under this proposal:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode cpp not_proposed"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> formattable_with_default format_as_identifier<span class="op">{</span><span class="st">&quot;s&quot;</span><span class="op">};</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> formattable_with_default format_as_underlying<span class="op">{</span><span class="st">&quot;i&quot;</span><span class="op">};</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode cpp not_proposed"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> formattable_with_default format_as_identifier<span class="op">{</span><span class="st">&quot;s&quot;</span><span class="op">};</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> formattable_with_default format_as_underlying<span class="op">{</span><span class="st">&quot;i&quot;</span><span class="op">};</span></span></code></pre></div>
 <p>The user would retain the ability to override the representation at
 the call site.</p>
 <p>As a practical matter, should a developer wish to enforce their
@@ -2103,7 +2303,7 @@ for the type. An annotation-based facility cannot enforce such a choice,
 as users remain free to explicitly specialize
 <code class="sourceCode cpp">std<span class="op">::</span>formatter</code>
 for the type and format it as they wish.</p>
-<h3 data-number="5.7.2" id="annotation-class-template-vs.-separate-annotation-types"><span class="header-section-number">5.7.2</span> Annotation Class Template
+<h3 data-number="5.7.3" id="annotation-class-template-vs.-separate-annotation-types"><span class="header-section-number">5.7.3</span> Annotation Class Template
 vs. Separate Annotation Types<a href="#annotation-class-template-vs.-separate-annotation-types" class="self-link"></a></h3>
 <p>The initial draft of the reference implementation had
 <code class="sourceCode cpp">formattable_with_default</code> and
@@ -2154,7 +2354,7 @@ as
 (assuming the relevant using directive/declaration). This provides the
 best of both worlds: clean annotation syntax, a unified annotation
 family, and a clear path for extension.</p>
-<h3 data-number="5.7.3" id="uniform-vs.-inferred-default-representation"><span class="header-section-number">5.7.3</span> Uniform vs. Inferred Default
+<h3 data-number="5.7.4" id="uniform-vs.-inferred-default-representation"><span class="header-section-number">5.7.4</span> Uniform vs. Inferred Default
 Representation<a href="#uniform-vs.-inferred-default-representation" class="self-link"></a></h3>
 <p>An alternative design would infer the default representation from the
 presence or absence of declared enumerators, selecting integer
@@ -2194,7 +2394,7 @@ pseudo-enumerator by default preserves that distinction, while
 <code class="sourceCode cpp"><span class="op">[[=</span><span class="at">std</span><span class="op">::</span><span class="at">formattable_with_default</span><span class="op">(</span><span class="st">&quot;i&quot;</span><span class="op">)]]</span></code>
 gives authors a concise, explicit way to opt into bare integer
 formatting when desired.</p>
-<h3 data-number="5.7.4" id="accessing-the-annotated-default-format-specification"><span class="header-section-number">5.7.4</span> Accessing the Annotated
+<h3 data-number="5.7.5" id="accessing-the-annotated-default-format-specification"><span class="header-section-number">5.7.5</span> Accessing the Annotated
 Default Format Specification<a href="#accessing-the-annotated-default-format-specification" class="self-link"></a></h3>
 <p>The syntax for accessing the default format specification stored by a
 <code class="sourceCode cpp">std<span class="op">::</span>basic_formattable_with_default</code>
@@ -2218,7 +2418,7 @@ clean interface that does not require selecting a name. Furthermore,
 should another type such as an explicit
 <code class="sourceCode cpp">std<span class="op">::</span>string</code>
 copy be desired in the future, the door is open to extension.</p>
-<h3 data-number="5.7.5" id="default-format-specification-syntax"><span class="header-section-number">5.7.5</span> Default Format Specification
+<h3 data-number="5.7.6" id="default-format-specification-syntax"><span class="header-section-number">5.7.6</span> Default Format Specification
 Syntax<a href="#default-format-specification-syntax" class="self-link"></a></h3>
 <p>The default format specification string used to construct a
 <code class="sourceCode cpp">std<span class="op">::</span>basic_formattable_with_default</code>
@@ -2230,16 +2430,16 @@ therefore be confusing for users. Using the <em>format specification
 proper</em> simplifies the annotation construction, the feature
 specification, and the implementation. This paper proposes the latter
 but could adapt to whichever form the committee prefers.</p>
-<h3 data-number="5.7.6" id="string-representation-of-unenumerated-values"><span class="header-section-number">5.7.6</span> String Representation of
+<h3 data-number="5.7.7" id="string-representation-of-unenumerated-values"><span class="header-section-number">5.7.7</span> String Representation of
 Unenumerated Values<a href="#string-representation-of-unenumerated-values" class="self-link"></a></h3>
-<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> <span class="kw">class</span> rgb_color <span class="op">:</span> std<span class="op">::</span><span class="dt">uint32_t</span> <span class="op">{</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    red   <span class="op">=</span> <span class="bn">0xFF0000</span><span class="op">,</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    green <span class="op">=</span> <span class="bn">0x00FF00</span><span class="op">,</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    blue  <span class="op">=</span> <span class="bn">0x0000FF</span><span class="op">,</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> black     <span class="op">=</span> rgb_color<span class="op">{</span><span class="bn">0x000000</span><span class="op">};</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> black_str <span class="op">=</span> std<span class="op">::</span>to_string<span class="op">(</span>black<span class="op">);</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> <span class="kw">class</span> rgb_color <span class="op">:</span> std<span class="op">::</span><span class="dt">uint32_t</span> <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    red   <span class="op">=</span> <span class="bn">0xFF0000</span><span class="op">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    green <span class="op">=</span> <span class="bn">0x00FF00</span><span class="op">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    blue  <span class="op">=</span> <span class="bn">0x0000FF</span><span class="op">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> black     <span class="op">=</span> rgb_color<span class="op">{</span><span class="bn">0x000000</span><span class="op">};</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> black_str <span class="op">=</span> std<span class="op">::</span>to_string<span class="op">(</span>black<span class="op">);</span></span></code></pre></div>
 <p>Considering this basic scoped enumeration representing RGB colors,
 what should be the string representation of an unnamed color? Since
 named enumerators are written
@@ -2251,13 +2451,12 @@ this proposal uses a parallel syntax for unenumerated values and
 produces
 <code class="sourceCode cpp"><span class="st">&quot;rgb_color::0&quot;</span></code>,
 treating the underlying value as a pseudo-enumerator. This preserves the
-enumeration type and underlying value for debugging/logging purposes.
-Other candidate representations discard some of this information or
-treat unenumerated values as construction expressions that are less
-readily parsed by consumers. The proposed representation also avoids
-favoring either parenthesized or braced initialization syntax, each of
-which has its own stylistic advocates and semantic distinctions in
-C++.</p>
+enumeration type and underlying value for diagnostic output. Other
+candidate representations discard some of this information or treat
+unenumerated values as construction expressions that are less readily
+parsed by consumers. The proposed representation also avoids favoring
+either parenthesized or braced initialization syntax, each of which has
+its own stylistic advocates and semantic distinctions in C++.</p>
 <div class="table-wrapper">
 <table>
 <colgroup>
@@ -2351,19 +2550,19 @@ proposed here provides that functionality:</p>
 </thead>
 <tbody>
 <tr>
-<td><div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>is_enumerated_value<span class="op">(</span>black<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    black_str <span class="op">=</span> std<span class="op">::</span>to_string<span class="op">(</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        std<span class="op">::</span>to_underlying<span class="op">(</span>black<span class="op">)</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
-<td><div class="sourceCode" id="cb10"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>is_enumerated_value<span class="op">(</span>black<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    black_str <span class="op">=</span> std<span class="op">::</span>string<span class="op">{</span><span class="st">&quot;&lt;UNNAMED&gt;&quot;</span><span class="op">};</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
+<td><div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>is_enumerated_value<span class="op">(</span>black<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    black_str <span class="op">=</span> std<span class="op">::</span>to_string<span class="op">(</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        std<span class="op">::</span>to_underlying<span class="op">(</span>black<span class="op">)</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
+<td><div class="sourceCode" id="cb12"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>is_enumerated_value<span class="op">(</span>black<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    black_str <span class="op">=</span> std<span class="op">::</span>string<span class="op">{</span><span class="st">&quot;&lt;UNNAMED&gt;&quot;</span><span class="op">};</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></td>
 </tr>
 </tbody>
 </table>
 </div>
-<h3 data-number="5.7.7" id="rejecting-non-enumerable-types-at-formatter-instantiation"><span class="header-section-number">5.7.7</span> Rejecting Non-Enumerable
+<h3 data-number="5.7.8" id="rejecting-non-enumerable-types-at-formatter-instantiation"><span class="header-section-number">5.7.8</span> Rejecting Non-Enumerable
 Types at <code class="sourceCode cpp">formatter</code> Instantiation<a href="#rejecting-non-enumerable-types-at-formatter-instantiation" class="self-link"></a></h3>
 <p>The
 <code class="sourceCode cpp">std<span class="op">::</span>formatter</code>
