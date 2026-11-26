@@ -8,7 +8,7 @@ author:
   - name: Jeremy Murphy
     email: jeremy dot r dot murphy at protonmail dot com
 toc: true
-toc-depth: 3
+toc-depth: 4
 ---
 
 # Abstract
@@ -111,9 +111,7 @@ The proposal also strives to maintain both backward and forward compatibility wi
 
 ## Naming and Interface Design
 
-_Explain the public interface and naming decisions._
-
-### Utility Functions
+### Enumeration Membership Predicate
 
 The utility predicate `std::is_enumerated_value`, proposed for addition to `<utility>`, complements the formatting and stringification features at the center of the proposal.
 It allows users to detect unenumerated values directly.
@@ -124,24 +122,55 @@ The name `is_enumerated_value` is proposed instead of `is_unenumerated_value` in
 While there is an obvious implementation that parallels the example of `enum_to_string` from [@P2996R13], that paper points out that implementations can exploit properties of the enumeration type known to the compiler to optimize performance.
 Therefore, the specific algorithm for the function is not specified by this proposal.
 
-### Format Specifiers
+### Formatting Specifiers and Semantics
+
+Rather than complicating the *std-format-spec* [format.string] grammar with additional characters, this proposal defines its own formatting mini-language of which *std-format-spec* is a subset.
+The specification grammar proposed for enumeration formatting consists of a representation specifier, a qualification specifier, and a delimiter followed by a *std-format-spec* valid for the selected representation.
 
 #### Representation (Enumerator Identifier String vs Underlying Integral Value)
 
+When the representation specifier is omitted, the *format-spec* portion of the replacement field must contain only an optional delimiter followed by a *std-format-spec* valid for the default representation.
+When the representation specifier is present, it selects between the string formatter and the built-in formatter for the enumeration's underlying integral type.
+Specifying the *type* representation selects the string formatter.
+
+The *string* representation, specified by `'s'`, represents the value as the chosen identifier of its named enumerator.
+See [String Representation of Unenumerated Values] for the case where the value does not correspond to any named enumerator and [Enumerator Aliases] for the case where it corresponds to multiple named enumerators.
+
+The *integer* representation, specified by `'i'`, represents the value as its representation in the enumeration's underlying integral type.
+
+The *type* representation, specified by `'t'`, represents the value as the identifier of the enumeration type itself.
+This allows the user to separately format the type name and the value from the same positional argument (e.g., `std::format("{0:t:>9}::{0:i:#04x}", e);`).
+
 #### Type-Qualification
+
+When a representation other than *type* is specified, the optional qualification specifier selects whether to *type-qualify* the output.
+This prepends the enumeration type's identifier and two colons in the form of the scope resolution operator (`::`) to the string or integer representation.
+When the representation is *string*, the type qualification is prepended before forwarding to the string formatter.
+Since the underlying integral type formatter does not format arbitrary characters, the *integer* representation prepends the type qualification to the result.
+
+Type-qualified output is specified by `'q'`, and unqualified output is specified by `'u'`.
 
 #### Format Specification Delimiter
 
-After considering several characters to separate the enumeration-specific portion of the format specification from the portion for formatting the specified representation, this proposal chose to use the `:` (format-specifier separator) as the delimiter.
+This proposal uses `':'` (the format-specifier separator) to separate the enumeration-specific portion of the format specification from the portion for formatting the specified representation.
 This avoids introducing a different character into the format grammar and naturally extends the replacement field to give the appearance of a third section.
 This results in replacement fields that look like `"{:i:02X}"`, `"{:i}"`, `"{:i:}"`, `"{:}"`, or `"{::}"`.
+
+#### Enumerator Aliases
+
+Choosing the named enumerator whose identifier represents an enumerated value is an exercise in discerning programmer intent.
+When multiple names alias the same value, this exercise becomes non-trivial.
+This proposal divides the set of enumerators into tiers and selects the first name in declaration order from the highest priority tier.
+The *canonical* tier holds the highest priority and consists of enumerators designated as in [Designating Canonical Names].
+The *normal* tier follows and consists of enumerators not so designated.
+(See [Reflecting on Attributes] for an as-yet-unproposed extension to disfavor `[[deprecated]]` enumerators.)
 
 ### Annotations
 
 Annotations are vocabulary.
 Introduced in [@P3393R4], they bring a new dimension in which code can communicate both with other code and with programmers.
-Absent standard terminology, everyone will invent their own, and like with natural languages, speakers of one dialect will not understand the slang of other dialects.
-Introducing sound annotations into the standard in an ergonomic way will have a large impact as the feature becomes widely used.
+Absent standard terminology, libraries will inevitably invent their own, and like with natural languages, speakers of one dialect will not understand the slang of other dialects.
+Introducing sound annotations into the standard in an ergonomic way will have a large impact on compatibility, interoperability, and consistency as the feature becomes widely used.
 
 This paper proposes the introduction of the `<annotations>` header to contain standard annotations.
 This avoids needing to include `<format>` just to declare an enumeration, prevents the header proliferation that would ensue if every header had a corresponding `<X_annotations>`, and prefers the option that is easiest to teach.
@@ -157,9 +186,9 @@ The author therefore invites feedback on the exact spelling of the annotation na
 #### Designating Canonical Names
 
 When selecting the enumerator name for a given value, one must sometimes select among a set of aliases all corresponding to the same value.
-At present, there is no mechanism to favor one over another, and there is no mechanism to recognize that one is `[[deprecated]]` in favor of another.
+At present, there is no mechanism to favor one over another, and there is no mechanism to recognize that one is `[[deprecated]]` in favor of another (see [Reflecting on Attributes]).
 This proposal introduces the `std::annotations::canonical` annotation to allow the designation of canonical enumerators inside their declaration.
-When an enumerator is annotated as canonical, its name is favored over unannotated enumerators with the same value.
+When the `canonical` annotation appertains to an enumerator, its name is favored over unannotated enumerators with the same value.
 
 #### Format Opt-In Annotations
 
@@ -230,6 +259,7 @@ Instantiation of the `std::formatter` or annotation of an enumeration is permitt
 ### Reflecting on Attributes
 
 Should [@P3385R8] be adopted into the Working Draft, this proposal would use its facilities to favor non-deprecated enumerator names over deprecated names.
+The tiers discussed in [Enumerator Aliases] would simply be extended with a *deprecated* tier below the *normal* tier consisting of enumerators to which the `[[deprecated]]` attribute appertains.
 
 ### Structural Types
 
@@ -246,6 +276,65 @@ This paper also does not propose to extend `std::formatter` to support UTF-8 cha
 If support were to be adopted, the mechanism proposed here would automatically interoperate through its character type template parameters that accept `char8_t` arguments.
 
 ## Alternatives Considered
+
+### Stringification Function Name
+
+Extending the existing `std::to_string` overload set for enumerable scoped enumerations rather than introducing a distinct function name (e.g., `enum_to_string`) keeps stringification familiar and integrates directly with generic code expecting `std::to_string` to take a value argument and return `std::string`.
+
+```cpp
+template<typename T>
+    requires requires (T t) { std::to_string(t); }
+void log_invalid(T t) {
+     std::cerr << "Invalid Value: " << std::to_string(t);
+}
+
+enum class color { red, blue };
+
+void contrived_use(color hue) {
+    if (hue != color::red)
+        log_invalid(hue); //previously failed constraint satisfaction
+    //...elided for brevity
+}
+```
+
+However, introducing `std::to_string` overloads can introduce overload ambiguity in existing code that brings `std::to_string` into scope with a `using` declaration and performs unqualified calls:
+
+```cpp
+namespace ambiguity {
+    enum class status { ok, err };
+  
+    template<typename E>
+        requires std::is_scoped_enum_v<E>
+    std::string to_string(E value) { /* elided for brevity */ }
+}
+
+void contrived_ambiguous_adl_use(ambiguity::status result_status) {
+    using std::to_string;
+    auto str = to_string(result_status); //previously unambiguous; ambiguous under this proposal
+}
+
+namespace safety {
+    enum class status { ok, err };
+  
+    std::string to_string(status value) { /* elided for brevity */ }
+}
+
+void contrived_safe_adl_use(safety::status result_status) {
+    using std::to_string;
+    auto str = to_string(result_status); //still unambiguous
+}
+```
+
+When `using std::to_string;` is in scope and `to_string` is called unqualified, argument-dependent lookup (ADL) considers `ambiguity::to_string` and `safety::to_string` alongside the overloads found in `std`.
+Adding a viable `std::to_string` overload for scoped enumerations would make this previously unambiguous call ambiguous when both overloads are equally viable.
+For an exact match on `safety::status`, both candidates have equally ranked conversion sequences, and overload resolution prefers the non-template function over a function template specialization.
+For `ambiguity::status`, the user-defined `to_string` is itself an equally constrained template (i.e., a template of equal or lesser partial-ordering specificity); therefore, the viable candidates have equal conversion rank and neither wins tie-breaking, and the call is ambiguous.
+Because the proposed `std::to_string` overloads rely on reflection metafunctions instead of type traits for their constraints, neither template is more constrained than the other in this example.
+If `ambiguity::to_string` had used `std::meta::is_scoped_enum_type(^^E)` instead, the proposed `std::to_string` overload, which additionally requires `std::meta::is_enumerable_type(^^E)`, would be more constrained and thus called unambiguously.
+
+The exact prevalence of such cases across existing C++ codebases is not empirically measured, as syntactic text search alone cannot reliably distinguish namespace-scoped `to_string` definitions, template vs. non-template declarations, and active `using std::to_string;` ADL call sites.
+However, the practical impact is expected to be bounded: scoped enumerations do not implicitly convert to arithmetic types, `std::to_string` is not widely established as an ADL customization point for user enumerations, generic stringification was limited before the C++26, and affected call sites can be resolved by qualifying the call or removing the redundant local overload.
+This paper considers the ergonomics and uniformity of supporting `std::to_string` for enumerable scoped enumerations to outweigh this potential compatibility cost.
 
 ### Unified Syntax vs. Separate Annotations
 
@@ -328,7 +417,7 @@ auto black_str = std::to_string(black);
 
 Considering this basic scoped enumeration representing RGB colors, what should be the string representation of an unnamed color?
 Since named enumerators are written `rgb_color::red`, `rgb_color::green`, and `rgb_color::blue`, this proposal uses a parallel syntax for unenumerated values and produces `"rgb_color::0"`, treating the underlying value as a pseudo-enumerator.
-This preserves the enumeration type and underlying value for debugging/logging purposes.
+This preserves the enumeration type and underlying value for diagnostic output.
 Other candidate representations discard some of this information or treat unenumerated values as construction expressions that are less readily parsed by consumers.
 The proposed representation also avoids favoring either parenthesized or braced initialization syntax, each of which has its own stylistic advocates and semantic distinctions in C++.
 
