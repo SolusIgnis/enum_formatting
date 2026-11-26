@@ -1842,9 +1842,28 @@ and forward compatibility with the evolution of the Standard.</p>
 <h2 data-number="5.2" id="naming-and-interface-design"><span class="header-section-number">5.2</span> Naming and Interface Design<a href="#naming-and-interface-design" class="self-link"></a></h2>
 <p><em>Explain the public interface and naming decisions.</em></p>
 <h3 data-number="5.2.1" id="utility-functions"><span class="header-section-number">5.2.1</span> Utility Functions<a href="#utility-functions" class="self-link"></a></h3>
+<p>The utility predicate
+<code class="sourceCode cpp">std<span class="op">::</span>is_enumerated_value</code>,
+proposed for addition to
+<code class="sourceCode cpp"><span class="op">&lt;</span>utility<span class="op">&gt;</span></code>,
+complements the formatting and stringification features at the center of
+the proposal. It allows users to detect unenumerated values directly.
+This provides opportunities to cleanly enforce function preconditions or
+establish fallbacks.</p>
+<p>The name <code class="sourceCode cpp">is_enumerated_value</code> is
+proposed instead of
+<code class="sourceCode cpp">is_unenumerated_value</code> in keeping
+with the standard library’s preference for naming predicates in the
+positive sense.</p>
+<p>While there is an obvious implementation that parallels the example
+of <code class="sourceCode cpp">enum_to_string</code> from <span class="citation" data-cites="P2996R13"><a href="https://wg21.link/p2996r13">[P2996R13]</a></span>, that paper
+points out that implementations can exploit properties of the
+enumeration type known to the compiler to optimize performance.
+Therefore, the specific algorithm for the function is not specified by
+this proposal.</p>
 <h3 data-number="5.2.2" id="format-specifiers"><span class="header-section-number">5.2.2</span> Format Specifiers<a href="#format-specifiers" class="self-link"></a></h3>
-<h4 data-number="5.2.2.1" id="representation-name-string-vs-underlying-integral-value"><span class="header-section-number">5.2.2.1</span> Representation (Name String
-vs Underlying Integral Value)<a href="#representation-name-string-vs-underlying-integral-value" class="self-link"></a></h4>
+<h4 data-number="5.2.2.1" id="representation-enumerator-identifier-string-vs-underlying-integral-value"><span class="header-section-number">5.2.2.1</span> Representation (Enumerator
+Identifier String vs Underlying Integral Value)<a href="#representation-enumerator-identifier-string-vs-underlying-integral-value" class="self-link"></a></h4>
 <h4 data-number="5.2.2.2" id="type-qualification"><span class="header-section-number">5.2.2.2</span> Type-Qualification<a href="#type-qualification" class="self-link"></a></h4>
 <h4 data-number="5.2.2.3" id="format-specification-delimiter"><span class="header-section-number">5.2.2.3</span> Format Specification
 Delimiter<a href="#format-specification-delimiter" class="self-link"></a></h4>
@@ -2062,8 +2081,8 @@ declaration and prevents users of those types from overriding that
 choice at their call sites.</p>
 <p>This paper, instead, provides a unified format specification syntax
 to defer the choice of representation to the caller and a single format
-annotation type which still allows the creator of the type to select a
-per-type default.</p>
+annotation class template which still allows the creator of the type to
+select a per-type default.</p>
 <p>Should the committee prefer the syntax of discrete named annotation
 objects like
 <code class="sourceCode cpp">std<span class="op">::</span>format_as_identifier</code>
@@ -2230,7 +2249,7 @@ and
 <code class="sourceCode cpp">rgb_color<span class="op">::</span>blue</code>,
 this proposal uses a parallel syntax for unenumerated values and
 produces
-<code class="sourceCode cpp">rgb_color<span class="op">::</span><span class="dv">0</span></code>,
+<code class="sourceCode cpp"><span class="st">&quot;rgb_color::0&quot;</span></code>,
 treating the underlying value as a pseudo-enumerator. This preserves the
 enumeration type and underlying value for debugging/logging purposes.
 Other candidate representations discard some of this information or
@@ -2428,6 +2447,11 @@ and
 <div id="ref-D&amp;E" class="csl-entry" role="listitem">
 [D&amp;E] Bjarne Stroustrup. <em>The Design and Evolution of C++</em>.
 Addison-Wesley.
+</div>
+<div id="ref-P2996R13" class="csl-entry" role="listitem">
+[P2996R13] Barry Revzin, Wyatt Childers, Peter Dimov, Andrew Sutton,
+Faisal Vali, Daveed Vandevoorde, Dan Katz. 2025-06-20. Reflection for
+C++26. <a href="https://wg21.link/p2996r13"><div class="csl-indent">https://wg21.link/p2996r13</div></a>
 </div>
 <div id="ref-P3258R0" class="csl-entry" role="listitem">
 [P3258R0] Corentin Jabot. 2024-05-22. Formatting charN_t. <a href="https://wg21.link/p3258r0"><div class="csl-indent">https://wg21.link/p3258r0</div></a>
