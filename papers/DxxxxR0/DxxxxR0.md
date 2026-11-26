@@ -28,7 +28,7 @@ Explain the relationship between this proposal and existing C++ formatting facil
 
 ## Motivation
 
-Describe the problem being addressed and why existing facilities are insufficient.
+_Describe the problem being addressed and why existing facilities are insufficient._
 
 ## Scope
 
@@ -44,7 +44,7 @@ To avoid potential conflicts with existing user-supplied formatting customizatio
 
 ## Examples
 
-Provide motivating examples demonstrating the need for the proposed functionality.
+_Provide motivating examples demonstrating the need for the proposed functionality._
 
 ```cpp
 // Example usage goes here.
@@ -111,7 +111,7 @@ The proposal also strives to maintain both backward and forward compatibility wi
 
 ## Naming and Interface Design
 
-Explain the public interface and naming decisions.
+_Explain the public interface and naming decisions._
 
 ### Utility Functions
 
@@ -298,7 +298,11 @@ Furthermore, should another type such as an explicit `std::string` copy be desir
 
 ### Default Format Specification Syntax
 
-
+The default format specification string used to construct a `std::basic_formattable_with_default` object could represent either a valid *replacement field* or the *format specification proper* (see [format.string]).
+Since it is the default rather than the caller's format string, it cannot reference positional arguments.
+Requiring a valid *replacement field* could therefore be confusing for users.
+Using the *format specification proper* simplifies the annotation construction, the feature specification, and the implementation.
+This paper proposes the latter but could adapt to whichever form the committee prefers.
 
 ### String Representation of Unenumerated Values
 
@@ -348,10 +352,6 @@ if (!is_enumerated_value(black)) {
 ```
 :::
 
-### Format Specifiers
-
-
-
 ### Rejecting Non-Enumerable Types at `formatter` Instantiation
 
 The `std::formatter` specialization could be constrained to require enumerable enumerations, matching `std::to_string`.
@@ -368,7 +368,7 @@ Summarize the proposed functionality.
 
 ## Formatting Semantics
 
-Describe the formatting behavior, including:
+_Describe the formatting behavior, including:
 
 - Default representations.
 - Format-specification syntax.
@@ -376,14 +376,14 @@ Describe the formatting behavior, including:
 - Integer representations.
 - Forwarded format specifications.
 - Type-name representations.
-
+_
 ## Enumerator Aliases
 
-Describe canonical enumerator selection and alias handling.
+_Describe canonical enumerator selection and alias handling._
 
 ## Annotations
 
-Describe the annotation facilities and their semantics.
+_Describe the annotation facilities and their semantics._
 
 ### `std::annotations::canonical`
 
@@ -401,33 +401,33 @@ Describe the annotation facilities and their semantics.
 
 ## Examples
 
-Provide representative examples demonstrating the proposed functionality.
+_Provide representative examples demonstrating the proposed functionality._
 
 # Implementation Experience
 
-Describe existing implementations, compiler support, implementation experience, and testing.
+_Describe existing implementations, compiler support, implementation experience, and testing._
 
 ## Reference Implementation
 
-Describe the reference implementation.
+_Describe the reference implementation._
 
 ## Implementation Status
 
-Describe compiler and library support.
+_Describe compiler and library support._
 
 ## Testing
 
-Describe the testing strategy and relevant test coverage.
+_Describe the testing strategy and relevant test coverage._
 
 # Feature-Test Macro
 
-Specify the proposed feature-test macro and its value.
+_Specify the proposed feature-test macro and its value._
 
 # Proposed Wording
 
-This section contains the proposed changes to the C++ working draft.
+_This section contains the proposed changes to the C++ working draft.
 
-Use markup tags like `[added text]{.add}`, `[removed text]{.rm}`, and `[removed text](added text){.sub}`.
+Use markup tags like `[added text]{.add}`, `[removed text]{.rm}`, and `[removed text](added text){.sub}`._
 
 > Modify Section [general.description] as follows:
 >
@@ -435,25 +435,19 @@ Use markup tags like `[added text]{.add}`, `[removed text]{.rm}`, and `[removed 
 
 ## Header Changes
 
-[Insert proposed wording.]
+_Insert proposed wording._
 
 ## Library Specification Changes
 
-[Insert proposed wording.]
+_Insert proposed wording._
 
 ## Feature-Test Macro Changes
 
-[Insert proposed wording.]
+_Insert proposed wording._
 
 # Acknowledgements
 
-Acknowledge contributors and reviewers.
-
-# Placeholder Biblio
-
-- [Nxxxx] ISO/IEC 14882: Programming Languages — C++.
-- [Pxxxx] Related WG21 proposal.
-- [Pxxxx] Related WG21 proposal.
+_Acknowledge contributors and reviewers._
 
 ---
 references:
