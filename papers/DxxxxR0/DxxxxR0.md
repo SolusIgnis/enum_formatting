@@ -129,31 +129,6 @@ void log_status(status s) {
 ```
 
 ```cpp
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 enum class [[=std::formattable]] status {
     success                    = 1,
     in_progress                = 2,
@@ -518,7 +493,7 @@ Should the programmer desire either of the last two options, the `is_enumerated_
 :::cmptable
 #### Fallback to Pure Value
 ```cpp
-if (!is_enumerated_value(black)) {
+if (!std::is_enumerated_value(black)) {
     black_str = std::to_string(
         std::to_underlying(black)
     );
