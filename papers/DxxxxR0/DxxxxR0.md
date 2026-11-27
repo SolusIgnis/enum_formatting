@@ -59,9 +59,11 @@ enum class color {
 #undef AS_ENUM
 };
 
-constexpr std::string_view to_string(color c) noexcept {
+constexpr std::string_view
+  to_string(color c) noexcept {
     switch (c) {
-#define AS_CASE(name, val) case color::name: return #name;
+#define AS_CASE(name, val) \
+    case color::name: return #name;
         COLOR_LIST(AS_CASE)
 #undef AS_CASE
     }
@@ -90,7 +92,8 @@ void log_color(color c) {
 
 ```cpp
 template <auto value>
-constexpr std::string_view enum_name_impl() {
+constexpr std::string_view
+  enum_name_impl() {
 #if defined(__clang__) || defined(__GNUC__)
     return __PRETTY_FUNCTION__;
 #elif defined(_MSC_VER)
@@ -102,13 +105,15 @@ template<typename E>
     requires std::is_scoped_enum_v<E>
 std::string to_string(E value) {
     //...compile-time probe for enumerators
-    //using enum_name_impl to extract signatures
-    //and non-portable string processing of the
-    //compiler-specific signature string happens
-    //and a character range is copied into storage
+    //using enum_name_impl to extract
+    //signatures and non-portable string
+    //processing of the compiler-specific
+    //signature string happens and a
+    //character range is copied into storage
     //for each found enumerator
 
-    return lookup_with_fallback(storage, value);
+    return lookup_with_fallback(storage,
+        value);
 }
 
 enum class status {
