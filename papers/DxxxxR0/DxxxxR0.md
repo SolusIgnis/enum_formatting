@@ -127,7 +127,7 @@ void log_status(status s) {
 ```
 
 ```cpp
-enum class status {
+enum class [[=std::formattable]] status {
     success                    = 1,
     in_progress                = 2,
     error                      = 3,
