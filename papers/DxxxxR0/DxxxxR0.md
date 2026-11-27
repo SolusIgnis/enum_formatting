@@ -184,7 +184,7 @@ export module net.telnet:types;
 
 import std;
 
-export namespace net::telnet {
+export namespace telnet {
   enum class command : std::uint8_t {
     eor = 0xEF, //End of Record
     se  = 0xF0, //Subnegotiation End
@@ -197,7 +197,7 @@ export namespace net::telnet {
     local,  //"us", sends WILL/WONT, receives DO/DONT
     remote, //"them", sends DO/DONT, receives WILL/WONT
   }; //enum class negotiation_direction
-} //namespace net::telnet
+} //namespace telnet
 ```
 
 ### After (Annotation-Driven Formatter)
@@ -207,7 +207,7 @@ export module net.telnet:types;
 
 import std;
 
-export namespace net::telnet {
+export namespace telnet {
   enum class [[=std::formattable]] command : std::uint8_t {
     eor = 0xEF, //End of Record
     se  = 0xF0, //Subnegotiation End
@@ -220,7 +220,7 @@ export namespace net::telnet {
     local,  //"us", sends WILL/WONT, receives DO/DONT
     remote, //"them", sends DO/DONT, receives WILL/WONT
   }; //enum class negotiation_direction
-} //namespace net::telnet
+} //namespace telnet
 ```
 
 ---
@@ -228,7 +228,7 @@ export namespace net::telnet {
 ```cpp
 template<>
 struct std::formatter<
-  ::net::telnet::command, char> {
+  telnet::command, char> {
 private:
   //Format specifier: 'n' for name,
   //                  'x' or 'X' for hex.
@@ -254,19 +254,19 @@ public:
   } //parse(format_parse_context&)
 
   template<typename FormatContext>
-  auto format(::net::telnet::command cmd,
+  auto format(telnet::command cmd,
     FormatContext& ctx) const
   {
     std::string_view name;
     switch (cmd) {
-      case ::net::telnet::command::eor:
+      case telnet::command::eor:
         name = "eor"; break;
-      case ::net::telnet::command::se:
+      case telnet::command::se:
         name = "se"; break;
-      case ::net::telnet::command::nop:
+      case telnet::command::nop:
         name = "nop"; break;
       //...13 cases elided for space
-      case ::net::telnet::command::iac:
+      case telnet::command::iac:
         name = "iac"; break;
       default:
         name = "UNKNOWN"; break;
@@ -297,25 +297,25 @@ public:
 ```cpp
 template<>
 struct std::formatter<
-  ::net::telnet::negotiation_direction, char
+  telnet::negotiation_direction, char
 > {
   constexpr auto parse(
     format_parse_context& ctx)
   {
     auto view = std::ranges::subrange(
       ctx.begin(), ctx.end());
-    if (!view.empty() && view.front() != '}') {
-      throw std::format_error("Invalid");
-    }
+    if (!view.empty() &&
+      view.front() != '}')
+        throw std::format_error("Invalid");
     return view.begin();
   } //parse(format_parse_context&)
 
   template<typename FormatContext>
   auto format(
-    ::net::telnet::negotiation_direction dir,
+    telnet::negotiation_direction dir,
     FormatContext& ctx) const
   {
-    using namespace ::net::telnet;
+    using namespace telnet;
     std::string_view name =
       (dir == negotiation_direction::local
       ? "local" : "remote");
@@ -333,42 +333,39 @@ struct std::formatter<
 
 ```cpp
 template<typename... Args>
-void log_error(const std::error_code& ec,
-  std::format_string<
+void log_error(std::format_string<
     std::remove_cvref_t<Args>...
-  > fmt,
-  Args&&... args)
+  > fmt, Args&&... args)
 {
-  std::cerr << "Telnet FSM error: "
-    << ec.message() << " (" << std::format(
+  std::cerr << "Telnet FSM error: ("
+    << std::format(
       fmt, std::forward<Args>(args)...
     ) << ")\n";
 }
 
-using namespace ::net::telnet;
-void contrived_use(std::error_code ec,
-  command  cmd)
+void contrived_use(telnet::command  cmd)
 {
-  log_error(ec, "cmd: {}", cmd);
-  log_error(ec, "cmd: {:n}", cmd);
-  log_error(ec, "cmd: {:x}", cmd);
-  log_error(ec, "cmd: {:X}", cmd);
-  log_error(ec, "cmd: {0:n} (0x{0:X})", cmd);
+  log_error("cmd: {}", cmd);
+  log_error("cmd: {:n}", cmd);
+  log_error("cmd: {:x}", cmd);
+  log_error("cmd: {:X}", cmd);
+  log_error("cmd: {0:n} (0x{0:X})", cmd);
 }
 ```
 
 ```cpp
 template<typename... Args>
-void log_error(const std::error_code& ec,
-  std::format_string<std::remove_cvref_t<Args>...> fmt,
-  Args&&... args)
+void log_error(std::format_string<
+    std::remove_cvref_t<Args>...
+  > fmt, Args&&... args)
 {
-  std::cerr << "Telnet FSM error: " << ec.message() << " (" << std::format(fmt, std::forward<Args>(args)...) << ")\n";
+  std::cerr << "Telnet FSM error: ("
+    << std::format(fmt, std::forward<Args>(args)...)
+    << ")\n";
 }
 
-using namespace ::net::telnet;
-void contrived_use(std::error_code ec,
-  command  cmd)
+using namespace telnet;
+void contrived_use(telnet::command  cmd)
 {
   log_error(ec, "cmd: {}", cmd);
   log_error(ec, "cmd: {:s}", cmd);
