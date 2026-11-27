@@ -77,8 +77,7 @@ To avoid potential conflicts with existing user-supplied formatting customizatio
 ## Examples
 
 ::: cmptable
-### Before (Macros and Signature Parsing)
-
+### Before (Macros)
 ```cpp
 #define COLOR_LIST(X)  \
   X(red,   0xFF0000) \
@@ -108,7 +107,6 @@ void log_color(color c) {
 ```
 
 ### After (Annotation-Driven Formatter)
-
 ```cpp
 enum class [[=std::formattable]] color {
   red   = 0xFF0000,
@@ -122,6 +120,7 @@ void log_color(color c) {
 ```
 ---
 
+### Before (Signature Parsing)
 ```cpp
 template <auto value>
 constexpr std::string_view
@@ -160,6 +159,7 @@ void log_status(status s) {
 }
 ```
 
+### After (Annotation-Driven Formatter)
 ```cpp
 enum class [[=std::formattable]] status {
   success                    = 1,
@@ -176,8 +176,10 @@ void log_status(status s) {
 
 *The legacy workarounds in the "Before" column are illustrative sketches of common macro and signature parsing techniques rather than complete, production-quality implementations. The reality would probably be an order of magnitude worse.*
 
+> Custom Formatter with Manual Switch
+
 ::: cmptable
-### Before (Custom Formatter with Manual Switch)
+### Before (Defining Enumeration)
 
 ```cpp
 export module net.telnet:types;
@@ -233,6 +235,7 @@ export namespace telnet {
 
 ---
 
+### Continued (Formatter Specialization)
 ```cpp
 export template<>
 struct std::formatter<
@@ -301,6 +304,7 @@ public:
 
 ---
 
+### Continued (Formatter Specialization)
 ```cpp
 export template<>
 struct std::formatter<
@@ -338,6 +342,9 @@ struct std::formatter<
 ---
 
 ```cpp
+import net.telnet;
+import net.telnet;
+
 template<typename... Args>
 void log_error(std::format_string<
     std::remove_cvref_t<Args>...
@@ -360,6 +367,9 @@ void contrived_use(telnet::command  cmd)
 ```
 
 ```cpp
+import std;
+import net.telnet;
+
 template<typename... Args>
 void log_error(std::format_string<
     std::remove_cvref_t<Args>...
