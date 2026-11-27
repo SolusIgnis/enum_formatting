@@ -30,6 +30,38 @@ Explain the relationship between this proposal and existing C++ formatting facil
 
 _Describe the problem being addressed and why existing facilities are insufficient._
 
+
+Enumeration types are frequently used to represent finite sets of named values, and those names often carry more meaning than their underlying integral representations.
+When enumerations are used in diagnostics, logging, user interfaces, serialization, or other contexts requiring textual output, representing an enumerated value by its identifier is often preferable to representing it numerically.
+However, the C++ Standard Library does not currently provide a general facility for converting an enumeration value to the identifier of its corresponding enumerator or for formatting enumerations in this manner.
+
+Programmers have consequently resorted to a variety of workarounds, including manually maintained `switch` statements, macro-generated enumerator lists, and compiler-specific function-signature parsing techniques.
+These approaches introduce varying degrees of maintenance burden, portability concerns, and implementation complexity.
+Even when a library provides enumeration stringification, integrating it with the standard formatting facilities may require additional customization, preventing users from naturally composing enumeration representations with the formatting capabilities already available for other types.
+
+This proposal provides a standard mechanism for stringifying enumerated values and formatting enumerations using their enumerator identifiers, underlying integral values, or type names.
+It further provides mechanisms for selecting canonical names among aliases, specifying per-type formatting defaults, and controlling type qualification.
+By integrating enumeration formatting with the existing standard library facilities, this proposal seeks to replace disparate workarounds with a portable, composable, and extensible interface.
+
+
+
+Scoped enumerations are widely used in modern C++ to prevent implicit conversions to integers and avoid polluting enclosing scopes with enumerator names.
+However, the standard library still lacks direct, ergonomic support for turning enumeration values into strings or formatting them with `std::format` and `std::print`.
+
+Today, programmers who want to log, display, or serialize a scoped enumeration must choose between writing repetitive boilerplate (such as `switch` statements or X-macros), adopting third-party libraries that rely on compiler-specific signature-parsing workarounds, or authoring custom `std::formatter` specializations for individual enum types.
+Meanwhile, `std::to_string` already serves as a familiar single-argument stringification entry point across the standard library, yet provides no overloads for scoped enumerations.
+
+Even when enumerations are formatted, existing facilities provide no standard way to express author or call-site intent around common enumeration idioms:
+
+* **Canonical names for aliased values:** Enumerations frequently define multiple enumerators with the same underlying value (such as aliases or status codes), with no standard way to indicate which identifier is canonical.
+* **Opt-in and configurable defaults:** Users may already provide custom `std::formatter` specializations for certain enumerations, or want an enumeration to default to a specific representation or format string while still allowing call-site overrides.
+* **Unenumerated values:** Values outside the declared enumerators can arise via casts or external input, requiring predictable behavior and a clear way to test whether a value corresponds to a named enumerator.
+
+C++26 reflection (`[@P2996R13]`) and annotations (`[@P3393R4]`) provide the compile-time introspection and metadata mechanisms needed to inspect enumerators and attach library vocabulary cleanly.
+This proposal builds on those facilities to provide `std::to_string` overloads for enumerable scoped enumerations and an opt-in, annotation-driven `std::formatter` specialization, supported by `<annotations>` and `std::is_enumerated_value`.
+
+
+
 ## Scope
 
 This proposal intentionally excludes unscoped enumerations from `std::to_string` overloads.
@@ -143,6 +175,235 @@ void log_status(status s) {
 :::
 
 *The legacy workarounds in the "Before" column are illustrative sketches of common macro and signature parsing techniques rather than complete, production-quality implementations. The reality would probably be an order of magnitude worse.*
+
+::: cmptable
+### Before (Custom Formatter with Manual Switch)
+
+```cpp {.number_lines}
+export module net.telnet:types;
+
+import std;
+
+export namespace net::telnet {
+    enum class command : std::uint8_t {
+        eor      = 0xEF, ///< End of Record
+        se       = 0xF0, ///< Subnegotiation End
+        nop      = 0xF1, ///< No Operation
+        dm       = 0xF2, ///< Data Mark
+        brk      = 0xF3, ///< Break
+        ip       = 0xF4, ///< Interrupt Process
+        ao       = 0xF5, ///< Abort Output
+        ayt      = 0xF6, ///< Are You There
+        ec       = 0xF7, ///< Erase Character
+        el       = 0xF8, ///< Erase Line
+        ga       = 0xF9, ///< Go Ahead
+        sb       = 0xFA, ///< Subnegotiation Begin
+        will_opt = 0xFB, ///< Sender wants to enable option
+        wont_opt = 0xFC, ///< Sender wants to disable option
+        do_opt   = 0xFD, ///< Sender requests receiver to enable option
+        dont_opt = 0xFE, ///< Sender requests receiver to disable option
+        iac      = 0xFF, ///< Interpret As Command
+    }; //enum class command
+
+    enum class negotiation_direction : std::uint8_t {
+        local,  ///< Local side ("us", sends WILL/WONT, receives DO/DONT)
+        remote, ///< Remote side ("them", sends DO/DONT, receives WILL/WONT)
+    }; //enum class negotiation_direction
+} //namespace net::telnet
+
+export namespace std {
+    template<>
+    struct formatter<::net::telnet::command, char> {
+    private:
+        char presentation_ = 'n'; ///< Format specifier: 'n' for name, 'x' or 'X' for hex.
+    public:
+        constexpr auto parse(format_parse_context& ctx)
+        {
+            auto view = std::ranges::subrange(ctx.begin(), ctx.end());
+            if (!view.empty()) {
+                const char c = view.front();
+                if (c == 'n' || c == 'x' || c == 'X') {
+                    presentation_ = c;
+                    view          = view.advance(1);
+                }
+            }
+            if (!view.empty() && view.front() != '}') {
+                throw std::format_error("Invalid format specifier for telnet::command");
+            }
+            return view.begin();
+        } //parse(format_parse_context&)
+
+        template<typename FormatContext>
+        auto format(::net::telnet::command cmd, FormatContext& ctx) const
+        {
+            std::string_view name;
+            switch (cmd) {
+                case ::net::telnet::command::eor:
+                    name = "eor";
+                    break;
+                case ::net::telnet::command::se:
+                    name = "se";
+                    break;
+                case ::net::telnet::command::nop:
+                    name = "nop";
+                    break;
+                case ::net::telnet::command::dm:
+                    name = "dm";
+                    break;
+                case ::net::telnet::command::brk:
+                    name = "brk";
+                    break;
+                case ::net::telnet::command::ip:
+                    name = "ip";
+                    break;
+                case ::net::telnet::command::ao:
+                    name = "ao";
+                    break;
+                case ::net::telnet::command::ayt:
+                    name = "ayt";
+                    break;
+                case ::net::telnet::command::ec:
+                    name = "ec";
+                    break;
+                case ::net::telnet::command::el:
+                    name = "el";
+                    break;
+                case ::net::telnet::command::ga:
+                    name = "ga";
+                    break;
+                case ::net::telnet::command::sb:
+                    name = "sb";
+                    break;
+                case ::net::telnet::command::will_opt:
+                    name = "will";
+                    break;
+                case ::net::telnet::command::wont_opt:
+                    name = "wont";
+                    break;
+                case ::net::telnet::command::do_opt:
+                    name = "do";
+                    break;
+                case ::net::telnet::command::dont_opt:
+                    name = "dont";
+                    break;
+                case ::net::telnet::command::iac:
+                    name = "iac";
+                    break;
+                default:
+                    name = "UNKNOWN";
+                    break;
+            }
+
+            if (presentation_ == 'n') {
+                return std::format_to(ctx.out(), "{}", name);
+            } else if (presentation_ == 'x') {
+                return std::format_to(ctx.out(), "0x{:02x}", std::to_underlying(cmd));
+            } else if (presentation_ == 'X') {
+                return std::format_to(ctx.out(), "0x{:02X}", std::to_underlying(cmd));
+            }
+        } //format(::net::telnet::command, FormatContext&)
+    }; //struct formatter<::net::telnet::command>
+
+    template<>
+    struct formatter<::net::telnet::negotiation_direction, char> {
+        constexpr auto parse(format_parse_context& ctx)
+        {
+            auto view = std::ranges::subrange(ctx.begin(), ctx.end());
+            if (!view.empty() && view.front() != '}') {
+                throw std::format_error("Invalid format specifier for negotiation_direction");
+            }
+            return view.begin();
+        } //parse(format_parse_context&)
+
+        template<typename FormatContext>
+        auto format(::net::telnet::negotiation_direction dir, FormatContext& ctx) const
+        {
+            std::string_view name = (dir == ::net::telnet::negotiation_direction::local ? "local" : "remote");
+            return std::format_to(ctx.out(), "{}", name);
+        } //format(::net::telnet::negotiation_direction, FormatContext&)
+    }; //struct formatter<::net::telnet::negotiation_direction>
+} //namespace std
+```
+
+### After (Annotation-Driven Formatter)
+
+```cpp {.number_lines}
+export module net.telnet:types;
+
+import std;
+
+export namespace net::telnet {
+    enum class [[=std::formattable]] command : std::uint8_t {
+        eor      = 0xEF, ///< End of Record
+        se       = 0xF0, ///< Subnegotiation End
+        nop      = 0xF1, ///< No Operation
+        dm       = 0xF2, ///< Data Mark
+        brk      = 0xF3, ///< Break
+        ip       = 0xF4, ///< Interrupt Process
+        ao       = 0xF5, ///< Abort Output
+        ayt      = 0xF6, ///< Are You There
+        ec       = 0xF7, ///< Erase Character
+        el       = 0xF8, ///< Erase Line
+        ga       = 0xF9, ///< Go Ahead
+        sb       = 0xFA, ///< Subnegotiation Begin
+        will_opt = 0xFB, ///< Sender wants to enable option
+        wont_opt = 0xFC, ///< Sender wants to disable option
+        do_opt   = 0xFD, ///< Sender requests receiver to enable option
+        dont_opt = 0xFE, ///< Sender requests receiver to disable option
+        iac      = 0xFF, ///< Interpret As Command
+    }; //enum class command
+
+    enum class [[=std::formattable]] negotiation_direction : std::uint8_t {
+        local,  ///< Local side ("us", sends WILL/WONT, receives DO/DONT)
+        remote, ///< Remote side ("them", sends DO/DONT, receives WILL/WONT)
+    }; //enum class negotiation_direction
+} //namespace net::telnet
+```
+
+---
+
+```cpp
+template<typename... Args>
+void log_error(const std::error_code& ec,
+               std::format_string<std::remove_cvref_t<Args>...> fmt,
+               Args&&... args)
+{
+    std::cerr << "Telnet FSM error: " << ec.message() << " (" << std::format(fmt, std::forward<Args>(args)...) << ")\n";
+}
+
+using namespace ::net::telnet;
+void contrived_use(std::error_code ec, command  cmd)
+{
+    log_error(ec, "cmd: {}", cmd);
+    log_error(ec, "cmd: {:n}", cmd);
+    log_error(ec, "cmd: {:x}", cmd);
+    log_error(ec, "cmd: {:X}", cmd);
+    log_error(ec, "cmd: {0:n} (0x{0:X})", cmd);
+}
+```
+
+```cpp
+template<typename... Args>
+void log_error(const std::error_code& ec,
+               std::format_string<std::remove_cvref_t<Args>...> fmt,
+               Args&&... args)
+{
+    std::cerr << "Telnet FSM error: " << ec.message() << " (" << std::format(fmt, std::forward<Args>(args)...) << ")\n";
+}
+
+using namespace ::net::telnet;
+void contrived_use(std::error_code ec, command  cmd)
+{
+    log_error(ec, "cmd: {}", cmd);
+    log_error(ec, "cmd: {:s}", cmd);
+    log_error(ec, "cmd: 0x{:i:02x}", cmd);
+    log_error(ec, "cmd: 0x{:i:02X}", cmd);
+    log_error(ec, "cmd: {0:s} (0x{0:i:02X})", cmd);
+}
+```
+:::
+
+*The code in the "Before" column is adapted from a real project written by the author of this paper. Block comments were removed for brevity.*
 
 # Impact on the Standard
 
