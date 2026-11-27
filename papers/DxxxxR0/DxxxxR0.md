@@ -198,7 +198,34 @@ export namespace net::telnet {
         remote, ///< Remote side ("them", sends DO/DONT, receives WILL/WONT)
     }; //enum class negotiation_direction
 } //namespace net::telnet
+```
 
+### After (Annotation-Driven Formatter)
+
+```cpp
+export module net.telnet:types;
+
+import std;
+
+export namespace net::telnet {
+    enum class [[=std::formattable]] command : std::uint8_t {
+        eor = 0xEF, ///< End of Record
+        se  = 0xF0, ///< Subnegotiation End
+        nop = 0xF1, ///< No Operation
+        //...13 enumerators elided for space
+        iac = 0xFF, ///< Interpret As Command
+    }; //enum class command
+
+    enum class [[=std::formattable]] negotiation_direction : std::uint8_t {
+        local,  ///< Local side ("us", sends WILL/WONT, receives DO/DONT)
+        remote, ///< Remote side ("them", sends DO/DONT, receives WILL/WONT)
+    }; //enum class negotiation_direction
+} //namespace net::telnet
+```
+
+---
+
+```cpp
 template<>
 struct std::formatter<::net::telnet::command, char> {
 private:
@@ -273,27 +300,8 @@ struct std::formatter<::net::telnet::negotiation_direction, char> {
 }; //struct formatter<::net::telnet::negotiation_direction>
 ```
 
-### After (Annotation-Driven Formatter)
-
 ```cpp
-export module net.telnet:types;
-
-import std;
-
-export namespace net::telnet {
-    enum class [[=std::formattable]] command : std::uint8_t {
-        eor = 0xEF, ///< End of Record
-        se  = 0xF0, ///< Subnegotiation End
-        nop = 0xF1, ///< No Operation
-        //...13 enumerators elided for space
-        iac = 0xFF, ///< Interpret As Command
-    }; //enum class command
-
-    enum class [[=std::formattable]] negotiation_direction : std::uint8_t {
-        local,  ///< Local side ("us", sends WILL/WONT, receives DO/DONT)
-        remote, ///< Remote side ("them", sends DO/DONT, receives WILL/WONT)
-    }; //enum class negotiation_direction
-} //namespace net::telnet
+//empty
 ```
 
 ---
