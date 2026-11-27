@@ -279,7 +279,15 @@ public:
         }
     } //format(::net::telnet::command, FormatContext&)
 }; //struct formatter<::net::telnet::command>
+```
 
+```cpp
+//empty
+```
+
+---
+
+```cpp
 template<>
 struct std::formatter<::net::telnet::negotiation_direction, char> {
     constexpr auto parse(format_parse_context& ctx)
