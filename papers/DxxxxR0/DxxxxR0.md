@@ -249,9 +249,7 @@ public:
     }
     if (!view.empty() &&
       view.front() != '}')
-    {
-      throw std::format_error("Invalid.");
-    }
+        throw std::format_error("Invalid.");
     return view.begin();
   } //parse(format_parse_context&)
 
@@ -279,13 +277,15 @@ public:
         "{}", name);
     } else if (presentation_ == 'x') {
       return std::format_to(ctx.out(),
-        "0x{:02x}", std::to_underlying(cmd));
+        "0x{:02x}",
+        std::to_underlying(cmd));
     } else if (presentation_ == 'X') {
       return std::format_to(ctx.out(),
-        "0x{:02X}", std::to_underlying(cmd));
+        "0x{:02X}",
+        std::to_underlying(cmd));
     }
-  } //format(::net::telnet::command, FormatContext&)
-}; //struct formatter<::net::telnet::command>
+  } //format(...)
+}; //struct formatter<...>
 ```
 
 ```cpp
@@ -315,13 +315,14 @@ struct std::formatter<
     ::net::telnet::negotiation_direction dir,
     FormatContext& ctx) const
   {
+    using namespace ::net::telnet;
     std::string_view name =
-      (dir == ::net::telnet::negotiation_direction::local
+      (dir == negotiation_direction::local
       ? "local" : "remote");
     return std::format_to(ctx.out(),
       "{}", name);
-  } //format(::net::telnet::negotiation_direction, FormatContext&)
-}; //struct formatter<::net::telnet::negotiation_direction>
+  } //format(...)
+}; //struct formatter<...>
 ```
 
 ```cpp
@@ -333,14 +334,20 @@ struct std::formatter<
 ```cpp
 template<typename... Args>
 void log_error(const std::error_code& ec,
-  std::format_string<std::remove_cvref_t<Args>...> fmt,
+  std::format_string<
+    std::remove_cvref_t<Args>...
+  > fmt,
   Args&&... args)
 {
-  std::cerr << "Telnet FSM error: " << ec.message() << " (" << std::format(fmt, std::forward<Args>(args)...) << ")\n";
+  std::cerr << "Telnet FSM error: "
+    << ec.message() << " (" << std::format(
+      fmt, std::forward<Args>(args)...
+    ) << ")\n";
 }
 
 using namespace ::net::telnet;
-void contrived_use(std::error_code ec, command  cmd)
+void contrived_use(std::error_code ec,
+  command  cmd)
 {
   log_error(ec, "cmd: {}", cmd);
   log_error(ec, "cmd: {:n}", cmd);
@@ -360,7 +367,8 @@ void log_error(const std::error_code& ec,
 }
 
 using namespace ::net::telnet;
-void contrived_use(std::error_code ec, command  cmd)
+void contrived_use(std::error_code ec,
+  command  cmd)
 {
   log_error(ec, "cmd: {}", cmd);
   log_error(ec, "cmd: {:s}", cmd);
