@@ -234,8 +234,7 @@ private:
   //                  'x' or 'X' for hex.
   char presentation_ = 'n';
 public:
-  constexpr auto parse(
-      format_parse_context& ctx)
+  constexpr auto parse(auto& ctx)
   {
     auto view = std::ranges::subrange(
       ctx.begin(), ctx.end());
@@ -249,13 +248,13 @@ public:
     }
     if (!view.empty() &&
       view.front() != '}')
-        throw std::format_error("Invalid.");
+        throw std::format_error(
+          "Invalid specifier.");
     return view.begin();
-  } //parse(format_parse_context&)
+  } //parse(auto&)
 
-  template<typename FormatContext>
   auto format(telnet::command cmd,
-    FormatContext& ctx) const
+    auto& ctx) const
   {
     std::string_view name;
     switch (cmd) {
@@ -284,12 +283,12 @@ public:
         "0x{:02X}",
         std::to_underlying(cmd));
     }
-  } //format(...)
+  } //format(telnet::command, auto&)
 }; //struct formatter<...>
 ```
 
 ```cpp
-//empty
+/* No user code required. */
 ```
 
 ---
@@ -299,21 +298,20 @@ template<>
 struct std::formatter<
   telnet::negotiation_direction, char
 > {
-  constexpr auto parse(
-    format_parse_context& ctx)
+  constexpr auto parse(auto& ctx)
   {
     auto view = std::ranges::subrange(
       ctx.begin(), ctx.end());
     if (!view.empty() &&
       view.front() != '}')
-        throw std::format_error("Invalid");
+        throw std::format_error(
+          "Invalid specifier.");
     return view.begin();
-  } //parse(format_parse_context&)
+  } //parse(auto&)
 
-  template<typename FormatContext>
   auto format(
     telnet::negotiation_direction dir,
-    FormatContext& ctx) const
+    auto& ctx) const
   {
     using namespace telnet;
     std::string_view name =
@@ -326,7 +324,7 @@ struct std::formatter<
 ```
 
 ```cpp
-//empty
+/* No user code required. */
 ```
 
 ---
@@ -365,7 +363,6 @@ void log_error(std::format_string<
     ) << ")\n";
 }
 
-using namespace telnet;
 void contrived_use(telnet::command  cmd)
 {
   log_error("cmd: {}", cmd);
