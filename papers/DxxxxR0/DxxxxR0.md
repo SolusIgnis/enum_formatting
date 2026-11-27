@@ -108,7 +108,7 @@ std::string to_string(E value) {
     //and a character range is copied into storage
     //for each found enumerator
 
-    return storage[std::to_underlying(value)];
+    return lookup_with_fallback(storage, value);
 }
 
 enum class status {
