@@ -179,30 +179,18 @@ void log_status(status s) {
 ::: cmptable
 ### Before (Custom Formatter with Manual Switch)
 
-```cpp {.number_lines}
+```cpp
 export module net.telnet:types;
 
 import std;
 
 export namespace net::telnet {
     enum class command : std::uint8_t {
-        eor      = 0xEF, ///< End of Record
-        se       = 0xF0, ///< Subnegotiation End
-        nop      = 0xF1, ///< No Operation
-        dm       = 0xF2, ///< Data Mark
-        brk      = 0xF3, ///< Break
-        ip       = 0xF4, ///< Interrupt Process
-        ao       = 0xF5, ///< Abort Output
-        ayt      = 0xF6, ///< Are You There
-        ec       = 0xF7, ///< Erase Character
-        el       = 0xF8, ///< Erase Line
-        ga       = 0xF9, ///< Go Ahead
-        sb       = 0xFA, ///< Subnegotiation Begin
-        will_opt = 0xFB, ///< Sender wants to enable option
-        wont_opt = 0xFC, ///< Sender wants to disable option
-        do_opt   = 0xFD, ///< Sender requests receiver to enable option
-        dont_opt = 0xFE, ///< Sender requests receiver to disable option
-        iac      = 0xFF, ///< Interpret As Command
+        eor = 0xEF, ///< End of Record
+        se  = 0xF0, ///< Subnegotiation End
+        nop = 0xF1, ///< No Operation
+        //...13 enumerators elided for space
+        iac = 0xFF, ///< Interpret As Command
     }; //enum class command
 
     enum class negotiation_direction : std::uint8_t {
@@ -211,146 +199,94 @@ export namespace net::telnet {
     }; //enum class negotiation_direction
 } //namespace net::telnet
 
-export namespace std {
-    template<>
-    struct formatter<::net::telnet::command, char> {
-    private:
-        char presentation_ = 'n'; ///< Format specifier: 'n' for name, 'x' or 'X' for hex.
-    public:
-        constexpr auto parse(format_parse_context& ctx)
-        {
-            auto view = std::ranges::subrange(ctx.begin(), ctx.end());
-            if (!view.empty()) {
-                const char c = view.front();
-                if (c == 'n' || c == 'x' || c == 'X') {
-                    presentation_ = c;
-                    view          = view.advance(1);
-                }
+template<>
+struct std::formatter<::net::telnet::command, char> {
+private:
+    char presentation_ = 'n'; ///< Format specifier: 'n' for name, 'x' or 'X' for hex.
+public:
+    constexpr auto parse(format_parse_context& ctx)
+    {
+        auto view = std::ranges::subrange(ctx.begin(), ctx.end());
+        if (!view.empty()) {
+            const char c = view.front();
+            if (c == 'n' || c == 'x' || c == 'X') {
+                presentation_ = c;
+                view          = view.advance(1);
             }
-            if (!view.empty() && view.front() != '}') {
-                throw std::format_error("Invalid format specifier for telnet::command");
-            }
-            return view.begin();
-        } //parse(format_parse_context&)
+        }
+        if (!view.empty() && view.front() != '}') {
+            throw std::format_error("Invalid format specifier for telnet::command");
+        }
+        return view.begin();
+    } //parse(format_parse_context&)
 
-        template<typename FormatContext>
-        auto format(::net::telnet::command cmd, FormatContext& ctx) const
-        {
-            std::string_view name;
-            switch (cmd) {
-                case ::net::telnet::command::eor:
-                    name = "eor";
-                    break;
-                case ::net::telnet::command::se:
-                    name = "se";
-                    break;
-                case ::net::telnet::command::nop:
-                    name = "nop";
-                    break;
-                case ::net::telnet::command::dm:
-                    name = "dm";
-                    break;
-                case ::net::telnet::command::brk:
-                    name = "brk";
-                    break;
-                case ::net::telnet::command::ip:
-                    name = "ip";
-                    break;
-                case ::net::telnet::command::ao:
-                    name = "ao";
-                    break;
-                case ::net::telnet::command::ayt:
-                    name = "ayt";
-                    break;
-                case ::net::telnet::command::ec:
-                    name = "ec";
-                    break;
-                case ::net::telnet::command::el:
-                    name = "el";
-                    break;
-                case ::net::telnet::command::ga:
-                    name = "ga";
-                    break;
-                case ::net::telnet::command::sb:
-                    name = "sb";
-                    break;
-                case ::net::telnet::command::will_opt:
-                    name = "will";
-                    break;
-                case ::net::telnet::command::wont_opt:
-                    name = "wont";
-                    break;
-                case ::net::telnet::command::do_opt:
-                    name = "do";
-                    break;
-                case ::net::telnet::command::dont_opt:
-                    name = "dont";
-                    break;
-                case ::net::telnet::command::iac:
-                    name = "iac";
-                    break;
-                default:
-                    name = "UNKNOWN";
-                    break;
-            }
+    template<typename FormatContext>
+    auto format(::net::telnet::command cmd, FormatContext& ctx) const
+    {
+        std::string_view name;
+        switch (cmd) {
+            case ::net::telnet::command::eor:
+                name = "eor";
+                break;
+            case ::net::telnet::command::se:
+                name = "se";
+                break;
+            case ::net::telnet::command::nop:
+                name = "nop";
+                break;
+            //...13 cases elided for space
+            case ::net::telnet::command::iac:
+                name = "iac";
+                break;
+            default:
+                name = "UNKNOWN";
+                break;
+        }
 
-            if (presentation_ == 'n') {
-                return std::format_to(ctx.out(), "{}", name);
-            } else if (presentation_ == 'x') {
-                return std::format_to(ctx.out(), "0x{:02x}", std::to_underlying(cmd));
-            } else if (presentation_ == 'X') {
-                return std::format_to(ctx.out(), "0x{:02X}", std::to_underlying(cmd));
-            }
-        } //format(::net::telnet::command, FormatContext&)
-    }; //struct formatter<::net::telnet::command>
-
-    template<>
-    struct formatter<::net::telnet::negotiation_direction, char> {
-        constexpr auto parse(format_parse_context& ctx)
-        {
-            auto view = std::ranges::subrange(ctx.begin(), ctx.end());
-            if (!view.empty() && view.front() != '}') {
-                throw std::format_error("Invalid format specifier for negotiation_direction");
-            }
-            return view.begin();
-        } //parse(format_parse_context&)
-
-        template<typename FormatContext>
-        auto format(::net::telnet::negotiation_direction dir, FormatContext& ctx) const
-        {
-            std::string_view name = (dir == ::net::telnet::negotiation_direction::local ? "local" : "remote");
+        if (presentation_ == 'n') {
             return std::format_to(ctx.out(), "{}", name);
-        } //format(::net::telnet::negotiation_direction, FormatContext&)
-    }; //struct formatter<::net::telnet::negotiation_direction>
-} //namespace std
+        } else if (presentation_ == 'x') {
+            return std::format_to(ctx.out(), "0x{:02x}", std::to_underlying(cmd));
+        } else if (presentation_ == 'X') {
+            return std::format_to(ctx.out(), "0x{:02X}", std::to_underlying(cmd));
+        }
+    } //format(::net::telnet::command, FormatContext&)
+}; //struct formatter<::net::telnet::command>
+
+template<>
+struct std::formatter<::net::telnet::negotiation_direction, char> {
+    constexpr auto parse(format_parse_context& ctx)
+    {
+        auto view = std::ranges::subrange(ctx.begin(), ctx.end());
+        if (!view.empty() && view.front() != '}') {
+            throw std::format_error("Invalid format specifier for negotiation_direction");
+        }
+        return view.begin();
+    } //parse(format_parse_context&)
+
+    template<typename FormatContext>
+    auto format(::net::telnet::negotiation_direction dir, FormatContext& ctx) const
+    {
+        std::string_view name = (dir == ::net::telnet::negotiation_direction::local ? "local" : "remote");
+        return std::format_to(ctx.out(), "{}", name);
+    } //format(::net::telnet::negotiation_direction, FormatContext&)
+}; //struct formatter<::net::telnet::negotiation_direction>
 ```
 
 ### After (Annotation-Driven Formatter)
 
-```cpp {.number_lines}
+```cpp
 export module net.telnet:types;
 
 import std;
 
 export namespace net::telnet {
     enum class [[=std::formattable]] command : std::uint8_t {
-        eor      = 0xEF, ///< End of Record
-        se       = 0xF0, ///< Subnegotiation End
-        nop      = 0xF1, ///< No Operation
-        dm       = 0xF2, ///< Data Mark
-        brk      = 0xF3, ///< Break
-        ip       = 0xF4, ///< Interrupt Process
-        ao       = 0xF5, ///< Abort Output
-        ayt      = 0xF6, ///< Are You There
-        ec       = 0xF7, ///< Erase Character
-        el       = 0xF8, ///< Erase Line
-        ga       = 0xF9, ///< Go Ahead
-        sb       = 0xFA, ///< Subnegotiation Begin
-        will_opt = 0xFB, ///< Sender wants to enable option
-        wont_opt = 0xFC, ///< Sender wants to disable option
-        do_opt   = 0xFD, ///< Sender requests receiver to enable option
-        dont_opt = 0xFE, ///< Sender requests receiver to disable option
-        iac      = 0xFF, ///< Interpret As Command
+        eor = 0xEF, ///< End of Record
+        se  = 0xF0, ///< Subnegotiation End
+        nop = 0xF1, ///< No Operation
+        //...13 enumerators elided for space
+        iac = 0xFF, ///< Interpret As Command
     }; //enum class command
 
     enum class [[=std::formattable]] negotiation_direction : std::uint8_t {
