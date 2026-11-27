@@ -318,7 +318,7 @@ struct std::formatter<
     using namespace telnet;
     std::string_view name =
       (dir == negotiation_direction::local
-      ? "local" : "remote");
+        ? "local" : "remote");
     return std::format_to(ctx.out(),
       "{}", name);
   } //format(...)
@@ -360,18 +360,19 @@ void log_error(std::format_string<
   > fmt, Args&&... args)
 {
   std::cerr << "Telnet FSM error: ("
-    << std::format(fmt, std::forward<Args>(args)...)
-    << ")\n";
+    << std::format(
+      fmt, std::forward<Args>(args)...
+    ) << ")\n";
 }
 
 using namespace telnet;
 void contrived_use(telnet::command  cmd)
 {
-  log_error(ec, "cmd: {}", cmd);
-  log_error(ec, "cmd: {:s}", cmd);
-  log_error(ec, "cmd: 0x{:i:02x}", cmd);
-  log_error(ec, "cmd: 0x{:i:02X}", cmd);
-  log_error(ec, "cmd: {0:s} (0x{0:i:02X})", cmd);
+  log_error("cmd: {}", cmd);
+  log_error("cmd: {:s}", cmd);
+  log_error("cmd: 0x{:i:02x}", cmd);
+  log_error("cmd: 0x{:i:02X}", cmd);
+  log_error("cmd: {0:s} (0x{0:i:02X})", cmd);
 }
 ```
 :::
