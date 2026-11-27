@@ -81,13 +81,13 @@ To avoid potential conflicts with existing user-supplied formatting customizatio
 
 ```cpp
 #define COLOR_LIST(X)  \
-    X(red,   0xFF0000) \
-    X(green, 0x00FF00) \
-    X(blue,  0x0000FF)
+  X(red,   0xFF0000) \
+  X(green, 0x00FF00) \
+  X(blue,  0x0000FF)
 
 enum class color {
 #define AS_ENUM(name, val) name = val,
-    COLOR_LIST(AS_ENUM)
+  COLOR_LIST(AS_ENUM)
 #undef AS_ENUM
 };
 
@@ -96,14 +96,14 @@ constexpr std::string_view
     switch (c) {
 #define AS_CASE(name, val) \
     case color::name: return #name;
-        COLOR_LIST(AS_CASE)
+      COLOR_LIST(AS_CASE)
 #undef AS_CASE
     }
     return "<unknown>";
 }
 
 void log_color(color c) {
-    std::print("{:>8}", to_string(c)); 
+  std::print("{:>8}", to_string(c)); 
 }
 ```
 
@@ -111,13 +111,13 @@ void log_color(color c) {
 
 ```cpp
 enum class [[=std::formattable]] color {
-    red   = 0xFF0000,
-    green = 0x00FF00,
-    blue  = 0x0000FF, 
+  red   = 0xFF0000,
+  green = 0x00FF00,
+  blue  = 0x0000FF, 
 };
 
 void log_color(color c) {
-    std::print("{:>8}", c); 
+  std::print("{:>8}", c); 
 }
 ```
 ---
@@ -134,42 +134,42 @@ constexpr std::string_view
 }
 
 template<typename E>
-    requires std::is_scoped_enum_v<E>
+  requires std::is_scoped_enum_v<E>
 std::string to_string(E value) {
-    //...compile-time probe for enumerators
-    //using enum_name_impl to extract
-    //signatures and non-portable string
-    //processing of the compiler-specific
-    //signature string happens and a
-    //character range is copied into storage
-    //for each found enumerator
+  //...compile-time probe for enumerators
+  //using enum_name_impl to extract
+  //signatures and non-portable string
+  //processing of the compiler-specific
+  //signature string happens and a
+  //character range is copied into storage
+  //for each found enumerator
 
-    return lookup_with_fallback(storage,
-        value);
+  return lookup_with_fallback(storage,
+    value);
 }
 
 enum class status {
-    success     = 1,
-    in_progress = 2,
-    error       = 3,
-    failed      = 3,
+  success     = 1,
+  in_progress = 2,
+  error       = 3,
+  failed      = 3,
 };
 
 void log_status(status s) {
-    std::print("{:^14}", to_string(s)); 
+  std::print("{:^14}", to_string(s)); 
 }
 ```
 
 ```cpp
 enum class [[=std::formattable]] status {
-    success                    = 1,
-    in_progress                = 2,
-    error                      = 3,
-    failed [[=std::canonical]] = 3,
+  success                    = 1,
+  in_progress                = 2,
+  error                      = 3,
+  failed [[=std::canonical]] = 3,
 };
 
 void log_status(status s) {
-    std::print("{:^14}", s); 
+  std::print("{:^14}", s); 
 }
 ```
 :::
@@ -185,18 +185,18 @@ export module net.telnet:types;
 import std;
 
 export namespace net::telnet {
-    enum class command : std::uint8_t {
-        eor = 0xEF, ///< End of Record
-        se  = 0xF0, ///< Subnegotiation End
-        nop = 0xF1, ///< No Operation
-        //...13 enumerators elided for space
-        iac = 0xFF, ///< Interpret As Command
-    }; //enum class command
+  enum class command : std::uint8_t {
+    eor = 0xEF, //End of Record
+    se  = 0xF0, //Subnegotiation End
+    nop = 0xF1, //No Operation
+    //...13 enumerators elided for space
+    iac = 0xFF, //Interpret As Command
+  }; //enum class command
 
-    enum class negotiation_direction : std::uint8_t {
-        local,  ///< Local side ("us", sends WILL/WONT, receives DO/DONT)
-        remote, ///< Remote side ("them", sends DO/DONT, receives WILL/WONT)
-    }; //enum class negotiation_direction
+  enum class negotiation_direction : std::uint8_t {
+    local,  //"us", sends WILL/WONT, receives DO/DONT
+    remote, //"them", sends DO/DONT, receives WILL/WONT
+  }; //enum class negotiation_direction
 } //namespace net::telnet
 ```
 
@@ -208,18 +208,18 @@ export module net.telnet:types;
 import std;
 
 export namespace net::telnet {
-    enum class [[=std::formattable]] command : std::uint8_t {
-        eor = 0xEF, ///< End of Record
-        se  = 0xF0, ///< Subnegotiation End
-        nop = 0xF1, ///< No Operation
-        //...13 enumerators elided for space
-        iac = 0xFF, ///< Interpret As Command
-    }; //enum class command
+  enum class [[=std::formattable]] command : std::uint8_t {
+    eor = 0xEF, //End of Record
+    se  = 0xF0, //Subnegotiation End
+    nop = 0xF1, //No Operation
+    //...13 enumerators elided for space
+    iac = 0xFF, //Interpret As Command
+  }; //enum class command
 
-    enum class [[=std::formattable]] negotiation_direction : std::uint8_t {
-        local,  ///< Local side ("us", sends WILL/WONT, receives DO/DONT)
-        remote, ///< Remote side ("them", sends DO/DONT, receives WILL/WONT)
-    }; //enum class negotiation_direction
+  enum class [[=std::formattable]] negotiation_direction : std::uint8_t {
+    local,  //"us", sends WILL/WONT, receives DO/DONT
+    remote, //"them", sends DO/DONT, receives WILL/WONT
+  }; //enum class negotiation_direction
 } //namespace net::telnet
 ```
 
@@ -227,57 +227,66 @@ export namespace net::telnet {
 
 ```cpp
 template<>
-struct std::formatter<::net::telnet::command, char> {
+struct std::formatter<
+  ::net::telnet::command, char> {
 private:
-    char presentation_ = 'n'; ///< Format specifier: 'n' for name, 'x' or 'X' for hex.
+  //Format specifier: 'n' for name,
+  //                  'x' or 'X' for hex.
+  char presentation_ = 'n';
 public:
-    constexpr auto parse(format_parse_context& ctx)
-    {
-        auto view = std::ranges::subrange(ctx.begin(), ctx.end());
-        if (!view.empty()) {
-            const char c = view.front();
-            if (c == 'n' || c == 'x' || c == 'X') {
-                presentation_ = c;
-                view          = view.advance(1);
-            }
-        }
-        if (!view.empty() && view.front() != '}') {
-            throw std::format_error("Invalid format specifier for telnet::command");
-        }
-        return view.begin();
-    } //parse(format_parse_context&)
+  constexpr auto parse(
+      format_parse_context& ctx)
+  {
+    auto view = std::ranges::subrange(
+      ctx.begin(), ctx.end());
+    if (!view.empty()) {
+      const char c = view.front();
+      if (c == 'n' || c == 'x' || c == 'X') {
+        presentation_ = c;
+        view = view.advance(1);
+      }
+    }
+    if (!view.empty() &&
+      view.front() != '}') {
+      throw std::format_error("Invalid format specifier for telnet::command");
+    }
+    return view.begin();
+  } //parse(format_parse_context&)
 
-    template<typename FormatContext>
-    auto format(::net::telnet::command cmd, FormatContext& ctx) const
-    {
-        std::string_view name;
-        switch (cmd) {
-            case ::net::telnet::command::eor:
-                name = "eor";
-                break;
-            case ::net::telnet::command::se:
-                name = "se";
-                break;
-            case ::net::telnet::command::nop:
-                name = "nop";
-                break;
-            //...13 cases elided for space
-            case ::net::telnet::command::iac:
-                name = "iac";
-                break;
-            default:
-                name = "UNKNOWN";
-                break;
-        }
+  template<typename FormatContext>
+  auto format(::net::telnet::command cmd, FormatContext& ctx) const
+  {
+    std::string_view name;
+    switch (cmd) {
+      case ::net::telnet::command::eor:
+        name = "eor";
+        break;
+      case ::net::telnet::command::se:
+        name = "se";
+        break;
+      case ::net::telnet::command::nop:
+        name = "nop";
+        break;
+      //...13 cases elided for space
+      case ::net::telnet::command::iac:
+        name = "iac";
+        break;
+      default:
+        name = "UNKNOWN";
+        break;
+    }
 
-        if (presentation_ == 'n') {
-            return std::format_to(ctx.out(), "{}", name);
-        } else if (presentation_ == 'x') {
-            return std::format_to(ctx.out(), "0x{:02x}", std::to_underlying(cmd));
-        } else if (presentation_ == 'X') {
-            return std::format_to(ctx.out(), "0x{:02X}", std::to_underlying(cmd));
-        }
-    } //format(::net::telnet::command, FormatContext&)
+    if (presentation_ == 'n') {
+      return std::format_to(ctx.out(),
+        "{}", name);
+    } else if (presentation_ == 'x') {
+      return std::format_to(ctx.out(),
+        "0x{:02x}", std::to_underlying(cmd));
+    } else if (presentation_ == 'X') {
+      return std::format_to(ctx.out(),
+        "0x{:02X}", std::to_underlying(cmd));
+    }
+  } //format(::net::telnet::command, FormatContext&)
 }; //struct formatter<::net::telnet::command>
 ```
 
@@ -290,21 +299,21 @@ public:
 ```cpp
 template<>
 struct std::formatter<::net::telnet::negotiation_direction, char> {
-    constexpr auto parse(format_parse_context& ctx)
-    {
-        auto view = std::ranges::subrange(ctx.begin(), ctx.end());
-        if (!view.empty() && view.front() != '}') {
-            throw std::format_error("Invalid format specifier for negotiation_direction");
-        }
-        return view.begin();
-    } //parse(format_parse_context&)
+  constexpr auto parse(format_parse_context& ctx)
+  {
+    auto view = std::ranges::subrange(ctx.begin(), ctx.end());
+    if (!view.empty() && view.front() != '}') {
+      throw std::format_error("Invalid format specifier for negotiation_direction");
+    }
+    return view.begin();
+  } //parse(format_parse_context&)
 
-    template<typename FormatContext>
-    auto format(::net::telnet::negotiation_direction dir, FormatContext& ctx) const
-    {
-        std::string_view name = (dir == ::net::telnet::negotiation_direction::local ? "local" : "remote");
-        return std::format_to(ctx.out(), "{}", name);
-    } //format(::net::telnet::negotiation_direction, FormatContext&)
+  template<typename FormatContext>
+  auto format(::net::telnet::negotiation_direction dir, FormatContext& ctx) const
+  {
+    std::string_view name = (dir == ::net::telnet::negotiation_direction::local ? "local" : "remote");
+    return std::format_to(ctx.out(), "{}", name);
+  } //format(::net::telnet::negotiation_direction, FormatContext&)
 }; //struct formatter<::net::telnet::negotiation_direction>
 ```
 
@@ -317,40 +326,40 @@ struct std::formatter<::net::telnet::negotiation_direction, char> {
 ```cpp
 template<typename... Args>
 void log_error(const std::error_code& ec,
-               std::format_string<std::remove_cvref_t<Args>...> fmt,
-               Args&&... args)
+  std::format_string<std::remove_cvref_t<Args>...> fmt,
+  Args&&... args)
 {
-    std::cerr << "Telnet FSM error: " << ec.message() << " (" << std::format(fmt, std::forward<Args>(args)...) << ")\n";
+  std::cerr << "Telnet FSM error: " << ec.message() << " (" << std::format(fmt, std::forward<Args>(args)...) << ")\n";
 }
 
 using namespace ::net::telnet;
 void contrived_use(std::error_code ec, command  cmd)
 {
-    log_error(ec, "cmd: {}", cmd);
-    log_error(ec, "cmd: {:n}", cmd);
-    log_error(ec, "cmd: {:x}", cmd);
-    log_error(ec, "cmd: {:X}", cmd);
-    log_error(ec, "cmd: {0:n} (0x{0:X})", cmd);
+  log_error(ec, "cmd: {}", cmd);
+  log_error(ec, "cmd: {:n}", cmd);
+  log_error(ec, "cmd: {:x}", cmd);
+  log_error(ec, "cmd: {:X}", cmd);
+  log_error(ec, "cmd: {0:n} (0x{0:X})", cmd);
 }
 ```
 
 ```cpp
 template<typename... Args>
 void log_error(const std::error_code& ec,
-               std::format_string<std::remove_cvref_t<Args>...> fmt,
-               Args&&... args)
+  std::format_string<std::remove_cvref_t<Args>...> fmt,
+  Args&&... args)
 {
-    std::cerr << "Telnet FSM error: " << ec.message() << " (" << std::format(fmt, std::forward<Args>(args)...) << ")\n";
+  std::cerr << "Telnet FSM error: " << ec.message() << " (" << std::format(fmt, std::forward<Args>(args)...) << ")\n";
 }
 
 using namespace ::net::telnet;
 void contrived_use(std::error_code ec, command  cmd)
 {
-    log_error(ec, "cmd: {}", cmd);
-    log_error(ec, "cmd: {:s}", cmd);
-    log_error(ec, "cmd: 0x{:i:02x}", cmd);
-    log_error(ec, "cmd: 0x{:i:02X}", cmd);
-    log_error(ec, "cmd: {0:s} (0x{0:i:02X})", cmd);
+  log_error(ec, "cmd: {}", cmd);
+  log_error(ec, "cmd: {:s}", cmd);
+  log_error(ec, "cmd: 0x{:i:02x}", cmd);
+  log_error(ec, "cmd: 0x{:i:02X}", cmd);
+  log_error(ec, "cmd: {0:s} (0x{0:i:02X})", cmd);
 }
 ```
 :::
