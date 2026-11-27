@@ -185,7 +185,9 @@ export module net.telnet:types;
 import std;
 
 export namespace telnet {
-  enum class command : std::uint8_t {
+  enum class command
+    : std::uint8_t
+  {
     eor = 0xEF, //End of Record
     se  = 0xF0, //Subnegotiation End
     nop = 0xF1, //No Operation
@@ -193,9 +195,11 @@ export namespace telnet {
     iac = 0xFF, //Interpret As Command
   }; //enum class command
 
-  enum class negotiation_direction : std::uint8_t {
-    local,  //"us", sends WILL/WONT, receives DO/DONT
-    remote, //"them", sends DO/DONT, receives WILL/WONT
+  enum class negotiation_direction
+    : std::uint8_t
+  {
+    local,  //"us", sends WILL/WONT
+    remote, //"them", sends DO/DONT
   }; //enum class negotiation_direction
 } //namespace telnet
 ```
@@ -208,7 +212,9 @@ export module net.telnet:types;
 import std;
 
 export namespace telnet {
-  enum class [[=std::formattable]] command : std::uint8_t {
+  enum class [[=std::formattable]] command
+    : std::uint8_t
+  {
     eor = 0xEF, //End of Record
     se  = 0xF0, //Subnegotiation End
     nop = 0xF1, //No Operation
@@ -216,9 +222,11 @@ export namespace telnet {
     iac = 0xFF, //Interpret As Command
   }; //enum class command
 
-  enum class [[=std::formattable]] negotiation_direction : std::uint8_t {
-    local,  //"us", sends WILL/WONT, receives DO/DONT
-    remote, //"them", sends DO/DONT, receives WILL/WONT
+  enum class [[=std::formattable]]
+    negotiation_direction : std::uint8_t
+  {
+    local,  //"us", sends WILL/WONT
+    remote, //"them", sends DO/DONT
   }; //enum class negotiation_direction
 } //namespace telnet
 ```
@@ -226,7 +234,7 @@ export namespace telnet {
 ---
 
 ```cpp
-template<>
+export template<>
 struct std::formatter<
   telnet::command, char> {
 private:
@@ -294,7 +302,7 @@ public:
 ---
 
 ```cpp
-template<>
+export template<>
 struct std::formatter<
   telnet::negotiation_direction, char
 > {
