@@ -241,39 +241,37 @@ public:
       ctx.begin(), ctx.end());
     if (!view.empty()) {
       const char c = view.front();
-      if (c == 'n' || c == 'x' || c == 'X') {
+      if (c == 'n' || c == 'x' || c == 'X')
+      {
         presentation_ = c;
         view = view.advance(1);
       }
     }
     if (!view.empty() &&
-      view.front() != '}') {
-      throw std::format_error("Invalid format specifier for telnet::command");
+      view.front() != '}')
+    {
+      throw std::format_error("Invalid.");
     }
     return view.begin();
   } //parse(format_parse_context&)
 
   template<typename FormatContext>
-  auto format(::net::telnet::command cmd, FormatContext& ctx) const
+  auto format(::net::telnet::command cmd,
+    FormatContext& ctx) const
   {
     std::string_view name;
     switch (cmd) {
       case ::net::telnet::command::eor:
-        name = "eor";
-        break;
+        name = "eor"; break;
       case ::net::telnet::command::se:
-        name = "se";
-        break;
+        name = "se"; break;
       case ::net::telnet::command::nop:
-        name = "nop";
-        break;
+        name = "nop"; break;
       //...13 cases elided for space
       case ::net::telnet::command::iac:
-        name = "iac";
-        break;
+        name = "iac"; break;
       default:
-        name = "UNKNOWN";
-        break;
+        name = "UNKNOWN"; break;
     }
 
     if (presentation_ == 'n') {
@@ -298,21 +296,30 @@ public:
 
 ```cpp
 template<>
-struct std::formatter<::net::telnet::negotiation_direction, char> {
-  constexpr auto parse(format_parse_context& ctx)
+struct std::formatter<
+  ::net::telnet::negotiation_direction, char
+> {
+  constexpr auto parse(
+    format_parse_context& ctx)
   {
-    auto view = std::ranges::subrange(ctx.begin(), ctx.end());
+    auto view = std::ranges::subrange(
+      ctx.begin(), ctx.end());
     if (!view.empty() && view.front() != '}') {
-      throw std::format_error("Invalid format specifier for negotiation_direction");
+      throw std::format_error("Invalid");
     }
     return view.begin();
   } //parse(format_parse_context&)
 
   template<typename FormatContext>
-  auto format(::net::telnet::negotiation_direction dir, FormatContext& ctx) const
+  auto format(
+    ::net::telnet::negotiation_direction dir,
+    FormatContext& ctx) const
   {
-    std::string_view name = (dir == ::net::telnet::negotiation_direction::local ? "local" : "remote");
-    return std::format_to(ctx.out(), "{}", name);
+    std::string_view name =
+      (dir == ::net::telnet::negotiation_direction::local
+      ? "local" : "remote");
+    return std::format_to(ctx.out(),
+      "{}", name);
   } //format(::net::telnet::negotiation_direction, FormatContext&)
 }; //struct formatter<::net::telnet::negotiation_direction>
 ```
