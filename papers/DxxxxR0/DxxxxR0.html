@@ -1987,40 +1987,48 @@ be an order of magnitude worse.</em></p>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> std<span class="op">;</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">export</span> <span class="kw">namespace</span> telnet <span class="op">{</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">enum</span> <span class="kw">class</span> command <span class="op">:</span> std<span class="op">::</span><span class="dt">uint8_t</span> <span class="op">{</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    eor <span class="op">=</span> <span class="bn">0xEF</span><span class="op">,</span> <span class="co">//End of Record</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    se  <span class="op">=</span> <span class="bn">0xF0</span><span class="op">,</span> <span class="co">//Subnegotiation End</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    nop <span class="op">=</span> <span class="bn">0xF1</span><span class="op">,</span> <span class="co">//No Operation</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">//...13 enumerators elided for space</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    iac <span class="op">=</span> <span class="bn">0xFF</span><span class="op">,</span> <span class="co">//Interpret As Command</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">};</span> <span class="co">//enum class command</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">enum</span> <span class="kw">class</span> negotiation_direction <span class="op">:</span> std<span class="op">::</span><span class="dt">uint8_t</span> <span class="op">{</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    local<span class="op">,</span>  <span class="co">//&quot;us&quot;, sends WILL/WONT, receives DO/DONT</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    remote<span class="op">,</span> <span class="co">//&quot;them&quot;, sends DO/DONT, receives WILL/WONT</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="op">};</span> <span class="co">//enum class negotiation_direction</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="co">//namespace telnet</span></span></code></pre></div></td>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">enum</span> <span class="kw">class</span> command</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">:</span> std<span class="op">::</span><span class="dt">uint8_t</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">{</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    eor <span class="op">=</span> <span class="bn">0xEF</span><span class="op">,</span> <span class="co">//End of Record</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    se  <span class="op">=</span> <span class="bn">0xF0</span><span class="op">,</span> <span class="co">//Subnegotiation End</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    nop <span class="op">=</span> <span class="bn">0xF1</span><span class="op">,</span> <span class="co">//No Operation</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">//...13 enumerators elided for space</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    iac <span class="op">=</span> <span class="bn">0xFF</span><span class="op">,</span> <span class="co">//Interpret As Command</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">};</span> <span class="co">//enum class command</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">enum</span> <span class="kw">class</span> negotiation_direction</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">:</span> std<span class="op">::</span><span class="dt">uint8_t</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">{</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    local<span class="op">,</span>  <span class="co">//&quot;us&quot;, sends WILL/WONT</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    remote<span class="op">,</span> <span class="co">//&quot;them&quot;, sends DO/DONT</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="op">};</span> <span class="co">//enum class negotiation_direction</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="co">//namespace telnet</span></span></code></pre></div></td>
 <td><div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">export</span> <span class="kw">module</span> net<span class="op">.</span>telnet<span class="op">:</span>types<span class="op">;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> std<span class="op">;</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">export</span> <span class="kw">namespace</span> telnet <span class="op">{</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">enum</span> <span class="kw">class</span> <span class="op">[[=</span><span class="at">std</span><span class="op">::</span><span class="at">formattable</span><span class="op">]]</span> command <span class="op">:</span> std<span class="op">::</span><span class="dt">uint8_t</span> <span class="op">{</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    eor <span class="op">=</span> <span class="bn">0xEF</span><span class="op">,</span> <span class="co">//End of Record</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    se  <span class="op">=</span> <span class="bn">0xF0</span><span class="op">,</span> <span class="co">//Subnegotiation End</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    nop <span class="op">=</span> <span class="bn">0xF1</span><span class="op">,</span> <span class="co">//No Operation</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">//...13 enumerators elided for space</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    iac <span class="op">=</span> <span class="bn">0xFF</span><span class="op">,</span> <span class="co">//Interpret As Command</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">};</span> <span class="co">//enum class command</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">enum</span> <span class="kw">class</span> <span class="op">[[=</span><span class="at">std</span><span class="op">::</span><span class="at">formattable</span><span class="op">]]</span> negotiation_direction <span class="op">:</span> std<span class="op">::</span><span class="dt">uint8_t</span> <span class="op">{</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    local<span class="op">,</span>  <span class="co">//&quot;us&quot;, sends WILL/WONT, receives DO/DONT</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    remote<span class="op">,</span> <span class="co">//&quot;them&quot;, sends DO/DONT, receives WILL/WONT</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="op">};</span> <span class="co">//enum class negotiation_direction</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="co">//namespace telnet</span></span></code></pre></div></td>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">enum</span> <span class="kw">class</span> <span class="op">[[=</span><span class="at">std</span><span class="op">::</span><span class="at">formattable</span><span class="op">]]</span> command</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">:</span> std<span class="op">::</span><span class="dt">uint8_t</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">{</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    eor <span class="op">=</span> <span class="bn">0xEF</span><span class="op">,</span> <span class="co">//End of Record</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    se  <span class="op">=</span> <span class="bn">0xF0</span><span class="op">,</span> <span class="co">//Subnegotiation End</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    nop <span class="op">=</span> <span class="bn">0xF1</span><span class="op">,</span> <span class="co">//No Operation</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">//...13 enumerators elided for space</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    iac <span class="op">=</span> <span class="bn">0xFF</span><span class="op">,</span> <span class="co">//Interpret As Command</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">};</span> <span class="co">//enum class command</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">enum</span> <span class="kw">class</span> <span class="op">[[=</span><span class="at">std</span><span class="op">::</span><span class="at">formattable</span><span class="op">]]</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    negotiation_direction <span class="op">:</span> std<span class="op">::</span><span class="dt">uint8_t</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">{</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    local<span class="op">,</span>  <span class="co">//&quot;us&quot;, sends WILL/WONT</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    remote<span class="op">,</span> <span class="co">//&quot;them&quot;, sends DO/DONT</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="op">};</span> <span class="co">//enum class negotiation_direction</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="co">//namespace telnet</span></span></code></pre></div></td>
 </tr>
 <tr>
-<td><div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;&gt;</span></span>
+<td><div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">export</span> <span class="kw">template</span><span class="op">&lt;&gt;</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> std<span class="op">::</span>formatter<span class="op">&lt;</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  telnet<span class="op">::</span>command<span class="op">,</span> <span class="dt">char</span><span class="op">&gt;</span> <span class="op">{</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
@@ -2082,7 +2090,7 @@ be an order of magnitude worse.</em></p>
 <td><div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* No user code required. */</span></span></code></pre></div></td>
 </tr>
 <tr>
-<td><div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;&gt;</span></span>
+<td><div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">export</span> <span class="kw">template</span><span class="op">&lt;&gt;</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> std<span class="op">::</span>formatter<span class="op">&lt;</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  telnet<span class="op">::</span>negotiation_direction<span class="op">,</span> <span class="dt">char</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">{</span></span>
