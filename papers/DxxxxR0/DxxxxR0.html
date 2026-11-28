@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="mpark/wg21" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="dcterms.date" content="2026-11-27" />
+  <meta name="dcterms.date" content="2026-11-28" />
   <title>Scoped Enumeration Stringification and Annotation-Driven
 Defaultable Formatting with C++26 Static Reflection</title>
   <style>
@@ -1586,7 +1586,7 @@ and
   </tr>
   <tr>
     <td>Date:</td>
-    <td>2026-11-27</td>
+    <td>2026-11-28</td>
   </tr>
   <tr>
     <td style="vertical-align:top">Project:</td>
@@ -1859,6 +1859,9 @@ as formattable with one of the proposed annotations.</p>
 <h2 data-number="3.3" id="examples"><span class="header-section-number">3.3</span> Examples<a href="#examples" class="self-link"></a></h2>
 <div class="table-wrapper">
 <table class="cmptable">
+<caption><blockquote>
+<p>X-Macros and Signature Parsing</p>
+</blockquote></caption>
 <colgroup>
 <col style="width: 50%" />
 <col style="width: 50%" />
@@ -1866,7 +1869,7 @@ as formattable with one of the proposed annotations.</p>
 <thead>
 <tr>
 <th><div style="text-align:center">
-<strong>Before (Macros)</strong>
+<strong>Before</strong>
 </div></th>
 <th><div style="text-align:center">
 <strong>After (Annotation-Driven Formatter)</strong>
@@ -1964,11 +1967,11 @@ as formattable with one of the proposed annotations.</p>
 sketches of common macro and signature parsing techniques rather than
 complete, production-quality implementations. The reality would probably
 be an order of magnitude worse.</em></p>
-<blockquote>
-<p>Custom Formatter with Manual Switch</p>
-</blockquote>
 <div class="table-wrapper">
 <table class="cmptable">
+<caption><blockquote>
+<p>Custom Formatter with Manual Switch</p>
+</blockquote></caption>
 <colgroup>
 <col style="width: 50%" />
 <col style="width: 50%" />
@@ -1976,7 +1979,7 @@ be an order of magnitude worse.</em></p>
 <thead>
 <tr>
 <th><div style="text-align:center">
-<strong>Before (Defining Enumeration)</strong>
+<strong>Before</strong>
 </div></th>
 <th><div style="text-align:center">
 <strong>After (Annotation-Driven Formatter)</strong>
@@ -2123,7 +2126,7 @@ be an order of magnitude worse.</em></p>
 <td><div class="sourceCode" id="cb10"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* No user code required. */</span></span></code></pre></div></td>
 </tr>
 <tr>
-<td><div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> net<span class="op">.</span>telnet<span class="op">;</span></span>
+<td><div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> std<span class="op">;</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> net<span class="op">.</span>telnet<span class="op">;</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;</span><span class="kw">typename</span><span class="op">...</span> Args<span class="op">&gt;</span></span>
@@ -2172,8 +2175,9 @@ be an order of magnitude worse.</em></p>
 </table>
 </div>
 <p><em>The code in the “Before” column is adapted from a real project
-written by the author of this paper. Block comments were removed for
-brevity.</em></p>
+written by the author of this paper. Everything was compacted for the
+space available. The code should be considered illustrative rather than
+normative.</em></p>
 <h1 data-number="4" id="impact-on-the-standard"><span class="header-section-number">4</span> Impact on the Standard<a href="#impact-on-the-standard" class="self-link"></a></h1>
 <p>This is a <strong>pure library extension</strong>.</p>
 <p>This proposal <strong>does not</strong> require any changes in the
