@@ -77,7 +77,11 @@ To avoid potential conflicts with existing user-supplied formatting customizatio
 ## Examples
 
 ::: cmptable
-### Before (Macros)
+
+> X-Macros and Signature Parsing
+
+### Before
+
 ```cpp
 #define COLOR_LIST(X)  \
   X(red,   0xFF0000) \
@@ -107,6 +111,7 @@ void log_color(color c) {
 ```
 
 ### After (Annotation-Driven Formatter)
+
 ```cpp
 enum class [[=std::formattable]] color {
   red   = 0xFF0000,
@@ -120,7 +125,6 @@ void log_color(color c) {
 ```
 ---
 
-### Before (Signature Parsing)
 ```cpp
 template <auto value>
 constexpr std::string_view
@@ -159,7 +163,6 @@ void log_status(status s) {
 }
 ```
 
-### After (Annotation-Driven Formatter)
 ```cpp
 enum class [[=std::formattable]] status {
   success                    = 1,
@@ -176,10 +179,11 @@ void log_status(status s) {
 
 *The legacy workarounds in the "Before" column are illustrative sketches of common macro and signature parsing techniques rather than complete, production-quality implementations. The reality would probably be an order of magnitude worse.*
 
+::: cmptable
+
 > Custom Formatter with Manual Switch
 
-::: cmptable
-### Before (Defining Enumeration)
+### Before
 
 ```cpp
 export module net.telnet:types;
@@ -235,7 +239,6 @@ export namespace telnet {
 
 ---
 
-### Continued (Formatter Specialization)
 ```cpp
 export template<>
 struct std::formatter<
@@ -304,7 +307,6 @@ public:
 
 ---
 
-### Continued (Formatter Specialization)
 ```cpp
 export template<>
 struct std::formatter<
@@ -342,7 +344,7 @@ struct std::formatter<
 ---
 
 ```cpp
-import net.telnet;
+import std;
 import net.telnet;
 
 template<typename... Args>
@@ -392,7 +394,7 @@ void contrived_use(telnet::command  cmd)
 ```
 :::
 
-*The code in the "Before" column is adapted from a real project written by the author of this paper. Block comments were removed for brevity.*
+*The code in the "Before" column is adapted from a real project written by the author of this paper. Everything was compacted for the space available. The code should be considered illustrative rather than normative.*
 
 # Impact on the Standard
 
